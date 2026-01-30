@@ -1,0 +1,24 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>IRSA</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{% static 'js/htmx.min.js' %}" defer ></script>
+    {% tailwind_css %}
+    <style>
+      *{
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+    </style>
+</head>
+<body class="bg-gray-50 text-black font-serif leading-normal tracking-normal">
+  {% block content %}
+    {% include 'partials/header.html' %}
+     {% comment %} {% include 'home/index.html' %} {% endcomment %}
+     {% include 'partials/messages.html' %}
+    <!-- Zone centrale HTMX -->
+    {% endblock %}
+</body>
+</html>

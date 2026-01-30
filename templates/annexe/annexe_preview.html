@@ -1,0 +1,141 @@
+{% extends 'base_tailwind.html' %}
+
+{% block content %}
+{% include 'partials/header.html' %}
+{% include 'partials/stepper.html' with current_step=3 %}
+
+<div class="min-h-screen bg-gray-50 pb-12">
+    <div class="bg-white border-b border-gray-200 mb-8 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <div class="flex items-center space-x-3">
+                    <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Étape 2 / 2</span>
+                    <h1 class="text-2xl font-bold text-gray-900">Vérification de Cohérence</h1>
+                </div>
+                <p class="text-sm text-gray-500 mt-1">Comparaison des données importées avec le barème légal IRSA de l'année {{ periode.annee }}.</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <a href="{% url 'upload_annexe' %}" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium text-sm transition-colors">Réimporter le fichier</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-[98%] mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {% if any_error %}
+        <div class="mb-8 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl shadow-md">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-6 w-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-bold text-red-800 uppercase">Anomalies de calcul détectées</h3>
+                    <p class="mt-1 text-sm text-red-700 font-medium">
+                        Certains calculs d'impôt net dans votre fichier Excel ne correspondent pas au barème progressif calculé par le système.
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 bg-white flex justify-between items-center">
+                <h3 class="font-bold text-gray-800 uppercase text-sm tracking-wide">
+                    Période : {{ periode.get_periode_type_display }} {{ periode.annee }}
+                </h3>
+                <span class="text-xs font-semibold text-gray-400 uppercase tracking-widest">{{ rows|length }} employés détectés</span>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50/50 text-gray-500 uppercase text-[10px] font-bold tracking-wider">
+                            <th class="px-3 py-4 border-b">CNAPS / CIN</th>
+                            <th class="px-3 py-4 border-b">Nom & Prénoms</th>
+                            <th class="px-3 py-4 border-b text-right">Brut</th>
+                            <th class="px-3 py-4 border-b text-right">Avantages</th>
+                            <th class="px-3 py-4 border-b text-right">Retenues (P+S)</th>
+                            <th class="px-3 py-4 border-b text-right bg-blue-50/50">RNI (Excel)</th>
+                            <th class="px-3 py-4 border-b text-center">Charges</th>
+                            <th class="px-3 py-4 border-b text-right bg-indigo-50/50 font-black">Impôt Net (Excel)</th>
+                            <th class="px-3 py-4 border-b text-center">Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 text-[12px]">
+                        {% for row in rows %}
+                        <tr class="{% if not row.est_valide %}bg-red-50/40{% else %}hover:bg-indigo-50/20{% endif %} transition-colors">
+                            <td class="px-3 py-3 font-mono text-gray-400">
+                                {{ row.num_cnaps }}<br>
+                                <span class="text-[10px]">{{ row.cin }}</span>
+                            </td>
+                            <td class="px-3 py-3 font-bold text-gray-900">{{ row.nom_prenom }}</td>
+                            <td class="px-3 py-3 text-right text-gray-600">{{ row.remuneration_brute|floatformat:2 }}</td>
+                            <td class="px-3 py-3 text-right text-gray-600">{{ row.avantages_nature|floatformat:2 }}</td>
+                            <td class="px-3 py-3 text-right text-gray-600">
+                                {{ row.pension|add:row.cotisation_sante|floatformat:2 }}
+                            </td>
+
+                            <td class="px-3 py-3 text-right font-bold text-blue-700">
+                                {{ row.revenu_net|floatformat:2 }}
+                            </td>
+
+                            <td class="px-3 py-3 text-center text-gray-500 font-bold">{{ row.personnes_charge }}</td>
+
+                            <td class="px-3 py-3 text-right font-black {% if not row.est_valide %}bg-red-100 text-red-700{% else %}text-indigo-700{% endif %}">
+                                <div>{{ row.impot_net|floatformat:2 }}</div>
+                                {% if not row.est_valide %}
+                                    <div class="text-[9px] font-normal italic">Attendu : {{ row.impot_net_theo|floatformat:2 }}</div>
+                                {% endif %}
+                            </td>
+
+                            <td class="px-3 py-3 text-center">
+                                {% if not row.est_valide %}
+                                    <span class="flex justify-center" title="Le calcul Excel diffère du barème système">
+                                        <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                                    </span>
+                                {% else %}
+                                    <span class="flex justify-center text-green-500">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="px-6 py-10 text-center text-gray-500">Aucune donnée trouvée dans le fichier Excel.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-6 bg-white p-6 rounded-2xl border border-gray-200 shadow-lg">
+            <div class="flex items-center space-x-4">
+                <div class="bg-gray-100 px-4 py-2 rounded-xl font-bold text-gray-700 text-sm">
+                    Total : {{ rows|length }} employés
+                </div>
+                {% if any_error %}
+                <p class="text-sm text-red-600 font-bold">
+                    ⚠️ Des écarts de calcul existent.
+                </p>
+                {% endif %}
+            </div>
+
+            <form method="post" action="{% url 'convertir_en_brouillon' %}">
+                {% csrf_token %}
+                <button type="submit" 
+                        {% if any_error %}onclick="return confirm('Attention : Des erreurs de calcul subsistent. Les données importées seront celles de votre fichier Excel. Voulez-vous continuer ?');"{% endif %}
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-black shadow-xl shadow-indigo-200 transition-all transform hover:-translate-y-1 active:scale-95 flex items-center group">
+                    <span class="mr-2">Confirmer l'importation</span>
+                    <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

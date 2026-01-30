@@ -1,0 +1,33 @@
+body {
+    color: rgb(255, 255, 255);
+}
+.custom-blur {
+  backdrop-filter: blur(100px);
+}
+.welcome-text {
+  font-size: 3rem;
+  font-weight: bold;
+}
+.sub-text {
+  font-size: 1.5rem;
+  margin-top: 10px;
+}
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.btn-custom {
+  margin-top: 30px;
+  padding: 10px 30px;
+  font-size: 1.2rem;
+  background-color: #e9aa23;
+  border: none;
+  color: white;
+}
+  .btn-custom:hover {
+  background-color: #a77a1a;
+}

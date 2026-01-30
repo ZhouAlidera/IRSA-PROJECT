@@ -1,0 +1,132 @@
+{% extends 'base_tailwind.html' %}
+{% block content %}
+{% include 'partials/header.html' %}
+
+<div class="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-6xl bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/60 overflow-hidden flex min-h-[700px] border border-slate-100">
+        
+        <div class="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center">
+            <div class="mb-10">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600">Inscription Entreprise</span>
+                </div>
+                <h2 class="text-3xl font-black text-slate-900 tracking-tighter mb-2">Commençons par le début.</h2>
+                <p class="text-slate-500 font-medium">Identifiez votre établissement.</p>
+            </div>
+
+            <div class="flex items-center gap-4 mb-12">
+                <div class="flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-black">1</span>
+                    <span class="text-xs font-black uppercase tracking-widest text-slate-900">Établissement</span>
+                </div>
+                <div class="h-px w-12 bg-slate-200"></div>
+                <div class="flex items-center gap-2 opacity-30">
+                    <span class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-black">2</span>
+                    <span class="text-xs font-black uppercase tracking-widest text-slate-400">Accès</span>
+                </div>
+            </div>
+
+            <form method="post" id="regForm1" class="space-y-6">
+                {% csrf_token %}
+                <div class="space-y-1 relative">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">NIF</label>
+                    <div class="relative">
+                        <input type="text" name="nif" id="nif_input" required placeholder="NIF2026..."
+                               class="w-full px-6 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 focus:outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-400 transition-all font-medium text-slate-700 uppercase" />
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2">
+                            <svg id="nif_loader" class="hidden animate-spin h-5 w-5 text-indigo-600" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            <svg id="nif_success" class="hidden w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                    <p id="nif_error" class="hidden text-[10px] font-bold text-red-500 ml-4 italic">NIF introuvable.</p>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Raison Sociale</label>
+                    <input type="text" name="raison_sociale" id="raison_input" required readonly
+                           class="w-full px-6 py-4 rounded-2xl border border-slate-200 bg-slate-100 transition-all font-bold text-slate-400 cursor-not-allowed" />
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Adresse Siège</label>
+                    <textarea name="adresse" id="adresse_input" required placeholder="Adresse à Madagascar" rows="3"
+                              class="w-full px-6 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 focus:outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-400 transition-all font-medium text-slate-700 resize-none"></textarea>
+                </div>
+
+                <div class="flex items-center justify-between pt-4">
+                    <a href="{% url 'login' %}" class="text-sm font-bold text-slate-400 hover:text-indigo-600 transition">Se connecter</a>
+                    <button type="submit" id="submit_btn" disabled class="px-10 py-4 bg-slate-300 text-white rounded-2xl transition-all font-black uppercase text-xs flex items-center gap-3 cursor-not-allowed">
+                        Suivant <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="hidden md:flex w-1/2 bg-slate-50 border-l border-slate-100 items-center justify-center p-12">
+            </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fields = {
+        nif: document.getElementById('nif_input'),
+        raison: document.getElementById('raison_input'),
+        adresse: document.getElementById('adresse_input')
+    };
+    const submitBtn = document.getElementById('submit_btn');
+
+    // Restoration
+    Object.keys(fields).forEach(key => {
+        const val = localStorage.getItem('reg_' + key);
+        if (val) {
+            fields[key].value = val;
+            if (key === 'nif' && val.length >= 8) checkNIF(val);
+        }
+    });
+
+    // Save on input
+    fields.adresse.addEventListener('input', (e) => localStorage.setItem('reg_adresse', e.target.value));
+    fields.nif.addEventListener('input', (e) => {
+        localStorage.setItem('reg_nif', e.target.value);
+        if (e.target.value.length < 8) resetState();
+    });
+
+    fields.nif.addEventListener('blur', function() { checkNIF(this.value); });
+
+    function checkNIF(nif) {
+        if (nif.length < 8) return;
+        document.getElementById('nif_loader').classList.remove('hidden');
+        fetch(`/api/nif-info/?nif=${encodeURIComponent(nif)}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('nif_loader').classList.add('hidden');
+                if (data.exists) {
+                    fields.raison.value = data.data.raison_sociale;
+                    localStorage.setItem('reg_raison', data.data.raison_sociale);
+                    document.getElementById('nif_success').classList.remove('hidden');
+                    unlockBtn();
+                } else {
+                    document.getElementById('nif_error').classList.remove('hidden');
+                    resetState();
+                }
+            });
+    }
+
+    function unlockBtn() {
+        submitBtn.disabled = false;
+        submitBtn.className = "px-10 py-4 bg-slate-900 text-white rounded-2xl shadow-xl hover:bg-indigo-600 hover:-translate-y-1 transition-all font-black uppercase text-xs flex items-center gap-3";
+    }
+
+    function resetState() {
+        submitBtn.disabled = true;
+        submitBtn.className = "px-10 py-4 bg-slate-300 text-white rounded-2xl transition-all font-black uppercase text-xs flex items-center gap-3 cursor-not-allowed";
+        document.getElementById('nif_success').classList.add('hidden');
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base_tailwind.html' %}
+{% block content %}
+<!-- Barre profil sous le navbar -->
+<div class="bg-white shadow-md rounded-lg px-8 py-4 flex items-center justify-between">
+  <!-- Infos utilisateur -->
+  <div class="grid grid-cols-2 gap-x-12 gap-y-2 text-gray-800">
+    <div>
+      <p class="text-sm font-medium text-gray-500">Utilisateur</p>
+      <p class="text-lg font-semibold">{{ request.user.first_name }} {{ request.user.last_name }}</p>
+    </div>
+    <div>
+      <p class="text-sm font-medium text-gray-500">Raison sociale</p>
+      <p class="text-lg font-semibold">{{ request.user.entreprise.raison_sociale }}</p>
+    </div>
+    <div>
+      <p class="text-sm font-medium text-gray-500">Adresse</p>
+      <p class="text-lg font-semibold">{{ request.user.entreprise.adresse }}</p>
+    </div>
+    <div>
+      <p class="text-sm font-medium text-gray-500">NIF</p>
+      <p class="text-lg font-semibold">{{ request.user.entreprise.nif }}</p>
+    </div>
+  </div>
+
+  <!-- Avatar utilisateur -->
+  <div class="flex-shrink-0">
+    <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl">
+      {{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}
+    </div>
+  </div>
+</div>
+{% endblock %}

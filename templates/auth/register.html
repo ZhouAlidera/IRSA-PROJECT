@@ -1,0 +1,137 @@
+{% extends 'base_tailwind.html' %}
+{% load widget_tweaks %}
+{% block content %}
+{% include 'partials/header.html' %}
+
+<div class="flex justify-center items-center min-h-screen 
+            bg-gradient-to-br from-[#a9d9de] via-[#8fc8ca] to-[#6fb4b4]">
+
+  <div class="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-md border border-gray-100">
+
+    <h2 class="text-3xl font-bold text-center mb-8 text-[#6fb4b4] tracking-wide">
+      Inscription – Étape {{ current_step }} / {{ total_steps }}
+    </h2>
+
+    <form method="POST" class="space-y-6" id="wizardForm">
+      {% csrf_token %}
+      <input type="hidden" name="current_step" value="{{ current_step }}">
+
+      <!-- ÉTAPE 1 : NIF + Raison sociale + Adresse -->
+      {% if current_step == 1 %}
+        <div>
+          <label class="block text-sm font-semibold text-gray-700">NIF</label>
+          {{ form.nif|add_class:"mt-1 block w-full rounded-xl border-gray-300 bg-gray-100 shadow-sm focus:border-[#8fc8ca] focus:ring-[#8fc8ca]" }}
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700">Raison Sociale</label>
+          {{ form.raison_sociale|add_class:"mt-1 block w-full rounded-xl border-gray-300 bg-gray-100 shadow-sm focus:border-[#8fc8ca] focus:ring-[#8fc8ca]" }}
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700">Adresse</label>
+          {{ form.adresse|add_class:"mt-1 block w-full rounded-xl border-gray-300 bg-gray-100 shadow-sm focus:border-[#8fc8ca] focus:ring-[#8fc8ca]" }}
+        </div>
+
+        <!-- BOUTON SUIVANT -->
+        <button type="submit" name="next"
+          class="w-full mt-6 bg-[#6fb4b4] text-white py-2.5 rounded-xl shadow-md font-semibold
+                 hover:bg-[#8fc8ca] transition">
+          Suivant
+        </button>
+      {% endif %}
+
+      <!-- ÉTAPE 2 : Informations utilisateur -->
+      {% if current_step == 2 %}
+        <div>
+          <label class="block text-sm font-semibold text-gray-700">Email</label>
+          {{ form.email|add_class:"mt-1 block w-full rounded-xl border-gray-300 bg-gray-100 shadow-sm focus:border-[#8fc8ca] focus:ring-[#8fc8ca]" }}
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700">Nom d'utilisateur</label>
+          {{ form.username|add_class:"mt-1 block w-full rounded-xl border-gray-300 bg-gray-100 shadow-sm focus:border-[#8fc8ca] focus:ring-[#8fc8ca]" }}
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700">Nom</label>
+          {{ form.first_name|add_class:"mt-1 block w-full rounded-xl border-gray-300 bg-gray-100 shadow-sm focus:border-[#8fc8ca] focus:ring-[#8fc8ca]" }}
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700">Prénom</label>
+          {{ form.last_name|add_class:"mt-1 block w-full rounded-xl border-gray-300 bg-gray-100 shadow-sm focus:border-[#8fc8ca] focus:ring-[#8fc8ca]" }}
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700">Mot de passe</label>
+          {{ form.password1|add_class:"mt-1 block w-full rounded-xl border-gray-300 bg-gray-100 shadow-sm focus:border-[#8fc8ca] focus:ring-[#8fc8ca]" }}
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700">Confirmer le mot de passe</label>
+          {{ form.password2|add_class:"mt-1 block w-full rounded-xl border-gray-300 bg-gray-100 shadow-sm focus:border-[#8fc8ca] focus:ring-[#8fc8ca]" }}
+        </div>
+
+        <div class="flex justify-between mt-6">
+          <button type="submit" name="prev"
+            class="px-6 py-2 bg-gray-300 hover:bg-gray-400 rounded-xl font-medium shadow-sm transition">
+            Précédent
+          </button>
+
+          <button type="submit" name="submit"
+            class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium shadow-lg transition">
+            Terminer
+          </button>
+        </div>
+      {% endif %}
+
+    </form>
+
+  </div>
+</div>
+
+<!-- SCRIPT AUTO-REMPLISSAGE NIF -->
+{% if current_step == 1 %}
+<script>
+const nifInput = document.getElementById("id_nif");
+const raisonInput = document.getElementById("id_raison_sociale");
+const adresseInput = document.getElementById("id_adresse");
+
+nifInput.addEventListener("blur", async () => {
+    const nif = nifInput.value.trim();
+    if (!nif) return;
+
+    try {
+        const res = await fetch(`/api/nif-info/?nif=${nif}`);
+        const data = await res.json();
+
+        if (data.exists) {
+            raisonInput.value = data.data.raison_sociale;
+            adresseInput.value = data.data.adresse;
+
+            raisonInput.classList.remove("bg-gray-100","bg-red-50");
+            adresseInput.classList.remove("bg-gray-100","bg-red-50");
+
+            raisonInput.classList.add("bg-emerald-50");
+            adresseInput.classList.add("bg-emerald-50");
+        } else {
+            raisonInput.value = "";
+            adresseInput.value = "";
+
+            raisonInput.classList.remove("bg-emerald-50","bg-gray-100");
+            adresseInput.classList.remove("bg-emerald-50","bg-gray-100");
+
+            raisonInput.classList.add("bg-red-50");
+            adresseInput.classList.add("bg-red-50");
+
+            alert("Ce NIF n'existe pas.");
+        }
+    } catch (e) {
+        console.error("Erreur API :", e);
+    }
+});
+</script>
+{% endif %}
+
+{% endblock %}

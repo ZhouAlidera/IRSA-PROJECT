@@ -1,0 +1,110 @@
+<nav class="bg-white sticky top-0 z-50 border-b border-slate-100">
+  <div class="h-1.5 w-full bg-gradient-to-r from-[rgb(91,167,167)] via-[#8CCBCC] to-[#A7DDDF]"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-20">
+      
+      <div class="flex items-center space-x-10">
+        <a href="{% url 'home' %}" class="flex items-center space-x-3 group">
+          <div class="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center transition-transform group-hover:rotate-6 shadow-lg shadow-slate-200">
+            <span class="text-white font-black text-xl">L</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-slate-900 font-black text-lg tracking-tighter leading-none">MY<span class="text-[rgb(91,167,167)]">APP</span></span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Gestion IRSA</span>
+          </div>
+        </a>
+
+        <div class="hidden md:flex items-center space-x-1">
+          {% if user.is_authenticated %}
+            {% with url_name=request.resolver_match.url_name %}
+            <a href="{% url 'dashboard_employeur' %}" class="px-4 py-2 rounded-xl text-sm font-bold transition-all {% if url_name == 'home' %}text-slate-900 bg-slate-50{% else %}text-slate-500 hover:text-slate-900 hover:bg-slate-50/50{% endif %}">Tableau de bord</a>
+            <a href="{% url 'presentation' %}" class="px-4 py-2 rounded-xl text-sm font-bold transition-all">Déclaration</a>
+            <a href="{% url 'liste_declarations' %}" class="px-4 py-2 rounded-xl text-sm font-bold transition-all ">Historique</a>
+            <a href="" class="px-4 py-2 rounded-xl text-sm font-bold transition-all">Consultation</a>
+            {% endwith %}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="hidden md:flex items-center space-x-6">
+        {% if user.is_authenticated %}
+          <button class="text-slate-400 hover:text-[rgb(91,167,167)] transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          </button>
+
+          <div class="h-8 w-px bg-slate-100"></div>
+
+          <div class="relative" id="user-menu-wrapper">
+            <button id="user-menu-btn" class="flex items-center space-x-3 group">
+              <div class="text-right">
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 leading-none mb-1">Entreprise</p>
+                <p class="text-xs font-bold text-slate-900 leading-none">{{ user.username }}</p>
+              </div>
+              <div class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-700 font-black shadow-sm group-hover:bg-[rgb(91,167,167)] group-hover:text-white transition-all">
+                {{ user.username|slice:":1"|upper }}
+              </div>
+            </button>
+
+            <div id="user-dropdown" class="hidden absolute right-0 mt-4 w-56 bg-white rounded-2xl shadow-2xl shadow-slate-200 border border-slate-100 py-3 transform origin-top-right z-50">
+              <div class="px-5 py-3 border-b border-slate-50 mb-2">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Compte actif</p>
+                <p class="text-sm font-bold text-slate-800 truncate">{{ user.entreprise.raison_sociale|default:"Ma Société" }}</p>
+              </div>
+              <a href="" class="flex items-center px-5 py-2.5 text-sm text-slate-600 hover:bg-slate-50 hover:text-[rgb(91,167,167)] transition">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                Mon profil
+              </a>
+              <hr class="my-2 border-slate-50">
+              <a href="{% url 'logout' %}" class="flex items-center px-5 py-2.5 text-sm text-red-500 hover:bg-red-50 transition">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                Déconnexion
+              </a>
+            </div>
+          </div>
+        {% else %}
+          <a href="{% url 'login' %}" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition">Connexion</a>
+          <a href="{% url 'register_step_one' %}" class="bg-slate-900 text-white px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl shadow-slate-200 hover:bg-indigo-600 transition-all">
+            Créer un compte
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="md:hidden flex items-center">
+        <button id="menu-btn" class="p-2 text-slate-500 hover:bg-slate-100 rounded-xl transition">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-50 p-4 space-y-2">
+    {% if user.is_authenticated %}
+      <a href="{% url 'home' %}" class="block p-4 text-slate-700 font-bold hover:bg-slate-50 rounded-2xl">Dashboard</a>
+      <a href="" class="block p-4 text-slate-700 font-bold hover:bg-slate-50 rounded-2xl">Déclaration</a>
+      <a href="{% url 'logout' %}" class="block p-4 text-red-500 font-bold bg-red-50 rounded-2xl text-center">Déconnexion</a>
+    {% else %}
+      <a href="{% url 'login' %}" class="block p-4 text-slate-700 font-bold text-center">Connexion</a>
+      <a href="{% url 'register_step_one' %}" class="block p-4 bg-slate-900 text-white font-bold rounded-2xl text-center">S'inscrire</a>
+    {% endif %}
+  </div>
+</nav>
+
+<script>
+  // Menu Mobile Toggle
+  const menuBtn = document.getElementById("menu-btn");
+  const mobileMenu = document.getElementById("mobile-menu");
+  menuBtn?.addEventListener("click", () => mobileMenu.classList.toggle("hidden"));
+
+  // Dropdown Profil Toggle
+  const userBtn = document.getElementById("user-menu-btn");
+  const userDropdown = document.getElementById("user-dropdown");
+
+  if(userBtn) {
+    userBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      userDropdown.classList.toggle("hidden");
+    });
+    window.addEventListener("click", () => userDropdown.classList.add("hidden"));
+  }
+</script>

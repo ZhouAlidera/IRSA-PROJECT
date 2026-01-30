@@ -1,0 +1,212 @@
+{% extends 'base_tailwind.html' %}
+
+{% block content %}
+{% include 'partials/header.html' %}
+{% include 'partials/messages.html' %}
+
+<div class="max-w-7xl mx-auto px-4 mt-4">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="flex items-center p-4 mb-4 rounded-2xl shadow-sm border 
+                {% if message.tags == 'error' %}
+                    bg-red-50 border-red-200 text-red-800
+                {% elif message.tags == 'success' %}
+                    bg-green-50 border-green-200 text-green-800
+                {% else %}
+                    bg-blue-50 border-blue-200 text-blue-800
+                {% endif %}">
+                
+                {% if message.tags == 'error' %}
+                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+                {% else %}
+                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                {% endif %}
+                
+                <span class="font-bold text-sm">{{ message }}</span>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<div class="min-h-screen bg-gray-50 py-12 px-4">
+    <div class="max-w-7xl mx-auto">
+        
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-black text-gray-900 tracking-tight italic uppercase">
+                    {% if is_edit %}Modifier l'employé{% else %}Ajouter un employé{% endif %}
+                </h1>
+                <p class="text-gray-500 font-medium italic">Période : <span class="text-indigo-600">{{ annexe.periode_label }} {{ annexe.annee }}</span></p>
+            </div>
+            <a href="{% url 'detail_import_brouillon' %}" class="group flex items-center text-sm font-bold text-gray-400 hover:text-red-500 transition-colors uppercase tracking-widest">
+                <span class="mr-2 px-2 py-1 bg-gray-200 rounded-lg group-hover:bg-red-100 italic transition-colors">✕</span> Annuler
+            </a>
+        </div>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            <div class="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50/80">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Informations Salarié</th>
+                                <th class="px-4 py-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Revenus</th>
+                                <th class="px-4 py-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Déductions Sociales</th>
+                                <th class="px-4 py-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Situation Familiale</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr class="align-top">
+                                <td class="px-6 py-6 space-y-3 w-1/3 border-r border-gray-50">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Nom Complet</label>
+                                        <input type="text" name="nom_prenom" required value="{{ item.nom_prenom|default:'' }}" placeholder="Ex: RAKOTO Jean"
+                                               class="w-full bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-500 font-bold text-gray-900">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div class="col-span-2">
+                                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 italic">N° CIN (Obligatoire)</label>
+                                            <input type="text" name="cin" required value="{{ item.cin|default:'' }}" placeholder="000 000 000 000"
+                                                   class="w-full bg-indigo-50/50 border-none rounded-xl focus:ring-2 focus:ring-indigo-500 font-black tracking-widest text-indigo-900">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">CNaPS</label>
+                                            <input type="text" name="num_cnaps" value="{{ item.num_cnaps|default:'' }}" placeholder="Matricule"
+                                                   class="w-full bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-500 font-bold text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Fonction</label>
+                                            <input type="text" name="fonction" value="{{ item.fonction|default:'' }}" placeholder="Poste"
+                                                   class="w-full bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-500 font-bold text-sm">
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="px-4 py-6 bg-indigo-50/10 space-y-3 border-r border-gray-50">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-indigo-400 uppercase mb-1 text-center italic">Salaire Brut (Ar)</label>
+                                        <input type="number" step="0.01" name="brut" required value="{{ item.remuneration_brute|stringformat:'.2f'|default:'0' }}"
+                                               class="w-full bg-white border-2 border-indigo-100 rounded-xl focus:ring-2 focus:ring-indigo-500 font-black text-indigo-700 text-xl text-center">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-amber-500 uppercase mb-1 text-center">Avantages en nature</label>
+                                        <input type="number" step="0.01" name="avantage" value="{{ item.avantages_nature|stringformat:'.2f'|default:'0' }}"
+                                               class="w-full bg-white border-none rounded-xl focus:ring-2 focus:ring-amber-500 font-bold text-center text-amber-600">
+                                    </div>
+                                </td>
+
+                                <td class="px-4 py-6 space-y-3 border-r border-gray-50">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-red-400 uppercase mb-1 text-center italic">Retraite (Auto 1%)</label>
+                                        <input type="number" step="0.01" name="pension" value="{{ item.pension|stringformat:'.2f'|default:'0' }}" readonly
+                                               class="w-full bg-gray-100 border-none rounded-xl font-black text-center text-red-500 cursor-not-allowed">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-blue-400 uppercase mb-1 text-center italic">Cotisation Santé</label>
+                                        <input type="number" step="0.01" name="sante" value="{{ item.cotisation_sante|stringformat:'.2f'|default:'0' }}"
+                                               class="w-full bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-400 font-bold text-center text-blue-500">
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-6 bg-gray-50/30">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 text-center">Enfants à charge</label>
+                                    <div class="flex items-center justify-center bg-white border border-gray-100 rounded-2xl p-1 mt-4 shadow-sm">
+                                        <button type="button" onclick="const i=this.nextElementSibling; i.value=Math.max(0,parseInt(i.value)-1); i.dispatchEvent(new Event('change'))" 
+                                                 class="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-xl font-black text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors">-</button>
+                                        <input type="number" name="charges" value="{{ item.personnes_charge|default:'0' }}" readonly 
+                                               class="w-14 border-none bg-transparent text-center font-black text-indigo-600 text-2xl">
+                                        <button type="button" onclick="const i=this.previousElementSibling; i.value=parseInt(i.value)+1; i.dispatchEvent(new Event('change'))" 
+                                                 class="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-xl font-black text-gray-400 hover:bg-green-50 hover:text-green-500 transition-colors">+</button>
+                                    </div>
+                                    <p class="text-[9px] text-gray-400 text-center mt-3 uppercase font-bold tracking-tighter italic">(-2.000 Ar / enfant)</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="bg-gray-900 px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div class="flex flex-wrap gap-8 justify-center md:justify-start">
+                        <div class="text-center md:text-left border-r border-gray-700 pr-8">
+                            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Base Imposable (RNI)</p>
+                            <p id="display-rni" class="text-2xl font-black text-white">0 Ar</p>
+                        </div>
+                        <div class="text-center md:text-left border-r border-gray-700 pr-8">
+                            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Réduction Famille</p>
+                            <p id="display-reduction" class="text-2xl font-black text-amber-500">0 Ar</p>
+                        </div>
+                        <div class="text-center md:text-left">
+                            <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1 italic">Impôt IRSA Net</p>
+                            <p id="display-impot" class="text-3xl font-black text-green-400">0 Ar</p>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full md:w-auto px-12 py-5 bg-green-500 hover:bg-green-400 text-gray-900 font-black rounded-2xl shadow-2xl shadow-green-500/20 transition-all transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest text-sm flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        {% if is_edit %}Mettre à jour{% else %}Enregistrer l'employé{% endif %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputBrut = document.querySelector('input[name="brut"]');
+        const inputAvantage = document.querySelector('input[name="avantage"]');
+        const inputSante = document.querySelector('input[name="sante"]');
+        const inputPension = document.querySelector('input[name="pension"]');
+        const inputCharges = document.querySelector('input[name="charges"]');
+        const cinInput = document.querySelector('input[name="cin"]');
+        
+        function updateCalculations() {
+            const brut = parseFloat(inputBrut.value) || 0;
+            const avantage = parseFloat(inputAvantage.value) || 0;
+            const sante = parseFloat(inputSante.value) || 0;
+            const nbEnfants = parseInt(inputCharges.value) || 0;
+    
+            const pension = Math.round(brut * 0.01);
+            inputPension.value = pension;
+    
+            const rni = Math.max(0, (brut + avantage) - (pension + sante));
+    
+            let irsaBrut = 0;
+            if (rni > 350000) {
+                if (rni <= 400000) irsaBrut = (rni - 350000) * 0.05;
+                else if (rni <= 500000) irsaBrut = 2500 + (rni - 400000) * 0.10;
+                else if (rni <= 600000) irsaBrut = 12500 + (rni - 500000) * 0.15;
+                else if (rni <= 4000000) irsaBrut = 27500 + (rni - 600000) * 0.20;
+                else irsaBrut = 707500 + (rni - 4000000) * 0.25;
+            }
+    
+            const reduction = nbEnfants * 2000;
+            let irsaNet = Math.max(irsaBrut - reduction, 0);
+            if (rni > 350000 && irsaNet < 3000) irsaNet = 3000;
+    
+            const formatter = new Intl.NumberFormat('fr-FR');
+            document.getElementById('display-rni').innerText = formatter.format(Math.round(rni)) + " Ar";
+            document.getElementById('display-reduction').innerText = "-" + formatter.format(reduction) + " Ar";
+            document.getElementById('display-impot').innerText = formatter.format(Math.round(irsaNet)) + " Ar";
+        }
+    
+        // Formatage CIN auto
+        cinInput.addEventListener('input', function(e) {
+            let val = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            let formatted = val.match(/.{1,3}/g)?.join(' ') || val;
+            e.target.value = formatted.substring(0, 15);
+        });
+
+        [inputBrut, inputAvantage, inputSante].forEach(el => {
+            el.addEventListener('input', updateCalculations);
+        });
+        
+        inputCharges.addEventListener('change', updateCalculations);
+
+        // LANCEMENT INITIAL : Très important pour la modification
+        updateCalculations();
+    });
+</script>
+{% endblock %}

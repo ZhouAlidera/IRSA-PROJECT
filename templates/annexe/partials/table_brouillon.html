@@ -1,0 +1,85 @@
+<div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+        <thead>
+            <tr class="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] bg-gray-50/50">
+                <th class="px-8 py-4 border-b border-gray-100">Salarié</th>
+                <th class="px-8 py-4 border-b border-gray-100">N° CNaPS</th>
+                <th class="px-8 py-4 border-b border-gray-100 text-right">Brut (Excel)</th>
+                <th class="px-8 py-4 border-b border-gray-100 text-right text-indigo-600">IRSA (Système)</th>
+
+                <th class="px-8 py-4 border-b border-gray-100 text-right">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+            {% for row in rows %}
+            <tr class="group hover:bg-gray-50/80 transition-all {% if not row.est_valide %}bg-red-50/30{% endif %}">
+                <td class="px-8 py-5">
+                    <p class="text-sm font-bold text-gray-900">{{ row.nom_prenom }}</p>
+                    <p class="text-[10px] text-gray-400 font-medium">{{ row.fonction|default:"-" }}</p>
+                </td>
+                <td class="px-8 py-5 text-xs font-mono text-gray-500">{{ row.num_cnaps }}</td>
+                <td class="px-8 py-5 text-right text-sm font-medium text-gray-600">{{ row.remuneration_brute|floatformat:2 }}</td>
+                <td class="px-8 py-5 text-right text-sm font-black text-indigo-600">{{ row.impot_net_theo|floatformat:2 }}</td>
+                {% comment %} <td class="px-8 py-5 text-center">
+                    {% if row.est_valide %}
+                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        </span>
+                    {% else %}
+                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-100 text-red-600" title="Écart détecté avec les calculs officiels">
+                            <span class="text-[10px] font-black">!</span>
+                        </span>
+                    {% endif %}
+                </td> {% endcomment %}
+                <td class="px-8 py-5 text-right">
+                    <div class="flex items-center justify-end gap-2">
+                        <a href="{% url 'modifier_employe_brouillon' row.id %}" 
+                           class="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                           title="Modifier">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                        </a>
+                
+                        <form action="{% url 'supprimer_ligne_temp' row.id %}" method="post" onsubmit="return confirm('Supprimer ce salarié du brouillon ?')" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Supprimer">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="px-8 py-20 text-center">
+                    <p class="text-gray-400 font-medium">Aucun salarié trouvé dans ce brouillon.</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if rows.has_other_pages %}
+<div class="px-8 py-6 border-t border-gray-50 flex items-center justify-between bg-gray-50/20">
+    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">
+        Page {{ rows.number }} sur {{ rows.paginator.num_pages }}
+    </p>
+    <div class="flex gap-2">
+        {% if rows.has_previous %}
+            <button onclick="fetchResultsPage({{ rows.previous_page_number }})" class="p-2 rounded-xl border border-gray-200 hover:bg-white transition-all">
+                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke-width="2"/></svg>
+            </button>
+        {% endif %}
+        
+        {% if rows.has_next %}
+            <button onclick="fetchResultsPage({{ rows.next_page_number }})" class="p-2 rounded-xl border border-gray-200 hover:bg-white transition-all">
+                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2"/></svg>
+            </button>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
