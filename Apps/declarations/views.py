@@ -50,7 +50,7 @@ def upload_annexe(request):
     # 2. Sécurité : Si aucune donnée temporaire n'existe, on redirige vers l'étape 1
     if not temp_periode:
         messages.warning(request, "Veuillez d'abord configurer la période fiscale de votre déclaration.")
-        return redirect('creer_periode_fiscale')
+        return redirect('presentation')
 
     # 3. Gestion du POST (Upload)
     if request.method == "POST":
@@ -66,7 +66,7 @@ def upload_annexe(request):
             # C'est ici que l'on transforme le brouillon de session en objet réel
             try:
                 periode_obj = PeriodeFiscale.objects.create(
-                    employeur=request.user.employeur,
+                    # employeur=request.user.employeur,
                     date_debut=temp_periode['date_debut'],
                     date_fin=temp_periode['date_fin'],
                     date_limite=temp_periode.get('date_limite'),
@@ -81,7 +81,7 @@ def upload_annexe(request):
                 
             except Exception as e:
                 messages.error(request, f"Erreur lors de la création de la période : {e}")
-                return redirect('creer_periode_fiscale')
+                return redirect('presentation')
 
             # Sauvegarde du fichier
             folder = f"temp/imports/{request.user.id}"
@@ -107,10 +107,11 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import PeriodeFiscale, TrancheBareme, ImportIRSATemporaire
-
+from .utils import calculer_irsa_brut, calculer_reduction_charge 
+from decimal import Decimal
 import logging
 logger = logging.getLogger(__name__)
-
+#------------------RECTIFICATION DE CALCUL
 @login_required
 def preview_annexe(request):
     periode_id = request.session.get('current_periode_id')
@@ -130,15 +131,21 @@ def preview_annexe(request):
 
         engine = "openpyxl" if file_path.endswith(".xlsx") else "xlrd"
         
-        # Lecture initiale pour trouver l'entête
+        # CAS si le canevas du société s'appelle autremnet que CANEVAS_IRSA
         try:
             df_raw = pd.read_excel(full_path, sheet_name="CANEVAS_IRSA", header=None, engine=engine)
         except Exception as e:
             raise ValueError(f"Impossible de lire l'onglet 'CANEVAS_IRSA'. Vérifiez le nom de la feuille. Erreur: {e}")
 
         start_row = -1
+        num_cnaps= "NUMÉRO D'IDENTIFICATION À LA CNAPS (LAHARAM-PAMANTARANA CNAPS)"
+        nom_prenoms="NOM ET PRÉNOM DU TRAVAILLEUR (ANARANA SY FANAMPIN'ANARAN'NY MPIASA)"
+        Nb_charge="NOMBRE DE PERSONNES À CHARGE (ISAN'OLONA IADIDIANA)"
+        cin="NUMÉRO CARTE D'IDENTITÉ NATIONALE OU DE RÉSIDENT (LAHARAN'NY KARAPANONDROM-PIRENENA NA KARA-BAHINY)"
+        fonction="FONCTION (ASANY)"
+        
         for i, row in df_raw.iterrows():
-            if "N° CNaPS" in row.values:
+            if num_cnaps in row.values:
                 start_row = i
                 break
         
@@ -147,7 +154,7 @@ def preview_annexe(request):
 
         df = pd.read_excel(full_path, sheet_name="CANEVAS_IRSA", header=start_row, engine=engine)
         df.columns = df.columns.str.strip()
-        df = df.dropna(subset=['N° CNaPS', 'NOM ET PRÉNOMS'], how='all').fillna(0)
+        df = df.dropna(subset=[num_cnaps, nom_prenoms], how='all').fillna(0)
 
         tranches = TrancheBareme.objects.filter(annee_fiscale=periode_obj.annee).order_by('seuil_minimal')
         if not tranches.exists():
@@ -166,7 +173,7 @@ def preview_annexe(request):
         COL_RNI = "REVENUS NETS IMPOSABLES (KARAMA SY NY TOA AZY AFA-KARATSAKA AMERANA NY HETRA) ( F = B + C - D - E )"
         COL_NET_EXCEL = "IMPÔT NET RETENU (HETRA ALOA AFA-KARATSAKA) ( I = G - H )"
         COL_BRUT_IMPOT = "IMPÔT BRUT CORRESPONDANT (HETRA TANDRIFIN'IZANY) ( G )"
-
+        # tsy ao ny reduction
         for index, row in df.iterrows():
             try:
                 # Helper pour convertir en Decimal proprement
@@ -181,34 +188,30 @@ def preview_annexe(request):
                 rni_excel = to_dec(row.get(COL_RNI, 0))
                 impot_net_excel = to_dec(row.get(COL_NET_EXCEL, 0))
                 impot_brut_excel = to_dec(row.get(COL_BRUT_IMPOT, 0))
-                nb_charge = int(float(row.get('NbCharge', 0)))
+                nb_charge = int(to_dec(row.get(Nb_charge, 0)))
 
                 # Calculs
                 rni_theo = (brut + avantage - pension - cotisation).quantize(Decimal('1.00'))
                 
-                impot_brut_theo = Decimal('0.00')
-                for t in tranches:
-                    if rni_theo > t.seuil_minimal:
-                        plafond = t.seuil_maximal if t.seuil_maximal else rni_theo
-                        base = min(rni_theo, plafond) - t.seuil_minimal
-                        impot_brut_theo += base * (t.taux / Decimal('100'))
-
-                reduction_theo = Decimal(str(nb_charge * 2000))
-                min_perception = tranches[0].minimum_perception if tranches else Decimal('3000')
+                impot_brut_theo = to_dec(calculer_irsa_brut(rni_theo))
+                # for t in tranches:
+                #     if rni_theo > t.seuil_minimal:
+                #         plafond = t.seuil_maximal if t.seuil_maximal else rni_theo
+                #         base = min(rni_theo, plafond) - t.seuil_minimal
+                #         impot_brut_theo += base * (t.taux / Decimal('100'))
+                reduction_theo = to_dec(calculer_reduction_charge(nb_charge))
+               
+                impot_net_theo = max(impot_brut_theo - reduction_theo, 3000.0)
                 
-                calc_net = impot_brut_theo - reduction_theo
-                impot_net_theo = max(calc_net, min_perception) if rni_theo > Decimal('350000') else Decimal('0.00')
-                impot_net_theo = impot_net_theo.quantize(Decimal('1.00'), rounding=ROUND_HALF_UP)
-
                 est_valide = abs(impot_net_excel - impot_net_theo) <= 2 and abs(rni_excel - rni_theo) <= 2
                 if not est_valide: any_error = True
 
                 objs_to_create.append(ImportIRSATemporaire(
                     employeur=employeur,
-                    num_cnaps=str(row.get('N° CNaPS', '')),
-                    nom_prenom=str(row.get('NOM ET PRÉNOMS', '')),
-                    cin=str(row.get('N° CIN OU PASSEPORT', '')),
-                    fonction=str(row.get('FONCTION', '')),
+                    num_cnaps=str(row.get(num_cnaps, '')),
+                    nom_prenom=str(row.get(nom_prenoms, '')),
+                    cin=str(row.get(cin, '')),
+                    fonction=str(row.get(fonction, '')),
                     remuneration_brute=brut,
                     avantages_nature=avantage,
                     pension=pension,
@@ -243,7 +246,7 @@ def preview_annexe(request):
         logger.exception("Erreur critique lors de la lecture de l'annexe")
         messages.error(request, f"Erreur : {str(e)}")
         return redirect("upload_annexe")
-
+#------------------------------------------------------------------------------------
 @login_required
 def convertir_en_brouillon(request):
     employeur = request.user.employeur

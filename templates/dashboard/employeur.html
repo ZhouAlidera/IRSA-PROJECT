@@ -1,185 +1,146 @@
 {% extends 'base_tailwind.html' %}
 {% load static %}
-
 {% block content %}
 {% include 'partials/header.html' %}
-
-<div class="min-h-screen bg-[#f8fafc] p-6 lg:p-10">
+{% include 'partials/messages.html' %}
+<div class="min-h-screen bg-[#fcfdfe] p-4 lg:p-8 font-sans">
     <div class="max-w-7xl mx-auto">
         
-        {% if deadline_info.jours_restants <= 10 %}
-        <div class="mb-8 p-1 rounded-[2rem] bg-gradient-to-r from-indigo-500 to-blue-600 shadow-2xl shadow-indigo-100">
-            <div class="bg-white/95 backdrop-blur-sm rounded-[1.9rem] px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
-                <div class="flex items-center gap-5">
-                    <div class="relative flex h-10 w-10 items-center justify-center">
-                        {% if deadline_info.status == 'danger' %}
-                            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
-                        {% endif %}
-                        <div class="relative flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 gap-8">
+            <div class="flex items-center gap-6">
+                <div class="h-20 w-20 bg-slate-900 rounded-[2rem] flex items-center justify-center text-white shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-black text-slate-900 tracking-tighter uppercase italic leading-none">
+                        {{ request.user.employeur.raison_sociale }}
+                    </h1>
+                    <div class="flex items-center gap-4 mt-2">
+                        <span class="px-3 py-1 bg-slate-100 rounded-full text-[10px] font-bold text-slate-500 uppercase tracking-widest">NIF {{ request.user.employeur.nif }}</span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="h-2 w-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                            <span class="text-[10px] font-black text-emerald-600 uppercase tracking-tight">Portail Sécurisé</span>
                         </div>
                     </div>
-                    <div>
-                        <h4 class="font-black text-slate-900 uppercase text-xs tracking-widest">Échéance IRSA</h4>
-                        <p class="text-slate-500 text-xs">Date limite : <span class="font-bold text-slate-900">{{ deadline_info.deadline|date:"d F Y" }}</span></p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-6">
-                    <div class="text-center">
-                        <span class="text-2xl font-black {% if deadline_info.status == 'danger' %}text-red-600{% else %}text-indigo-600{% endif %}">J-{{ deadline_info.jours_restants }}</span>
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Restants</p>
-                    </div>
-                    <a href="{% url 'presentation' %}" class="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg">Déclarer</a>
                 </div>
             </div>
+            
+            <div class="flex items-center gap-3">
+                {% if brouillon_en_cours > 0 %}
+                <a href="{% url 'detail_import_brouillon' %}" class="group bg-white border-2 border-slate-900 text-slate-900 px-6 py-4 rounded-2xl font-black text-xs transition-all hover:bg-slate-50 flex items-center gap-3">
+                    CONTINUER LE BROUILLON ({{ brouillon_en_cours }})
+                </a>
+                {% endif %}
+                <a href="{% url 'presentation' %}" class="group bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black text-xs transition-all hover:scale-105 hover:shadow-2xl hover:shadow-indigo-200 flex items-center gap-3 uppercase tracking-widest">
+                    <svg class="w-4 h-4 group-hover:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+                    Nouvelle Déclaration
+                </a>
+            </div>
+        </div>
+
+        {% if deadline_info.jours <= 10 %}
+        <div class="mb-10 relative overflow-hidden bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl">
+            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-6">
+                    <div class="h-16 w-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center">
+                        <span class="text-3xl font-black {% if deadline_info.status == 'danger' %}text-red-400{% else %}text-indigo-400{% endif %}">J-{{ deadline_info.jours }}</span>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-black uppercase italic tracking-tight">Attention, date limite proche</h4>
+                        <p class="text-slate-400 text-sm">Votre déclaration IRSA doit être soumise avant le <span class="text-white font-bold">{{ deadline_info.date|date:"d F Y" }}</span>.</p>
+                    </div>
+                </div>
+                <button class="w-full md:w-auto px-10 py-4 bg-white text-slate-900 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-indigo-50 transition-colors">Régulariser maintenant</button>
+            </div>
+            <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-600/20 rounded-full blur-3xl -mr-32 -mt-32"></div>
         </div>
         {% endif %}
 
-        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-10 gap-6">
-            <div class="flex items-center gap-4">
-                <div class="h-16 w-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-100">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-shadow group">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Cumul Annuel IRSA</p>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-5xl font-black text-slate-900 tracking-tighter">{{ total_irsa_annuel|floatformat:0 }}</span>
+                    <span class="text-slate-300 font-black text-sm italic uppercase">Ar</span>
                 </div>
-                <div>
-                    <h1 class="text-3xl font-black text-slate-900 tracking-tight leading-none italic uppercase">{{ request.user.employeur.raison_sociale }}</h1>
-                    <div class="flex items-center gap-3 mt-1">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest italic">NIF : {{ request.user.employeur.nif }}</span>
-                        <span class="h-1 w-1 bg-slate-300 rounded-full"></span>
-                        <span class="text-xs font-bold text-indigo-500 uppercase">Compte Entreprise Certifié</span>
-                    </div>
-                </div>
-            </div>
-            
-            <a href="{% url 'presentation' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-black text-sm transition-all shadow-xl shadow-indigo-100 flex items-center gap-3 group">
-                <div class="bg-indigo-500 rounded-lg p-1 group-hover:rotate-90 transition-transform">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
-                </div>
-                NOUVELLE DÉCLARATION
-            </a>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100">
-                <span class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">Cumul Annuel IRSA</span>
-                <div class="flex items-end gap-2 mt-2">
-                    <span class="text-4xl font-black text-slate-900 tracking-tighter">{{ total_irsa|floatformat:0 }}</span>
-                    <span class="text-slate-400 font-bold mb-1 uppercase text-xs italic">Ar</span>
+                <div class="mt-6 flex items-center gap-2">
+                    <span class="flex h-2 w-2 rounded-full bg-indigo-500"></span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Année Fiscale {{ today.year }}</span>
                 </div>
             </div>
 
-            <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100">
-                <span class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">Effectif Salarié</span>
-                <div class="flex items-center gap-4 mt-2">
-                    <span class="text-4xl font-black text-slate-900 tracking-tighter">{{ nb_salaries }}</span>
-                    <span class="text-[10px] font-bold text-green-500 bg-green-50 px-3 py-1 rounded-full uppercase italic">Déclarés</span>
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-shadow">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Effectif Salarié</p>
+                <div class="flex items-center gap-4">
+                    <span class="text-5xl font-black text-slate-900 tracking-tighter">{{ nb_employes_actuel }}</span>
+                    <span class="px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-tighter italic">Dernière déclaration</span>
+                </div>
+                <div class="mt-6 h-1.5 w-full bg-slate-50 rounded-full overflow-hidden">
+                    <div class="h-full bg-emerald-500 rounded-full" style="width: 70%"></div>
                 </div>
             </div>
 
-            <div class="bg-slate-900 p-8 rounded-[2rem] shadow-2xl shadow-slate-200 relative overflow-hidden group">
+            <div class="bg-indigo-600 p-8 rounded-[2.5rem] shadow-2xl shadow-indigo-200 text-white relative group overflow-hidden">
                 <div class="relative z-10">
-                    <span class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">Dernier Versement</span>
-                    <p class="text-white text-2xl font-black mt-2 italic uppercase tracking-tight">{{ deadline_info.deadline|date:"d M Y" }}</p>
-                    <p class="text-indigo-400 text-[10px] font-bold mt-1 uppercase tracking-widest">Période Clôturée</p>
-                </div>
-                <svg class="absolute right-[-10%] bottom-[-10%] w-32 h-32 text-slate-800 opacity-50 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <div class="lg:col-span-1 space-y-6">
-                <div class="bg-gradient-to-br from-indigo-600 to-indigo-800 p-8 rounded-[2.5rem] text-white shadow-xl shadow-indigo-100">
-                    <h3 class="text-[10px] font-black uppercase tracking-[0.2em] opacity-70 mb-6 italic text-center">Indice de Conformité</h3>
-                    <div class="flex justify-center items-center py-4">
-                        <div class="relative h-32 w-32 flex items-center justify-center">
+                    <p class="text-[10px] font-black text-indigo-200 uppercase tracking-[0.2em] mb-4">Indice de Conformité</p>
+                    <div class="flex items-center gap-6">
+                        <div class="relative h-20 w-20 flex items-center justify-center">
                             <svg class="absolute inset-0 h-full w-full rotate-[-90deg]" viewBox="0 0 36 36">
-                                <circle cx="18" cy="18" r="16" fill="none" class="stroke-indigo-400/30" stroke-width="3"></circle>
-                                <circle cx="18" cy="18" r="16" fill="none" class="stroke-white" stroke-width="3" stroke-dasharray="85, 100" stroke-linecap="round"></circle>
+                                <circle cx="18" cy="18" r="16" fill="none" class="stroke-indigo-400/30" stroke-width="3.5"></circle>
+                                <circle cx="18" cy="18" r="16" fill="none" class="stroke-white" stroke-width="3.5" stroke-dasharray="95, 100" stroke-linecap="round"></circle>
                             </svg>
-                            <span class="text-3xl font-black">95<span class="text-xs opacity-60">%</span></span>
+                            <span class="text-2xl font-black italic">95<span class="text-[10px] opacity-60">%</span></span>
+                        </div>
+                        <div>
+                            <p class="text-lg font-black italic uppercase leading-none">Excellent</p>
+                            <p class="text-[10px] text-indigo-200 font-bold uppercase tracking-widest mt-1">Audit interne OK</p>
                         </div>
                     </div>
-                    <p class="text-[10px] text-center font-bold opacity-80 mt-4 uppercase">Excellente ponctualité sur 12 mois</p>
-                </div>
-
-                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 italic">Ratio de Charge</h3>
-                    <div class="flex items-center justify-between">
-                        <span class="text-2xl font-black text-slate-900 tracking-tighter">12.4%</span>
-                        <span class="text-[10px] font-bold text-amber-500 bg-amber-50 px-2 py-1 rounded-lg uppercase tracking-widest">+0.2% vs M-1</span>
-                    </div>
-                    <div class="w-full bg-slate-100 h-1.5 rounded-full mt-4">
-                        <div class="bg-indigo-500 h-1.5 rounded-full" style="width: 12%"></div>
-                    </div>
                 </div>
             </div>
-
-            <div class="lg:col-span-2 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
-                <div class="flex justify-between items-center mb-10">
-                    <h3 class="text-lg font-black text-slate-800 uppercase tracking-tight italic">Activités Récentes</h3>
-                    <a href="{% url 'liste_declarations' %}" class="text-[9px] font-black text-indigo-600 bg-indigo-50 px-4 py-2 rounded-xl uppercase tracking-widest hover:bg-indigo-100 transition-all">Consulter l'historique</a>
-                </div>
-                
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">
-                                <th class="pb-4 text-left">Période</th>
-                                <th class="pb-4 text-center">Salariés</th>
-                                <th class="pb-4 text-right">Montant</th>
-                                <th class="pb-4 text-center">Statut</th>
-                                <th class="pb-4 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-50">
-                            {% for dec in recent_declarations %}
-                            <tr class="group hover:bg-slate-50/50 transition-all">
-                                <td class="py-5">
-                                    <p class="text-xs font-black text-slate-800 uppercase italic">{{ dec.periode }}</p>
-                                    <p class="text-[9px] text-slate-400 font-mono">{{ dec.numero_document }}</p>
-                                </td>
-                                <td class="py-5 text-center text-xs font-bold text-slate-600">
-                                    {{ dec.nb_employes|default:0 }}
-                                </td>
-                                <td class="py-5 text-right">
-                                    <span class="text-xs font-black text-indigo-600">{{ dec.total_irsa|floatformat:0 }} Ar</span>
-                                </td>
-                                <td class="py-5 text-center">
-                                    {% if dec.statut == 'confirme' %}
-                                        <span class="text-[9px] font-black px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 uppercase tracking-tighter border border-blue-100 shadow-sm">Confirmé</span>
-                                    {% elif dec.statut == 'valide' %}
-                                        <span class="text-[9px] font-black px-3 py-1.5 rounded-lg bg-green-50 text-green-600 uppercase tracking-tighter border border-green-100 shadow-sm italic">✓ Validé</span>
-                                    {% else %}
-                                        <span class="text-[9px] font-black px-3 py-1.5 rounded-lg bg-amber-50 text-amber-600 uppercase tracking-tighter">{{ dec.statut }}</span>
-                                    {% endif %}
-                                </td>
-                                <td class="py-5 text-right">
-                                    {% if dec.statut == 'confirme' %}
-                                        <form action="{% url 'valider_declaration' dec.id %}" method="POST" class="inline">
-                                            {% csrf_token %}
-                                            <button type="submit" class="bg-indigo-600 hover:bg-slate-900 text-white p-2 rounded-xl transition-all shadow-md shadow-indigo-100" title="Valider définitivement">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                            </button>
-                                        </form>
-                                    {% else %}
-                                        <div class="flex justify-end gap-1">
-                                            <button class="p-2 text-slate-400 hover:text-indigo-600 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-width="2"/></svg></button>
-                                        </div>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="5" class="py-10 text-center text-slate-400 text-xs italic">Aucune donnée récente.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
         </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <div class="lg:col-span-2 bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm">
+                <div class="flex justify-between items-center mb-10">
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900 uppercase italic tracking-tight">Analyse des Versements</h3>
+                        <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">6 derniers mois</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="h-3 w-3 bg-indigo-600 rounded-full"></span>
+                        <span class="h-3 w-3 bg-slate-100 rounded-full"></span>
+                    </div>
+                </div>
+                <div class="h-[300px] w-full bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-100 flex items-center justify-center">
+                    <p class="text-slate-300 font-black text-xs uppercase tracking-[0.3em] italic">Graphique de tendance</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-sm font-black text-slate-900 uppercase italic">Flux Récent</h3>
+                    <a href="#" class="text-[10px] font-black text-indigo-600 uppercase tracking-tighter hover:underline">Voir tout</a>
+                </div>
+                <div class="space-y-6">
+                    {% for dec in recent_declarations %}
+                    <div class="flex items-center justify-between group cursor-pointer">
+                        <div class="flex items-center gap-4">
+                            <div class="h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-width="2" stroke-linecap="round"/></svg>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-black text-slate-800 uppercase leading-none">{{ dec.periode }}</p>
+                                <p class="text-[9px] text-slate-400 font-bold mt-1 uppercase tracking-tighter">{{ dec.statut }}</p>
+                            </div>
+                        </div>
+                        <p class="text-xs font-black text-slate-900">{{ dec.total_irsa|floatformat:0 }} <span class="text-[9px] text-slate-300">Ar</span></p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
-
 {% endblock %}

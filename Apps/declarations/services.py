@@ -103,8 +103,19 @@ def valider_brouillon_vers_declaration(request, declaration_id):
                 }
             )
 
-            # --- G. FINALISATION ---
+            # --- G. FINALISATION ----total_brut et total_irsa pas encore à la base  ---------------------
+            totaux = LigneDeclarationIRSA.objects.filter(
+                declaration=declaration
+            ).aggregate(
+                total_irsa=Sum('irsa_due'),
+                total_imposable=Sum('salaire_imposable'),
+                nb_employes=Count('id')
+            )
+            declaration.total_irsa=totaux['total_irsa'] or 0
+            declaration.total_salaire_imposable=totaux['total_imposable'] or 0
+            declaration.nombre_travailleurs_total=totaux['nb_employes'] or 0
             declaration.statut = 'confirme'
+            # declaration.total_irsa=sum(lignes_brouillon.impot_net_theo)
             declaration.save()
 
             # Nettoyage définitif du brouillon
@@ -204,11 +215,11 @@ def get_deadline_info():
     }
 
 import json
+from datetime import date
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
 from django.db.models.functions import TruncMonth
-from datetime import date
 from .models import DeclarationIRSA, ImportIRSATemporaire
 
 @login_required
@@ -216,18 +227,17 @@ def dashboard_employeur(request):
     employeur = request.user.employeur
     today = date.today()
 
-    # 1. LOGIQUE DU RAPPEL DYNAMIQUE (Deadline du 15)
+    # --- 1. GESTION DYNAMIQUE DE LA DEADLINE (Le 15 du mois) ---
     deadline = date(today.year, today.month, 15)
     if today > deadline:
-        # Passage au mois suivant
-        if today.month == 12:
-            deadline = date(today.year + 1, 1, 15)
-        else:
-            deadline = date(today.year, today.month + 1, 15)
+        # Si on a dépassé le 15, on calcule la deadline du mois prochain
+        next_month = today.month % 12 + 1
+        year = today.year + (1 if today.month == 12 else 0)
+        deadline = date(year, next_month, 15)
             
     jours_restants = (deadline - today).days
     
-    # Définition du niveau d'alerte
+    # Niveaux d'alerte UI
     if jours_restants <= 3:
         deadline_status = "danger"
     elif jours_restants <= 7:
@@ -235,22 +245,29 @@ def dashboard_employeur(request):
     else:
         deadline_status = "info"
 
-    # 2. STATISTIQUES POUR LE GRAPHIQUE (6 derniers mois)
+    # --- 2. STATISTIQUES POUR LE GRAPHIQUE (Évolution IRSA) ---
+    # On récupère les 6 derniers mois confirmés
     stats_queryset = (
         DeclarationIRSA.objects.filter(
             employeur=employeur, 
-            statut='valide' # Changé selon votre demande
+            statut='confirme'
         )
         .annotate(month=TruncMonth('periode__date_debut'))
         .values('month')
         .annotate(total=Sum('total_irsa'))
-        .order_by('month')
+        .order_by('month')[:6]
     )
 
     labels = [s['month'].strftime("%b") for s in stats_queryset]
     data_values = [float(s['total']) for s in stats_queryset]
 
-    # 3. KPIs RAPIDES
+    # --- 3. KPIs (Indicateurs Clés) ---
+    # Récupération de la toute dernière déclaration pour l'affichage de l'effectif
+    derniere_decl = DeclarationIRSA.objects.filter(
+        employeur=employeur,
+        statut='confirme'
+    ).order_by('-periode__date_debut').first()
+
     # Total IRSA cumulé sur l'année civile en cours
     total_annuel = DeclarationIRSA.objects.filter(
         employeur=employeur,
@@ -258,33 +275,36 @@ def dashboard_employeur(request):
         periode__annee=today.year
     ).aggregate(total=Sum('total_irsa'))['total'] or 0
 
-    # Effectif unique (basé sur le CIN)
-    nb_salaries = ImportIRSATemporaire.objects.filter(
-        employeur=employeur
-    ).values('cin').distinct().count()
+    # Vérification si un brouillon est actuellement en cours (Saisie ou Excel)
+    brouillon_count = ImportIRSATemporaire.objects.filter(
+        employeur=employeur,
+        statut='BROUILLON'
+    ).count()
 
-    # Dernières déclarations pour la liste
+    # Liste des 5 dernières activités
     recent_declarations = DeclarationIRSA.objects.filter(
         employeur=employeur
     ).select_related('periode').order_by('-id')[:5]
 
-    # 4. CONSTRUCTION DU CONTEXTE
+    # --- 4. CONSTRUCTION DU CONTEXTE ---
     context = {
-        # Données du Graphique
+        # Graphique
         'chart_labels': json.dumps(labels),
         'chart_data': json.dumps(data_values),
         
-        # Données de la Deadline
+        # Deadline
         'deadline_info': {
-            'deadline': deadline,
-            'jours_restants': jours_restants,
+            'date': deadline,
+            'jours': jours_restants,
             'status': deadline_status
         },
         
-        # KPIs
-        'total_irsa': total_annuel,
-        'nb_salaries': nb_salaries,
+        # Chiffres clés
+        'total_irsa_annuel': total_annuel,
+        'nb_employes_actuel': derniere_decl.nombre_travailleurs_total if derniere_decl else 0,
+        'brouillon_en_cours': brouillon_count,
         'recent_declarations': recent_declarations,
+        'today': today,
     }
 
     return render(request, 'dashboard/employeur.html', context)
