@@ -147,23 +147,89 @@ from declarations.models import LigneDeclarationIRSA
 
 @login_required
 def mes_declarations_irsa(request):
-    try:
-        # On récupère les infos de l'utilisateur connecté
-        profil_connecte = request.user.employe 
-        nif_du_gars = profil_connecte.nif_individuel # Assure-toi que ce champ existe
-    except AttributeError:
-        messages.error(request, "Profil incomplet.")
+    # 1. Récupération sécurisée du profil
+    profil = getattr(request.user, 'employe_profile', None)
+    
+    if not profil:
+        messages.error(request, "Aucun profil employé trouvé pour ce compte.")
         return redirect('home')
 
-    # IMPORTANT : On cherche les lignes qui ont le MÊME NIF que l'utilisateur connecté
+    # 2. On récupère ses identifiants
+    nif = profil.nif_individuel
+    cin = profil.cin
+    
+    # 3. Requête flexible : On cherche par NIF OU par CIN
+    # Cela permet de trouver les lignes même si l'employeur n'a saisi que le CIN
+    from django.db.models import Q
+    
     mes_lignes = LigneDeclarationIRSA.objects.filter(
-        employe__nif_individuel=nif_du_gars  # On traverse la relation vers l'employé
+        Q(employe__nif_individuel=nif) | Q(employe__cin=cin)
     ).select_related(
         'declaration__periode', 
         'declaration__employeur'
-    ).order_by('-declaration__periode__date_debut')
+    ).distinct().order_by('-declaration__periode__date_debut')
+
+    # --- DEBUG : À supprimer après test ---
+    if not mes_lignes.exists():
+        print(f"DEBUG: Aucun match trouvé pour NIF: {nif} ou CIN: {cin}")
+    # ---------------------------------------
 
     return render(request, "Portail_employes/mes_declarations.html", {
         'lignes': mes_lignes,
-        'nom_valide': profil_connecte.nom_prenom
+        'nom_valide': profil.nom_prenom
     })
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from declarations.models import SituationFamiliale
+
+@login_required
+def profil_employe_view(request):
+    employe = request.user.employe_profile
+    
+    # Récupérer la situation familiale la plus récente
+    situation = SituationFamiliale.objects.filter(employe=employe).order_by('-date_debut').first()
+    
+    context = {
+        'employe': employe,
+        'situation': situation,
+    }
+    return render(request, 'Portail_employes/profil.html', context)
+
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from declarations.models import LigneDeclarationIRSA
+
+from django.utils import timezone
+
+@login_required
+def detail_declaration_irsa(request, pk):
+    # Récupération du profil via le related_name 'employe_profile'
+    profil = request.user.employe_profile
+    
+    # Récupération de la ligne avec sécurité par CIN
+    declaration_ligne = get_object_or_404(
+        LigneDeclarationIRSA.objects.select_related(
+            'declaration__periode', 
+            'declaration__employeur'
+        ), 
+        pk=pk, 
+        employe__cin=profil.cin
+    )
+
+    # --- LOGIQUE "VU" ---
+    # On marque comme lu si l'employé ouvre la page
+    if not declaration_ligne.est_lu:
+        declaration_ligne.est_lu = True
+        # On peut aussi enregistrer l'heure exacte si tu as ajouté le champ date_lecture
+        if hasattr(declaration_ligne, 'date_lecture'):
+            declaration_ligne.date_lecture = timezone.now()
+        declaration_ligne.save(update_fields=['est_lu', 'date_lecture'] if hasattr(declaration_ligne, 'date_lecture') else ['est_lu'])
+
+    context = {
+        'ligne': declaration_ligne,
+        'revenus': declaration_ligne.revenus.all(),
+        'deductions': declaration_ligne.deductions.all(),
+    }
+    
+    return render(request, "Portail_employes/detail_declaration.html", context)

@@ -1,0 +1,97 @@
+{% extends 'base_tailwind.html' %}
+{% block content %}
+<div class="flex min-h-screen bg-[#F8FAFC]">
+    {% include 'Portail_employes/partials/header.html' %}
+
+    <main class="flex-1 ml-0 md:ml-72 p-4 md:p-12">
+        <div class="mb-10 flex items-center justify-between">
+            <h1 class="text-3xl font-black text-slate-800 tracking-tight">Mon Profil Fiscal</h1>
+            <span class="px-4 py-2 bg-[#91c4c6]/10 text-[#76aaaa] rounded-xl text-xs font-black uppercase tracking-widest border border-[#91c4c6]/20">
+                Statut : Actif
+            </span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-1 space-y-8">
+                <div class="bg-slate-900 rounded-[2.5rem] p-8 text-center shadow-2xl relative overflow-hidden">
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-[#91c4c6] opacity-10 rounded-full"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="w-24 h-24 bg-gradient-to-tr from-[#91c4c6] to-[#76aaaa] rounded-[2rem] mx-auto flex items-center justify-center text-white text-3xl font-black shadow-xl mb-6 rotate-3">
+                            {{ employe.nom_prenom|slice:":1" }}
+                        </div>
+                        <h2 class="text-xl font-black text-white mb-1">{{ employe.nom_prenom }}</h2>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">{{ employe.fonction }}</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm">
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-400 mb-6">Contact</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-[#76aaaa]">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black uppercase text-slate-400">Email</p>
+                                <p class="text-sm font-bold text-slate-700">{{ request.user.email }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 space-y-8">
+                <div class="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-xl shadow-slate-200/50">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div>
+                            <h3 class="text-[#76aaaa] font-black uppercase text-xs tracking-[0.2em] mb-6 flex items-center gap-2">
+                                <span class="w-2 h-2 bg-[#91c4c6] rounded-full"></span>
+                                Informations Fiscales
+                            </h3>
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Numéro CIN</label>
+                                    <p class="text-lg font-black text-slate-800">{{ employe.cin }}</p>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">NIF Individuel</label>
+                                    <p class="text-lg font-black text-[#76aaaa]">{{ employe.nif_individuel|default:"Non renseigné" }}</p>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Numéro CNaPS</label>
+                                    <p class="text-lg font-black text-slate-800">{{ employe.num_cnaps }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-[#76aaaa] font-black uppercase text-xs tracking-[0.2em] mb-6 flex items-center gap-2">
+                                <span class="w-2 h-2 bg-[#91c4c6] rounded-full"></span>
+                                Situation Familiale
+                            </h3>
+                            <div class="p-6 bg-slate-50 rounded-[2rem] border border-slate-100">
+                                <div class="text-center">
+                                    <p class="text-4xl font-black text-slate-800 mb-1">{{ situation.nombre_personnes_charge|default:"0" }}</p>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Personnes à charge</p>
+                                </div>
+                                <div class="mt-6 pt-6 border-t border-slate-200">
+                                    <p class="text-[10px] font-bold text-slate-500 text-center italic">
+                                        Dernière mise à jour : {{ situation.date_debut|date:"d F Y" }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-12 pt-8 border-t border-slate-100 flex justify-end">
+                        <button class="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#76aaaa] transition-all duration-300">
+                            Demander une modification
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

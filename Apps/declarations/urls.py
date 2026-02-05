@@ -35,5 +35,6 @@ urlpatterns = [
     path('declaration/saisie/manuelle', services.convertir_en_brouillon_SM, name='convertir_en_brouillon_SM'),
     
     path('declaration/<int:declaration_id>/pdf/', services.export_declaration_pdf, name='export_irsa_pdf'),
+    path('debug/reset/', services.reset_session_debug), # vider session pour le developpement
           
 ]

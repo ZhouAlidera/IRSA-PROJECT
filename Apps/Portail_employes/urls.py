@@ -9,6 +9,8 @@ urlpatterns = [
     path('register/employeur/step-2/', views.register_employe_step_two, name='register_employe_step_two'),
     path('dashbord/employe/', views.dashborad_employe, name='dashboard_employe'),
     path('mes-declarations/', views.mes_declarations_irsa, name='mes_declarations_irsa'),
+    path('mon-profil/', views.profil_employe_view, name='profil_employe'),
+    path('mes-declarations/<int:pk>/', views.detail_declaration_irsa, name='detail_declaration_irsa'),
 
     # # --- Portail Employé ---
     # path('mon-espace/', views.portail_employe_view, name='portail_employe'),

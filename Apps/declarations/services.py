@@ -117,6 +117,9 @@ def valider_brouillon_vers_declaration(request, declaration_id):
             declaration.statut = 'confirme'
             # declaration.total_irsa=sum(lignes_brouillon.impot_net_theo)
             declaration.save()
+            # Dans la vue finale après le save() réussi
+            if 'temp_periode_fiscale' in request.session:
+               del request.session['temp_periode_fiscale']
 
             # Nettoyage définitif du brouillon
             lignes_brouillon.delete() 
@@ -470,6 +473,7 @@ def convertir_en_brouillon_SM(request):
     # 3. CRÉATION DE LA PÉRIODE (Respectant strictement votre classe PeriodeFiscale)
     # Note : Pas de champ 'employeur' ici comme vous l'avez noté
     periode_obj = PeriodeFiscale.objects.create(
+        employeur=request.user.employeur,
         annee=d_debut.year,  # Maintenant .year fonctionne sur l'objet date
         date_debut=d_debut,
         date_fin=d_fin,
@@ -580,3 +584,15 @@ def export_declaration_pdf(request, declaration_id):
     html.write_pdf(response)
     
     return response
+# view pour vider la session 
+# views.py
+def reset_session_debug(request):
+    keys_to_delete = ['temp_periode_fiscale', 'register_employe_data']
+    for key in keys_to_delete:
+        if key in request.session:
+            del request.session[key]
+    return HttpResponse("Brouillons de session nettoyés ! <a href='/'>Retour</a>")
+
+# urls.py
+
+#----------------------------------------------

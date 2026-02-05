@@ -122,6 +122,14 @@
             btnLoader.classList.remove('hidden');
         });
     });
+    document.addEventListener('DOMContentLoaded', function() {
+        // On vérifie si un message de succès est présent (optionnel)
+        // Ou on le fait systématiquement sur la page de login
+        if (localStorage.getItem('verified_employe')) {
+            localStorage.removeItem('verified_employe');
+            console.log("Session d'inscription nettoyée.");
+        }
+    });
 </script>
 
 <style>

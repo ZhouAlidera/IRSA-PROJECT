@@ -1,0 +1,78 @@
+{% extends 'base_tailwind.html' %}
+{% block content %}
+<div class="flex min-h-screen bg-slate-50">
+    {% include 'Portail_employes/partials/header.html' %}
+
+    <main class="flex-1 ml-0 md:ml-72 p-4 md:p-12">
+        <div class="mb-8 flex items-center gap-4">
+            <a href="{% url 'mes_declarations_irsa' %}" class="p-3 bg-white rounded-2xl border border-slate-200 text-slate-400 hover:text-[#76aaaa] transition-all">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            </a>
+            <div>
+                <h1 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Fiche de Déclaration Individuelle</h1>
+                <p class="text-sm text-slate-500 font-bold italic">{{ ligne.declaration.numero_document }}</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-xl">
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-[#91c4c6] mb-4">Employeur</p>
+                    <h2 class="text-xl font-black leading-tight mb-6">{{ ligne.declaration.employeur.raison_sociale }}</h2>
+                    
+                    <div class="space-y-4 border-t border-slate-800 pt-6">
+                        <div class="flex justify-between">
+                            <span class="text-xs text-slate-400 font-bold uppercase">Période</span>
+                            <span class="text-xs font-black">{{ ligne.declaration.periode }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-xs text-slate-400 font-bold uppercase">Date de dépôt</span>
+                            <span class="text-xs font-black">{{ ligne.declaration.date_declaration|date:"d/m/Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-[#76aaaa] rounded-[2.5rem] p-8 text-white shadow-lg shadow-[#76aaaa]/20">
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 mb-2">Montant de l'Impôt (IRSA)</p>
+                    <p class="text-4xl font-black tracking-tighter">{{ ligne.irsa_due }} <span class="text-lg">Ar</span></p>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-[3rem] p-10 shadow-sm border border-slate-100">
+                    <h3 class="text-slate-800 font-black uppercase text-xs tracking-widest mb-6 flex items-center gap-3">
+                        <span class="w-8 h-1 bg-[#91c4c6] rounded-full"></span>
+                        Détail des Revenus
+                    </h3>
+                    <div class="space-y-4 mb-10">
+                        {% for rev in revenus %}
+                        <div class="flex justify-between items-center p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                            <span class="text-sm font-bold text-slate-600">{{ rev.type_revenu.libelle }}</span>
+                            <span class="font-black text-slate-800">+ {{ rev.montant }} Ar</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <h3 class="text-slate-800 font-black uppercase text-xs tracking-widest mb-6 flex items-center gap-3">
+                        <span class="w-8 h-1 bg-rose-400 rounded-full"></span>
+                        Cotisations & Déductions
+                    </h3>
+                    <div class="space-y-4">
+                        {% for ded in deductions %}
+                        <div class="flex justify-between items-center p-4 rounded-2xl bg-rose-50/30 border border-rose-100/50">
+                            <span class="text-sm font-bold text-slate-500">{{ ded.type_deduction.libelle }}</span>
+                            <span class="font-black text-rose-500">- {{ ded.montant }} Ar</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mt-10 pt-8 border-t-2 border-dashed border-slate-100 flex justify-between items-center">
+                        <span class="text-sm font-black uppercase text-slate-400 tracking-widest">Base Imposable Finale</span>
+                        <span class="text-2xl font-black text-slate-900">{{ ligne.salaire_imposable }} Ar</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

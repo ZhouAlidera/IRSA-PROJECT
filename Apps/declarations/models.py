@@ -3,6 +3,12 @@ from utilisateurs.models import Employe, Employeur
 
 # Create your models here.
 class PeriodeFiscale(models.Model):
+    employeur = models.ForeignKey(
+        'utilisateurs.Employeur', # Remplace par le bon chemin vers ton modèle Employeur
+        on_delete=models.PROTECT,
+        related_name='periodes_fiscales',
+        null=True
+    )
     annee = models.PositiveIntegerField()
     date_debut = models.DateField()
     date_fin = models.DateField()
@@ -95,6 +101,8 @@ class LigneDeclarationIRSA(models.Model):
     salaire_imposable = models.DecimalField(max_digits=15, decimal_places=2)
     # total_deduction = models.DecimalField(max_digits=15, decimal_places=2)
     irsa_due = models.DecimalField(max_digits=15, decimal_places=2)
+    est_lu = models.BooleanField(default=False) 
+    date_lecture = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         unique_together = ("declaration", "employe")
