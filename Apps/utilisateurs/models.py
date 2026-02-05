@@ -69,7 +69,20 @@ class AgentFiscale(models.Model):
         app_label = 'utilisateurs'
 
 
+# utilisateurs/models.py
+from django.conf import settings # Pour référencer AUTH_USER_MODEL
+
 class Employe(models.Model):
+    # Lien vers le compte utilisateur (email/password)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name="employe_profile",
+        null=True, blank=True # Permet de créer un employé avant qu'il n'ait un compte
+    )
+    
+    # Données identifiantes
+    nif_individuel = models.CharField(max_length=15, unique=True, null=True, blank=True)
     num_cnaps = models.CharField(max_length=30)
     nom_prenom = models.CharField(max_length=255)
     cin = models.CharField(max_length=20, blank=True, null=True)
@@ -87,4 +100,4 @@ class Employe(models.Model):
         app_label = 'utilisateurs'
 
     def __str__(self):
-        return f"{self.nom_prenom} ({self.num_cnaps})"
+        return f"{self.nom_prenom} ({self.nif_individuel})"

@@ -1,21 +1,33 @@
 {% extends 'base_tailwind.html' %}
-
 {% block content %}
 {% include 'partials/header.html' %}
 {% include 'partials/stepper.html' with current_step=3 %}
 
-<div class="min-h-screen bg-gray-50 pb-12">
-    <div class="bg-white border-b border-gray-200 mb-8 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-row {
+        opacity: 0;
+        animation: fadeInUp 0.5s ease-out forwards;
+    }
+</style>
+
+<div class="min-h-screen bg-[#f8fafc] pb-16">
+    <div class="bg-white border-b border-slate-200 mb-8 shadow-sm">
+        <div class="max-w-[98%] mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-                <div class="flex items-center space-x-3">
-                    <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Étape 2 / 2</span>
-                    <h1 class="text-2xl font-bold text-gray-900">Vérification de Cohérence</h1>
+                <div class="flex items-center gap-3">
+                    <span class="bg-indigo-50 text-indigo-700 text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider border border-indigo-100">Contrôle de conformité</span>
+                    <h1 class="text-2xl font-black text-slate-900 tracking-tight italic uppercase">Vérification <span class="text-[#2D8B8B]">Cohérence</span></h1>
                 </div>
-                <p class="text-sm text-gray-500 mt-1">Comparaison des données importées avec le barème légal IRSA de l'année {{ periode.annee }}.</p>
+                <p class="text-[11px] text-slate-500 mt-1 font-bold uppercase tracking-widest">Comparaison avec le barème IRSA {{ periode.annee }}</p>
             </div>
-            <div class="flex items-center space-x-3">
-                <a href="{% url 'upload_annexe' %}" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium text-sm transition-colors">Réimporter le fichier</a>
+            <div class="flex items-center gap-3">
+                <a href="{% url 'upload_annexe' %}" class="px-5 py-2.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all border border-transparent hover:border-indigo-100">
+                    ← Réimporter le fichier
+                </a>
             </div>
         </div>
     </div>
@@ -23,88 +35,73 @@
     <div class="max-w-[98%] mx-auto px-4 sm:px-6 lg:px-8">
         
         {% if any_error %}
-        <div class="mb-8 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl shadow-md">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <svg class="h-6 w-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        <div class="mb-8 bg-white border-l-4 border-l-rose-500 border border-slate-200 p-6 rounded-2xl shadow-sm">
+            <div class="flex items-start gap-4">
+                <div class="shrink-0 w-10 h-10 bg-rose-50 rounded-full flex items-center justify-center">
+                    <svg class="h-6 w-6 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                     </svg>
                 </div>
-                <div class="ml-3">
-                    <h3 class="text-sm font-bold text-red-800 uppercase">Anomalies de calcul détectées</h3>
-                    <p class="mt-1 text-sm text-red-700 font-medium">
-                        Certains calculs d'impôt net dans votre fichier Excel ne correspondent pas au barème progressif calculé par le système.
-                    </p>
+                <div>
+                    <h3 class="text-xs font-black text-rose-800 uppercase tracking-widest">Écarts de calcul détectés</h3>
+                    <p class="mt-1 text-sm text-slate-600 font-medium">Les montants d'impôts saisis dans votre Excel ne correspondent pas aux calculs du système.</p>
                 </div>
             </div>
         </div>
         {% endif %}
 
-        <div class="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 bg-white flex justify-between items-center">
-                <h3 class="font-bold text-gray-800 uppercase text-sm tracking-wide">
-                    Période : {{ periode.get_periode_type_display }} {{ periode.annee }}
-                </h3>
-                <span class="text-xs font-semibold text-gray-400 uppercase tracking-widest">{{ rows|length }} employés détectés</span>
+        <div class="bg-white rounded-[2rem] shadow-xl border border-slate-200 overflow-hidden">
+            <div class="px-8 py-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                <h3 class="font-black text-slate-400 uppercase text-[10px] tracking-[0.2em]">Période : {{ periode.get_periode_type_display }} {{ periode.annee }}</h3>
+                <span class="text-[9px] font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full uppercase border border-indigo-100">{{ rows|length }} Salariés</span>
             </div>
             
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-gray-50/50 text-gray-500 uppercase text-[10px] font-bold tracking-wider">
-                            <th class="px-3 py-4 border-b">CNAPS / CIN</th>
-                            <th class="px-3 py-4 border-b">Nom & Prénoms</th>
-                            <th class="px-3 py-4 border-b text-right">Brut</th>
-                            <th class="px-3 py-4 border-b text-right">Avantages</th>
-                            <th class="px-3 py-4 border-b text-right">Retenues (P+S)</th>
-                            <th class="px-3 py-4 border-b text-right bg-blue-50/50">RNI (Excel)</th>
-                            <th class="px-3 py-4 border-b text-center">Charges</th>
-                            <th class="px-3 py-4 border-b text-right bg-indigo-50/50 font-black">Impôt Net (Excel)</th>
-                            <th class="px-3 py-4 border-b text-center">Statut</th>
+                        <tr class="text-slate-400 uppercase text-[9px] font-black tracking-widest">
+                            <th class="px-6 py-5 border-b">CNAPS / CIN</th>
+                            <th class="px-6 py-5 border-b">Nom & Prénoms</th>
+                            <th class="px-6 py-5 border-b text-right">Brut</th>
+                            <th class="px-6 py-5 border-b text-right bg-blue-50/30">RNI (Excel)</th>
+                            <th class="px-6 py-5 border-b text-center">Charges</th>
+                            <th class="px-6 py-5 border-b text-right bg-indigo-50/30">Impôt Net (Excel)</th>
+                            <th class="px-6 py-5 border-b text-center">Statut</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100 text-[12px]">
+                    <tbody class="divide-y divide-slate-50 text-[11px]">
                         {% for row in rows %}
-                        <tr class="{% if not row.est_valide %}bg-red-50/40{% else %}hover:bg-indigo-50/20{% endif %} transition-colors">
-                            <td class="px-3 py-3 font-mono text-gray-400">
-                                {{ row.num_cnaps }}<br>
-                                <span class="text-[10px]">{{ row.cin }}</span>
+                        <tr class="animate-row hover:bg-slate-50/80 transition-all {% if not row.est_valide %}bg-rose-50/30{% endif %}" 
+                            style="animation-delay: calc({{ forloop.counter0 }} * 0.04s)">
+                            <td class="px-6 py-4 font-mono text-slate-400">
+                                <span class="font-bold text-slate-700">{{ row.num_cnaps }}</span><br>
+                                <span class="text-[9px] opacity-60">{{ row.cin }}</span>
                             </td>
-                            <td class="px-3 py-3 font-bold text-gray-900">{{ row.nom_prenom }}</td>
-                            <td class="px-3 py-3 text-right text-gray-600">{{ row.remuneration_brute|floatformat:2 }}</td>
-                            <td class="px-3 py-3 text-right text-gray-600">{{ row.avantages_nature|floatformat:2 }}</td>
-                            <td class="px-3 py-3 text-right text-gray-600">
-                                {{ row.pension|add:row.cotisation_sante|floatformat:2 }}
+                            <td class="px-6 py-4 font-black text-slate-900 uppercase italic">{{ row.nom_prenom }}</td>
+                            <td class="px-6 py-4 text-right text-slate-600 font-bold">{{ row.remuneration_brute|floatformat:2 }}</td>
+                            <td class="px-6 py-4 text-right font-black text-blue-700 bg-blue-50/10">{{ row.revenu_net|floatformat:2 }}</td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="px-2 py-1 bg-slate-100 rounded text-slate-600 font-black text-[10px]">{{ row.personnes_charge }}</span>
                             </td>
-
-                            <td class="px-3 py-3 text-right font-bold text-blue-700">
-                                {{ row.revenu_net|floatformat:2 }}
-                            </td>
-
-                            <td class="px-3 py-3 text-center text-gray-500 font-bold">{{ row.personnes_charge }}</td>
-
-                            <td class="px-3 py-3 text-right font-black {% if not row.est_valide %}bg-red-100 text-red-700{% else %}text-indigo-700{% endif %}">
-                                <div>{{ row.impot_net|floatformat:2 }}</div>
+                            <td class="px-6 py-4 text-right bg-indigo-50/10">
+                                <div class="font-black text-[13px] {% if not row.est_valide %}text-rose-600{% else %}text-indigo-700{% endif %}">{{ row.impot_net|floatformat:2 }}</div>
                                 {% if not row.est_valide %}
-                                    <div class="text-[9px] font-normal italic">Attendu : {{ row.impot_net_theo|floatformat:2 }}</div>
+                                    <div class="text-[8px] font-bold text-rose-400 uppercase italic">Attendu: {{ row.impot_net_theo|floatformat:2 }}</div>
                                 {% endif %}
                             </td>
-
-                            <td class="px-3 py-3 text-center">
-                                {% if not row.est_valide %}
-                                    <span class="flex justify-center" title="Le calcul Excel diffère du barème système">
-                                        <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                                    </span>
-                                {% else %}
-                                    <span class="flex justify-center text-green-500">
-                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                                    </span>
-                                {% endif %}
+                            <td class="px-6 py-4 text-center text-center">
+                                <div class="flex justify-center">
+                                    {% if not row.est_valide %}
+                                        <span class="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 animate-pulse">
+                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                                        </span>
+                                    {% else %}
+                                        <span class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500">
+                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                        </span>
+                                    {% endif %}
+                                </div>
                             </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="9" class="px-6 py-10 text-center text-gray-500">Aucune donnée trouvée dans le fichier Excel.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -112,30 +109,75 @@
             </div>
         </div>
 
-        <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-6 bg-white p-6 rounded-2xl border border-gray-200 shadow-lg">
-            <div class="flex items-center space-x-4">
-                <div class="bg-gray-100 px-4 py-2 rounded-xl font-bold text-gray-700 text-sm">
-                    Total : {{ rows|length }} employés
+        <div class="mt-10 flex flex-col md:flex-row items-center justify-between gap-6 bg-slate-900 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-48 h-48 bg-[#2D8B8B]/10 rounded-full -mr-24 -mt-24 blur-3xl"></div>
+            
+            <div class="flex items-center gap-6 relative z-10">
+                <div class="bg-white/10 px-5 py-3 rounded-2xl border border-white/5 backdrop-blur-md text-white">
+                    <span class="block text-[9px] font-black text-[#2D8B8B] uppercase mb-1">Total Effectif</span>
+                    <span class="text-xl font-black italic">{{ rows|length }} Salariés</span>
                 </div>
-                {% if any_error %}
-                <p class="text-sm text-red-600 font-bold">
-                    ⚠️ Des écarts de calcul existent.
-                </p>
-                {% endif %}
             </div>
 
-            <form method="post" action="{% url 'convertir_en_brouillon' %}">
-                {% csrf_token %}
-                <button type="submit" 
-                        {% if any_error %}onclick="return confirm('Attention : Des erreurs de calcul subsistent. Les données importées seront celles de votre fichier Excel. Voulez-vous continuer ?');"{% endif %}
-                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-black shadow-xl shadow-indigo-200 transition-all transform hover:-translate-y-1 active:scale-95 flex items-center group">
-                    <span class="mr-2">Confirmer l'importation</span>
-                    <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="relative z-10 w-full md:w-auto">
+                <button type="button" id="btn-submit-import" class="w-full md:w-auto bg-[#2D8B8B] hover:bg-emerald-600 text-white px-12 py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-xl transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center group">
+                    Finaliser l'importation
+                    <svg class="ml-4 w-5 h-5 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                     </svg>
                 </button>
-            </form>
+            </div>
         </div>
     </div>
 </div>
+
+<div id="modal-confirm" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-[2rem] p-8 max-w-sm w-full shadow-2xl border border-slate-100 transform scale-95 transition-transform duration-300" id="modal-content">
+        <div class="text-center">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-2xl bg-rose-50 mb-6 text-rose-500">
+                <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <h3 class="text-lg font-black text-slate-900 uppercase tracking-tight italic">Confirmer l'import ?</h3>
+            <p class="text-[11px] text-slate-500 font-medium mt-3 leading-relaxed uppercase tracking-tighter">
+                Certains calculs diffèrent du barème. En continuant, les valeurs du fichier <span class="text-rose-500 font-black">Excel</span> seront conservées.
+            </p>
+        </div>
+        <div class="mt-8 flex flex-col gap-3">
+            <form method="post" id="final-import-form" action="{% url 'convertir_en_brouillon' %}">
+                {% csrf_token %}
+                <button type="submit" class="w-full bg-slate-900 text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-colors">Continuer l'import</button>
+            </form>
+            <button type="button" id="btn-close-modal" class="w-full bg-slate-50 text-slate-400 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest hover:text-slate-600 transition-colors">Annuler</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('modal-confirm');
+    const modalContent = document.getElementById('modal-content');
+    const btnSubmit = document.getElementById('btn-submit-import');
+    const btnClose = document.getElementById('btn-close-modal');
+    const form = document.getElementById('final-import-form');
+    const hasErrors = {% if any_error %}true{% else %}false{% endif %};
+
+    function openModal() {
+        modal.classList.replace('hidden', 'flex');
+        setTimeout(() => {
+            modal.classList.add('opacity-100');
+            modalContent.classList.replace('scale-95', 'scale-100');
+        }, 10);
+    }
+
+    function closeModal() {
+        modal.classList.remove('opacity-100');
+        modalContent.classList.replace('scale-100', 'scale-95');
+        setTimeout(() => modal.classList.replace('flex', 'hidden'), 300);
+    }
+
+    btnSubmit.addEventListener('click', () => hasErrors ? openModal() : form.submit());
+    btnClose.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => e.target === modal && closeModal());
+});
+</script>
 {% endblock %}

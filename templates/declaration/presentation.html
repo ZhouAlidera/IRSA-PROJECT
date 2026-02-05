@@ -4,82 +4,92 @@
 {% include 'partials/stepper.html' with current_step=1 %}
 {% include 'partials/messages.html' %}
 
-<div class="min-h-screen bg-slate-50 py-12 px-4">
+<div class="min-h-screen bg-white py-16 px-4">
     <div class="max-w-4xl mx-auto">
         
-        <div class="mb-8">
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Configuration de la Période</h1>
-            <p class="text-slate-500 text-sm font-medium">Déterminez les dates de début et de fin pour générer automatiquement l'échéance fiscale.</p>
+        <div class="mb-12">
+            <h1 class="text-4xl font-black text-slate-900 tracking-tight italic uppercase">
+                Configuration <span class="text-[#2D8B8B]">Période</span>
+            </h1>
+            <div class="h-1.5 w-24 bg-[#2D8B8B] mt-4 rounded-full"></div>
+            <p class="text-slate-500 text-sm mt-4 font-medium max-w-xl">
+                Définissez l'intervalle temporel de votre déclaration. Le système calculera automatiquement votre échéance légale.
+            </p>
         </div>
 
-        <form method="post" class="space-y-6">
+        <form method="post" class="relative">
             {% csrf_token %}
             
-            <div class="bg-white rounded-[2rem] border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
-                <div class="p-8 md:p-10">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.05)] overflow-hidden">
+                <div class="p-8 md:p-12">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
                         
-                        <div class="space-y-2">
-                            <label for="id_date_debut" class="flex items-center gap-2 text-[11px] font-black uppercase tracking-wider text-slate-700 ml-1">
-                                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <div class="space-y-4">
+                            <label for="id_date_debut" class="flex items-center gap-2 text-[12px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                                <svg class="w-4 h-4 text-[#2D8B8B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                 Date de début
                             </label>
                             <input type="date" name="date_debut" id="id_date_debut" required
-                                class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm font-bold rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 block p-4 transition-all outline-none">
+                                class="w-full bg-slate-50 border-2 border-slate-100 text-slate-900 text-base font-bold rounded-2xl focus:ring-4 focus:ring-[#2D8B8B]/10 focus:border-[#2D8B8B] focus:bg-white block p-5 transition-all outline-none">
                         </div>
 
-                        <div class="space-y-2">
-                            <label for="id_date_fin" class="flex items-center gap-2 text-[11px] font-black uppercase tracking-wider text-slate-700 ml-1">
-                                <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <div class="space-y-4">
+                            <label for="id_date_fin" class="flex items-center gap-2 text-[12px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                                <svg class="w-4 h-4 text-[#2D8B8B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                 Date de fin
                             </label>
                             <input type="date" name="date_fin" id="id_date_fin" required
-                                class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm font-bold rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 block p-4 transition-all outline-none">
+                                class="w-full bg-slate-50 border-2 border-slate-100 text-slate-900 text-base font-bold rounded-2xl focus:ring-4 focus:ring-[#2D8B8B]/10 focus:border-[#2D8B8B] focus:bg-white block p-5 transition-all outline-none">
                         </div>
                     </div>
 
-                    <div class="mt-10 pt-8 border-t border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-bold uppercase text-slate-400 ml-1">Année Fiscale</label>
+                    <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100/50">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Année Fiscale</span>
                             <input type="number" name="annee" id="id_annee" readonly
-                                class="w-full bg-slate-100 border-none text-slate-500 text-sm font-black rounded-xl p-3 cursor-not-allowed">
+                                class="w-full bg-transparent border-none text-slate-900 text-xl font-black p-0 mt-1 cursor-default outline-none">
                         </div>
 
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-bold uppercase text-slate-400 ml-1">Type de Période</label>
+                        <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100/50">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Cycle</span>
                             <select name="periode_type" id="id_periode_type" 
-                                class="w-full bg-slate-100 border-none text-indigo-600 text-sm font-black rounded-xl p-3 appearance-none pointer-events-none">
+                                class="w-full bg-transparent border-none text-[#2D8B8B] text-xl font-black p-0 mt-1 appearance-none pointer-events-none outline-none">
                                 <option value="mensuel">Mensuel</option>
                                 <option value="bimestriel">Bimestriel</option>
                                 <option value="trimestriel">Trimestriel</option>
                             </select>
                         </div>
 
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-bold uppercase text-slate-400 ml-1">Échéance de paiement</label>
+                        <div class="p-6 bg-[#2D8B8B]/5 rounded-3xl border border-[#2D8B8B]/10">
+                            <span class="text-[10px] font-black text-[#2D8B8B] uppercase tracking-tighter">Échéance Finale</span>
                             <input type="date" name="date_limite" id="id_date_limite" readonly
-                                class="w-full bg-indigo-50 border-none text-indigo-700 text-sm font-black rounded-xl p-3">
+                                class="w-full bg-transparent border-none text-slate-900 text-xl font-black p-0 mt-1 outline-none">
                         </div>
                     </div>
                 </div>
 
-                <div class="px-8 py-6 bg-slate-900 flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-white/10 rounded-lg text-amber-400">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <div class="px-8 py-10 bg-slate-50/50 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div class="flex items-center gap-5">
+                        <div class="w-12 h-12 bg-white shadow-sm border border-slate-100 rounded-2xl flex items-center justify-center text-amber-500">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                         </div>
-                        <p class="text-slate-300 text-xs font-medium">L'échéance est fixée au <span class="text-white font-bold">15 du mois suivant</span> la clôture.</p>
+                        <div>
+                            <span class="text-slate-900 text-xs font-black uppercase italic">Note de conformité</span>
+                            <p class="text-slate-500 text-[11px] leading-relaxed">Délai rigoureux : Règlement attendu au plus tard le <span class="text-slate-900 font-bold">15 du mois suivant</span>.</p>
+                        </div>
                     </div>
                     
                     <button type="submit" 
-                        class="w-full md:w-auto px-8 py-4 bg-indigo-500 hover:bg-indigo-400 text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl transition-all shadow-lg shadow-indigo-500/20 active:scale-95">
-                        Valider la période
+                        class="w-full md:w-auto px-12 py-5 bg-[#2D8B8B] hover:bg-[#1E7F3C] text-white text-[12px] font-black uppercase tracking-[0.25em] rounded-2xl transition-all shadow-[0_15px_30px_-5px_rgba(45,139,139,0.3)] hover:-translate-y-1 active:scale-95">
+                        Continuer l'analyse
                     </button>
                 </div>
             </div>
         </form>
     </div>
 </div>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -100,31 +110,38 @@
             calculerPeriode();
         }
     
-        // --- LOGIQUE AMÉLIORÉE : SYNC DES DATES ---
+        // --- LOGIQUE AMÉLIORÉE : AUTO-COMPLÉTION FIN DE MOIS ---
         startInput.addEventListener('change', function() {
             if (this.value) {
-                // On définit la valeur de fin égale au début si fin est vide
-                // ou si la fin est antérieure au nouveau début choisi
-                if (!endInput.value || endInput.value < this.value) {
-                    endInput.value = this.value;
-                }
+                const dateDebut = new Date(this.value);
                 
-                // On empêche de choisir une date de fin antérieure au début (contrainte HTML5)
+                // Calcul du dernier jour du mois de la date de début
+                // (Mois + 1, Jour 0 = Dernier jour du mois précédent)
+                const dernierJour = new Date(dateDebut.getFullYear(), dateDebut.getMonth() + 1, 0);
+                
+                // Formatage YYYY-MM-DD pour l'input date
+                const year = dernierJour.getFullYear();
+                const month = String(dernierJour.getMonth() + 1).padStart(2, '0');
+                const day = String(dernierJour.getDate()).padStart(2, '0');
+                const dateFinAuto = `${year}-${month}-${day}`;
+
+                // On applique la date de fin automatiquement
+                endInput.value = dateFinAuto;
+                
+                // Contrainte : la fin ne peut pas être avant le début
                 endInput.setAttribute('min', this.value);
                 
-                // On sauvegarde et on recalcule
+                // Sauvegarde et calcul
                 localStorage.setItem('id_date_debut', this.value);
-                localStorage.setItem('id_date_fin', endInput.value);
+                localStorage.setItem('id_date_fin', dateFinAuto);
                 calculerPeriode();
             }
         });
     
-        // 2. SAUVEGARDE & CALCUL (sur les autres inputs)
-        document.addEventListener('input', function(e) {
-            if (fields.includes(e.target.id)) {
-                localStorage.setItem(e.target.id, e.target.value);
-                calculerPeriode();
-            }
+        // 2. SAUVEGARDE & CALCUL (sur les autres changements manuels)
+        endInput.addEventListener('change', function() {
+            localStorage.setItem('id_date_fin', this.value);
+            calculerPeriode();
         });
     
         // 3. NETTOYAGE
@@ -140,6 +157,7 @@
                 const d_debut = new Date(start);
                 const d_fin = new Date(end);
     
+                // Validation de cohérence
                 if (d_fin < d_debut) {
                     endInput.classList.add('border-rose-500', 'ring-rose-500/10');
                     submitBtn.disabled = true;
@@ -148,20 +166,25 @@
                 } else {
                     endInput.classList.remove('border-rose-500', 'ring-rose-500/10');
                     submitBtn.disabled = false;
-                    submitBtn.classList.remove('opacity-50', 'opacity-50', 'cursor-not-allowed');
+                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                 }
                 
-                // --- Logique de calcul ---
-                let diffMonths = (d_fin.getFullYear() - d_debut.getFullYear()) * 12 + (d_fin.getMonth() - d_debut.getMonth()) + 1;
+                // --- Calcul du type de période ---
+                // On ajoute 1 jour à la différence pour inclure les deux dates
+                const diffTime = Math.abs(d_fin - d_debut);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
                 
-                // Sélection intelligente du type
                 const typeSelect = document.getElementById('id_periode_type');
-                if(diffMonths <= 1) typeSelect.value = 'mensuel';
-                else if(diffMonths <= 2) typeSelect.value = 'bimestriel';
+                
+                // Logique basée sur le nombre de jours approximatifs
+                if (diffDays <= 31) typeSelect.value = 'mensuel';
+                else if (diffDays <= 62) typeSelect.value = 'bimestriel';
                 else typeSelect.value = 'trimestriel';
                 
-                // Calcul date limite (15 du mois suivant)
+                // Calcul date limite (15 du mois suivant la fin)
                 let dateLimite = new Date(d_fin.getFullYear(), d_fin.getMonth() + 1, 15);
+                
+                // Formatage de l'affichage
                 document.getElementById('id_date_limite').value = dateLimite.toISOString().split('T')[0];
                 document.getElementById('id_annee').value = d_fin.getFullYear();
             }
@@ -169,3 +192,4 @@
     });
 </script>
 {% endblock %}
+

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page { size: A4; margin: 1cm; }
+        body { font-family: 'Helvetica', 'Arial', sans-serif; margin: 0; padding: 20px; color: #1a1a1a; font-size: 11px; line-height: 1.4; }
+        .page-break { page-break-after: always; }
+        
+        /* En-tête officiel */
+        .header { text-align: center; margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px solid #000; padding-bottom: 10px; }
+        .header h2 { font-size: 14px; margin: 2px; letter-spacing: 1px; }
+        .title { text-align: center; font-weight: 900; font-size: 18px; margin: 25px 0; text-decoration: underline; text-transform: uppercase; }
+        
+        /* Sections d'identification */
+        .section-box { margin-bottom: 20px; border: 1px solid #eee; padding: 10px; border-radius: 5px; }
+        .section-title { font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 3px; font-size: 12px; }
+        .field { margin-left: 10px; margin-bottom: 5px; display: flex; }
+        .label { font-weight: bold; width: 180px; display: inline-block; color: #444; }
+        .value { font-family: 'Courier', monospace; font-weight: bold; }
+
+        /* Tableau Rubriques conforme au formulaire */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; table-layout: fixed; }
+        th, td { border: 1px solid black; padding: 10px; word-wrap: break-word; }
+        th { background-color: #f2f2f2; text-align: center; font-weight: bold; text-transform: uppercase; font-size: 10px; }
+        .col-num { width: 40px; text-align: center; font-weight: bold; }
+        .col-rubrique { width: auto; text-align: left; }
+        .col-montant { width: 160px; text-align: right; font-weight: bold; font-family: 'Courier', monospace; }
+        
+        .footer-note { margin-top: 30px; font-style: italic; font-size: 9px; text-align: right; }
+    </style>
+</head>
+<body>
+
+<div class="page-break">
+    <div class="header">
+        <h2>Ministère des Finances et du Budget</h2>
+        <div>Secrétariat Général</div>
+        <div>Direction Régionale des Impôts</div>
+        <div>Centre Fiscal Antananarivo IV</div>
+    </div>
+
+    <div class="title">IMPRIME DECLARATION</div>
+
+    <div class="section-box">
+        <div class="section-title">PARTIE 1 : CONTRIBUABLE DECLARANT</div>
+        <div class="field"><span class="label">NIF :</span> <span class="value">{{ declaration.employeur.nif }}</span></div>
+        <div class="field"><span class="label">Raison sociale :</span> <span class="value">{{ declaration.employeur.raison_sociale }}</span></div>
+        <div class="field"><span class="label">Adresse :</span> <span class="value">{{ declaration.employeur.adresse }}</span></div>
+    </div>
+
+    <div class="section-box">
+        <div class="section-title">PARTIE 3 : DOCUMENT</div>
+        <div class="field"><span class="label">Numéro document :</span> <span class="value">{{ declaration.numero_document }}</span></div>
+        <div class="field"><span class="label">Nature d'impôts :</span> <span class="value">{{ declaration.nature_impots }}</span></div>
+        <div class="field"><span class="label">Période d'imposition :</span> <span class="value">{{ declaration.periode.date_debut|date:"F Y"|upper }}</span></div>
+        <div class="field"><span class="label">Date de dépôt :</span> <span class="value">{% now "d/m/Y" %}</span></div>
+    </div>
+
+    <div class="section-title">Partie 2 : DECLARATION</div>
+    <table>
+        <thead>
+            <tr>
+                <th class="col-num">N°</th>
+                <th class="col-rubrique">Rubrique</th>
+                <th class="col-montant">Montant déclaré (AR)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="col-num">1</td>
+                <td class="col-rubrique">Nombre de travailleurs</td>
+                <td class="col-montant">{{ declaration.nombre_travailleurs_total }}</td>
+            </tr>
+            <tr>
+                <td class="col-num">2</td>
+                <td class="col-rubrique">Avantages en nature</td>
+                <td class="col-montant">{{ r2|default:"0"|floatformat:0 }}</td>
+            </tr>
+            <tr>
+                <td class="col-num">3</td>
+                <td class="col-rubrique">Rémunération brute</td>
+                <td class="col-montant">{{ r3|default:"0"|floatformat:0 }}</td>
+            </tr>
+            <tr>
+                <td class="col-num">5</td>
+                <td class="col-rubrique">Retenue au titre de cotisation ouvrière (CNaPS)</td>
+                <td class="col-montant">{{ r5|default:"0"|floatformat:0 }}</td>
+            </tr>
+            <tr>
+                <td class="col-num">6</td>
+                <td class="col-rubrique">Rémunération nette imposable</td>
+                <td class="col-montant">{{ declaration.total_salaire_imposable|floatformat:0 }}</td>
+            </tr>
+            <tr>
+                <td class="col-num">7</td>
+                <td class="col-rubrique">Impôt correspondant (selon barème IRSA)</td>
+                <td class="col-montant">{{ declaration.total_irsa|floatformat:0 }}</td>
+            </tr>
+            <tr>
+                <td class="col-num">13</td>
+                <td class="col-rubrique">Masse globale de salaires versés</td>
+                <td class="col-montant">{{ r3|default:"0"|floatformat:0 }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <div class="header">
+        <h2>Ministère des Finances et du Budget</h2>
+        <div>DECOMPTE FINAL DE L'IMPÔT</div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="col-num">N°</th>
+                <th class="col-rubrique">Rubrique de paiement</th>
+                <th class="col-montant">Montant (AR)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="col-num">20</td>
+                <td class="col-rubrique">Total impôt à payer</td>
+                <td class="col-montant">{{ declaration.total_irsa|floatformat:0 }}</td>
+            </tr>
+            <tr>
+                <td class="col-num">21</td>
+                <td class="col-rubrique">Régularisations</td>
+                <td class="col-montant">0</td>
+            </tr>
+            <tr>
+                <td class="col-num">22</td>
+                <td class="col-rubrique">Réduction d'impôt pour personne à charge</td>
+                <td class="col-montant">{{ r22|default:"0"|floatformat:0 }}</td>
+            </tr>
+            <tr style="background-color: #eee;">
+                <td class="col-num">24</td>
+                <td class="col-rubrique"><strong>IMPÔT NET À PAYER</strong></td>
+                <td class="col-montant" style="font-size: 14px;">{{ r24|default:declaration.total_irsa|floatformat:0 }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer-note">
+        Document généré électroniquement le {% now "d/m/Y H:i" %}<br>
+        Certifié conforme aux données déclarées sur le portail e-Déclaration.
+    </div>
+</div>
+
+</body>
+</html>

@@ -156,9 +156,9 @@ def preview_annexe(request):
         df.columns = df.columns.str.strip()
         df = df.dropna(subset=[num_cnaps, nom_prenoms], how='all').fillna(0)
 
-        tranches = TrancheBareme.objects.filter(annee_fiscale=periode_obj.annee).order_by('seuil_minimal')
-        if not tranches.exists():
-            messages.warning(request, f"Attention: Aucun barème trouvé pour l'année {periode_obj.annee}. Les calculs seront à 0.")
+        # tranches = TrancheBareme.objects.filter(annee_fiscale=periode_obj.annee).order_by('seuil_minimal')
+        # if not tranches.exists():
+        #     messages.warning(request, f"Attention: Aucun barème trouvé pour l'année {periode_obj.annee}. Les calculs seront à 0.")
 
         ImportIRSATemporaire.objects.filter(employeur=employeur).delete()
 

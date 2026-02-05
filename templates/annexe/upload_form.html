@@ -3,131 +3,137 @@
 {% include 'partials/header.html' %}
 {% include 'partials/stepper.html' with current_step=2 %}
 
-<div class="min-h-screen bg-[#f8fafc] py-12 px-4">
-    <div class="max-w-5xl mx-auto">
+<div class="min-h-screen bg-white py-12 px-4">
+    <div class="max-w-6xl mx-auto">
         
-        <div class="mb-10 flex items-end justify-between">
+        <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-                <h1 class="text-3xl font-black text-slate-900 tracking-tight italic uppercase">Pièces Jointes</h1>
-                <p class="text-slate-500 font-medium mt-1 uppercase text-xs tracking-widest">Étape 02 : Importation de l'annexe Excel</p>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tight italic uppercase">
+                    Pièces <span class="text-[#2D8B8B]">Jointes</span>
+                </h1>
+                <p class="text-slate-500 font-medium mt-1 uppercase text-[10px] tracking-[0.2em]">Étape 02 : Importation des données salariales</p>
             </div>
             
-            <div class="hidden md:flex flex-col items-end">
-                <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Période sélectionnée</span>
-                <span class="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl text-xs font-black border border-indigo-100 shadow-sm flex items-center gap-2">
+            <div class="flex items-center gap-3">
+                <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">Période :</span>
+                <span class="px-4 py-2 bg-slate-50 text-slate-700 rounded-xl text-[10px] font-black border border-slate-100 shadow-sm flex items-center gap-2">
                     {% if periode_data %}
-                        <svg class="w-3 h-3 text-indigo-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg>
-                        <span class="uppercase italic">{{ periode_data.periode_type }}</span> {{ periode_data.annee }}
-                        <span class="text-[10px] text-indigo-400 font-bold ml-1">
-                            ({{ periode_data.date_debut|slice:":10" }} au {{ periode_data.date_fin|slice:":10" }})
-                        </span>
+                        <span class="text-[#2D8B8B] italic uppercase">{{ periode_data.periode_type }}</span> {{ periode_data.annee }}
                     {% else %}
-                        <span class="text-rose-500 text-[10px] font-black uppercase">Session expirée</span>
+                        <span class="text-rose-500 uppercase">Non définie</span>
                     {% endif %}
                 </span>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2 space-y-8">
-                <form method="POST" enctype="multipart/form-data" class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden transition-all">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <div class="lg:col-span-8 space-y-6">
+                
+                <form method="POST" enctype="multipart/form-data" class="bg-white rounded-[2rem] border border-slate-100 shadow-[0_15px_40px_rgba(0,0,0,0.03)] overflow-hidden">
                     {% csrf_token %}
-                    <div class="px-8 py-5 bg-slate-50/50 border-b border-slate-100 flex justify-between items-center">
-                        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Méthode Automatisée</h3>
-                        <span class="text-[9px] font-bold text-indigo-500 bg-indigo-50 px-2 py-1 rounded-md uppercase">Recommandé</span>
-                    </div>
-
-                    <div class="p-8 md:p-12">
-                        {% if messages %}
-                        <div class="mb-6 space-y-2">
-                            {% for message in messages %}
-                            <div class="p-4 rounded-2xl text-xs font-bold animate-pulse {% if message.tags == 'error' %}bg-rose-50 text-rose-700 border border-rose-100{% else %}bg-emerald-50 text-emerald-700 border border-emerald-100{% endif %}">
-                                {{ message }}
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-
+                    
+                    <div class="p-8 md:p-10">
                         <div class="relative group">
-                            <label id="dropzone" class="relative block border-2 border-dashed border-slate-200 rounded-[2.5rem] bg-slate-50/30 p-16 transition-all hover:border-indigo-500 hover:bg-white flex flex-col items-center justify-center cursor-pointer overflow-hidden">
-                                <div class="w-24 h-24 bg-white rounded-3xl shadow-lg border border-slate-100 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                                    <svg class="w-12 h-12 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            <label id="dropzone" class="relative block border-2 border-dashed border-slate-200 rounded-[1.5rem] bg-slate-50/50 p-10 transition-all hover:border-[#2D8B8B] hover:bg-white flex flex-col items-center justify-center cursor-pointer">
+                                <div class="w-16 h-16 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500">
+                                    <svg class="w-8 h-8 text-[#2D8B8B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                     </svg>
                                 </div>
-                                <div class="text-center space-y-2">
-                                    <span class="text-base font-black text-slate-900 block uppercase italic tracking-tight">Importer l'annexe Excel</span>
-                                    <span class="text-[10px] text-slate-400 block font-bold uppercase tracking-widest">Glissez votre fichier ici</span>
+                                <div class="text-center">
+                                    <span class="text-sm font-black text-slate-900 block uppercase italic tracking-tight">Cliquer pour importer l'annexe</span>
+                                    <span class="text-[9px] text-slate-400 block font-bold uppercase tracking-[0.2em] mt-1 text-center">Formats acceptés : .XLSX, .XLS</span>
                                 </div>
                                 <input type="file" name="file" id="file_input" class="absolute inset-0 opacity-0 cursor-pointer" accept=".xlsx, .xls" required onchange="updateFileName(this)">
                             </label>
 
-                            <div id="file_name_display" class="hidden mt-6 flex items-center justify-between p-5 bg-slate-900 rounded-[1.5rem] text-white shadow-2xl animate-in zoom-in-95 duration-300">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            <div id="file_name_display" class="hidden mt-4 flex items-center justify-between p-4 bg-slate-900 rounded-2xl text-white animate-in slide-in-from-top-2 duration-300">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-[#2D8B8B] rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                     </div>
-                                    <div>
-                                        <p id="file_name_text" class="text-xs font-black truncate max-w-[250px] italic"></p>
-                                        <p class="text-[9px] font-bold text-emerald-400 uppercase tracking-tighter">Fichier prêt</p>
-                                    </div>
+                                    <p id="file_name_text" class="text-[11px] font-bold truncate max-w-[200px] italic"></p>
                                 </div>
-                                <button type="button" onclick="location.reload()" class="bg-white/10 hover:bg-white/20 p-2 rounded-lg transition-colors">
+                                <button type="button" onclick="location.reload()" class="text-slate-400 hover:text-white transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="px-8 py-8 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-                        <a href="{% url 'presentation' %}" class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-indigo-600 transition-colors">Retour</a>
-                        <button type="submit" class="group flex items-center gap-6 px-12 py-5 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 uppercase text-xs tracking-[0.2em]">
-                            Analyser le fichier
-                            <svg class="w-5 h-5 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
+                        <a href="{% url 'presentation' %}" class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors italic">← Retour</a>
+                        <button type="submit" class="px-10 py-4 bg-[#2D8B8B] text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-[#1E7F3C] transition-all shadow-lg shadow-[#2D8B8B]/20 active:scale-95">
+                            Analyser les données
                         </button>
                     </div>
                 </form>
 
-                <div class="bg-gradient-to-br from-white to-slate-50 rounded-[2.5rem] border border-slate-200 p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 border-l-4 border-l-amber-400">
-                    <div class="flex items-center gap-5">
-                        <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center shrink-0 shadow-sm border border-amber-100">
-                            <svg class="w-7 h-7 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
+                <div class="bg-white rounded-[2rem] border border-slate-100 p-6 flex flex-col md:flex-row items-center justify-between gap-4 border-l-4 border-l-amber-400 shadow-sm">
+                    <div class="flex items-center gap-4 text-center md:text-left">
+                        <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center shrink-0">
+                            <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                         </div>
                         <div>
-                            <h4 class="text-sm font-black text-slate-900 uppercase italic tracking-tight">Pas de fichier Excel ?</h4>
-                            <p class="text-xs font-medium text-slate-500 mt-1">Vous pouvez déclarer vos salariés un par un via notre interface simplifiée.</p>
+                            <h4 class="text-[11px] font-black text-slate-900 uppercase italic italic tracking-tight">Saisie Manuelle</h4>
+                            <p class="text-[10px] font-medium text-slate-500">Pour les petits effectifs ou corrections rapides.</p>
                         </div>
                     </div>
-                    <a href="{% url 'valider_saisie_manuelle' %}" class="w-full md:w-auto text-center px-8 py-4 bg-white border-2 border-slate-200 text-slate-700 font-black rounded-2xl hover:border-amber-400 hover:text-amber-600 transition-all uppercase text-[10px] tracking-widest shadow-sm">
-                        Saisie Manuelle
+                    <a href="{% url 'valider_saisie_manuelle' %}" class="px-6 py-3 border-2 border-slate-100 text-slate-600 font-black rounded-xl hover:border-amber-400 hover:text-amber-600 transition-all uppercase text-[9px] tracking-widest">
+                        Commencer
                     </a>
                 </div>
             </div>
 
-            <div class="space-y-6">
-                <div class="bg-slate-900 rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden group">
-                    <div class="relative z-10">
-                        <h4 class="text-xs font-black uppercase tracking-[0.2em] mb-8 text-indigo-400 italic">Guide Rapide</h4>
-                        <ul class="space-y-6">
-                            <li class="flex gap-4 items-start">
-                                <span class="w-6 h-6 rounded-lg bg-indigo-500 flex items-center justify-center text-[10px] font-black shrink-0">01</span>
-                                <p class="text-[11px] font-bold text-slate-300 leading-relaxed uppercase">L'importation Excel est <span class="text-white">plus rapide</span> pour plus de 5 salariés.</p>
-                            </li>
-                            <li class="flex gap-4 items-start">
-                                <span class="w-6 h-6 rounded-lg bg-slate-700 flex items-center justify-center text-[10px] font-black shrink-0">02</span>
-                                <p class="text-[11px] font-bold text-slate-400 leading-relaxed uppercase">La saisie manuelle calcule l'IRSA <span class="text-white">en temps réel</span>.</p>
-                            </li>
-                        </ul>
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-slate-900 rounded-[2rem] p-8 text-white shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-[#2D8B8B]/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+                    
+                    <h4 class="text-[11px] font-black uppercase tracking-[0.2em] mb-8 text-[#2D8B8B] italic">Processus d'analyse</h4>
+                    
+                    <div class="space-y-8 relative">
+                        <div class="absolute left-[11px] top-2 bottom-2 w-[2px] bg-slate-800"></div>
+
+                        <div class="relative flex gap-4">
+                            <div class="w-6 h-6 rounded-full bg-[#2D8B8B] flex items-center justify-center z-10 ring-4 ring-slate-900">
+                                <span class="text-[9px] font-black">1</span>
+                            </div>
+                            <div>
+                                <h5 class="text-[10px] font-black uppercase tracking-tight italic">Extraction</h5>
+                                <p class="text-slate-400 text-[10px] mt-1 leading-relaxed">Lecture intelligente de votre fichier Excel et identification des colonnes.</p>
+                            </div>
+                        </div>
+
+                        <div class="relative flex gap-4">
+                            <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center z-10 ring-4 ring-slate-900">
+                                <span class="text-[9px] font-black">2</span>
+                            </div>
+                            <div>
+                                <h5 class="text-[10px] font-black uppercase tracking-tight italic">Contrôle IRSA</h5>
+                                <p class="text-slate-400 text-[10px] mt-1 leading-relaxed">Vérification automatique de la conformité des calculs d'impôts.</p>
+                            </div>
+                        </div>
+
+                        <div class="relative flex gap-4">
+                            <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center z-10 ring-4 ring-slate-900">
+                                <span class="text-[9px] font-black">3</span>
+                            </div>
+                            <div>
+                                <h5 class="text-[10px] font-black uppercase tracking-tight italic">Rapport</h5>
+                                <p class="text-slate-400 text-[10px] mt-1 leading-relaxed">Génération d'un récapitulatif détaillé pour validation finale.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-[2rem] border border-slate-200 p-8 text-center">
-                    <h4 class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-4 italic">Modèle de données</h4>
-                    <a href="#" class="inline-flex items-center gap-2 text-[10px] font-black text-indigo-600 hover:text-slate-900 transition-colors uppercase tracking-widest">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        Télécharger le canevas
+                <div class="bg-slate-50 rounded-[2rem] border border-slate-100 p-6 text-center group">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-4 italic italic">Besoin du format type ?</p>
+                    <a href="#" class="inline-flex items-center gap-3 text-[10px] font-black text-[#2D8B8B] hover:text-slate-900 transition-colors uppercase tracking-widest">
+                        <div class="p-2 bg-white rounded-lg shadow-sm group-hover:shadow-md transition-shadow">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        Modèle Canevas .xlsx
                     </a>
                 </div>
             </div>
@@ -144,7 +150,8 @@ function updateFileName(input) {
     if (input.files && input.files[0]) {
         text.innerText = input.files[0].name;
         display.classList.remove('hidden');
-        dropzone.classList.add('opacity-30', 'pointer-events-none');
+        // On réduit la visibilité de la zone de drop pour focaliser sur le fichier prêt
+        dropzone.classList.add('opacity-40');
     }
 }
 </script>

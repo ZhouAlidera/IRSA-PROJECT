@@ -29,7 +29,7 @@ from django.db.models import Sum
 from django.core.exceptions import ObjectDoesNotExist
 from datetime import date
 # Create your views here.
-def dashboard(request):
+def home(request):
     return render(request,'base_tailwind.html')
 
 User = get_user_model()

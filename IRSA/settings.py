@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'utilisateurs',
     'declarations',
     'NifAPI',
+    'Portail_employes',
     
     'tailwind',
     'theme',

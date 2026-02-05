@@ -33,5 +33,7 @@ urlpatterns = [
     path('declaration/ajax/ajouter/', services.ajax_ajouter_employe, name='ajax_ajouter_employe'),
     path('declaration/ajax/supprimer/<int:id>/', services.ajax_supprimer_employe, name='ajax_supprimer_employe'),
     path('declaration/saisie/manuelle', services.convertir_en_brouillon_SM, name='convertir_en_brouillon_SM'),
+    
+    path('declaration/<int:declaration_id>/pdf/', services.export_declaration_pdf, name='export_irsa_pdf'),
           
 ]

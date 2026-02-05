@@ -1,0 +1,203 @@
+{% extends 'base_tailwind.html' %}
+{% block content %}
+{% include 'partials/header.html' %}
+
+<div class="min-h-screen bg-[#F0F4F8] flex items-center justify-center px-4 py-12 font-sans">
+    <div class="w-full max-w-6xl bg-white rounded-[3rem] shadow-[0_40px_80px_-20px_rgba(30,58,138,0.1)] overflow-hidden flex min-h-[750px] border border-slate-100 animate-fade-in-up">
+        
+        <div class="w-full md:w-1/2 p-8 md:p-20 flex flex-col justify-center relative bg-white">
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-br from-[#3B82F6] to-[#1E3A8A] rounded-2xl flex items-center justify-center shadow-xl rotate-3">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                    </div>
+                    <span class="text-[11px] font-black uppercase tracking-[0.3em] text-blue-600">Espace Salarié</span>
+                </div>
+                <h2 class="text-4xl font-black text-slate-800 tracking-tight mb-4">Activation.</h2>
+                <p class="text-slate-400 font-medium text-lg">Vérification de vos identifiants fiscaux.</p>
+            </div>
+
+            <form method="post" id="regFormEmploye" class="space-y-6">
+                {% csrf_token %}
+                
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 ml-2">NIF Individuel</label>
+                    <input type="text" name="nif" id="nif_input" required placeholder="Ex: 400..."
+                           class="w-full px-8 py-5 rounded-[1.5rem] border-2 border-slate-50 bg-slate-50 focus:bg-white focus:outline-none focus:border-blue-600 transition-all font-bold text-slate-700 tracking-widest" />
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2">Numéro CIN</label>
+                    <input type="text" name="cin" id="cin_input" required placeholder="Votre numéro CIN"
+                           class="w-full px-8 py-5 rounded-[1.5rem] border-2 border-slate-50 bg-slate-50 focus:bg-white focus:outline-none focus:border-blue-600 transition-all font-bold text-slate-700" />
+                </div>
+
+                <div id="name_preview_container" class="hidden space-y-2 animate-fade-in">
+                    <label class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 ml-2">Nom détecté</label>
+                    <input type="text" name="nom_prenom" id="nom_input" readonly
+                           class="w-full px-8 py-5 rounded-[1.5rem] border-2 border-emerald-100 bg-emerald-50 font-black text-emerald-800 cursor-not-allowed" />
+                </div>
+
+                <div id="error_box" class="hidden p-4 bg-rose-50 rounded-2xl border border-rose-100">
+                    <p id="error_msg" class="text-[10px] font-black text-rose-500 uppercase text-center"></p>
+                </div>
+
+                <div class="flex items-center justify-between pt-6">
+                    <a href="{% url 'login' %}" class="text-xs font-black uppercase text-slate-400 hover:text-blue-600 transition-all">Retour</a>
+                    
+                    <button type="button" id="submit_btn" 
+                            class="relative min-w-[200px] h-[64px] px-10 bg-blue-600 text-white rounded-2xl shadow-xl hover:bg-blue-700 transition-all duration-300 font-black uppercase text-[11px] tracking-[0.2em] overflow-hidden flex items-center justify-center">
+                        
+                        <span id="btn_text" class="transition-opacity duration-300">Vérifier l'identité</span>
+
+                        <div id="btn_loader" class="hidden absolute inset-0 flex items-center justify-center bg-inherit">
+                            <span class="flex gap-1.5">
+                                <div class="w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                                <div class="w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                                <div class="w-2 h-2 bg-white rounded-full animate-bounce"></div>
+                            </span>
+                        </div>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="hidden md:flex w-1/2 bg-gradient-to-br from-[#1E3A8A] to-[#3B82F6] relative items-center justify-center p-20">
+            <div class="relative z-10 text-center">
+                <div class="bg-white/10 backdrop-blur-3xl border border-white/20 p-12 rounded-[4rem] shadow-2xl">
+                    <div class="inline-block p-6 bg-white text-blue-900 rounded-3xl mb-8 shadow-2xl">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-3xl font-black text-white italic uppercase tracking-tight">Accès Sécurisé</h3>
+                    <p class="text-blue-100 font-bold uppercase tracking-[0.3em] text-[10px] mt-4">Portail Salarié</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const regForm = document.getElementById('regFormEmploye');
+    const nifIn = document.getElementById('nif_input');
+    const cinIn = document.getElementById('cin_input');
+    const nomIn = document.getElementById('nom_input');
+    const preview = document.getElementById('name_preview_container');
+    const submitBtn = document.getElementById('submit_btn');
+    const btnText = document.getElementById('btn_text');
+    const btnLoader = document.getElementById('btn_loader');
+    const errorBox = document.getElementById('error_box');
+    
+    let isVerified = false;
+
+    // --- 1. FONCTION DE RESTAURATION (RETOUR ARRIÈRE) ---
+    function restoreSession() {
+        const savedData = localStorage.getItem('verified_employe');
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            nifIn.value = data.nif;
+            cinIn.value = data.cin;
+            nomIn.value = data.nom_prenom;
+            
+            setAsVerified(); // Active l'état "déjà vérifié"
+        }
+    }
+
+    function setAsVerified() {
+        isVerified = true;
+        preview.classList.remove('hidden');
+        btnText.innerText = "Confirmer l'inscription";
+        submitBtn.classList.remove('bg-blue-600');
+        submitBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+    }
+
+    // Appeler la restauration au chargement
+    restoreSession();
+
+    // --- 2. LOGIQUE DU CLIC ---
+    submitBtn.addEventListener('click', function() {
+        if (isVerified) {
+            // Optionnel : Effacer le localStorage au moment de la soumission finale si nécessaire
+            // localStorage.removeItem('verified_employe');
+            regForm.submit();
+            return;
+        }
+
+        const nif = nifIn.value.trim();
+        const cin = cinIn.value.trim();
+
+        if (nif.length < 5 || cin.length < 5) {
+            showError("Identifiants incomplets.");
+            return;
+        }
+
+        const startTime = Date.now();
+        btnText.classList.add('opacity-0');
+        btnLoader.classList.remove('hidden');
+        submitBtn.classList.add('pointer-events-none');
+        errorBox.classList.add('hidden');
+
+        fetch(`/api/nif-employe/?nif=${nif}&cin=${cin}`)
+            .then(res => res.json())
+            .then(data => {
+                const delay = Math.max(0, 1500 - (Date.now() - startTime));
+
+                setTimeout(() => {
+                    btnLoader.classList.add('hidden');
+                    btnText.classList.remove('opacity-0');
+                    submitBtn.classList.remove('pointer-events-none');
+                    
+                    if (data.valid || data.exists) { 
+                        const userData = data.data || data;
+                        nomIn.value = userData.nom_prenom;
+                        
+                        // --- SAUVEGARDE DANS LE NAVIGATEUR ---
+                        localStorage.setItem('verified_employe', JSON.stringify({
+                            nif: nif,
+                            cin: cin,
+                            nom_prenom: userData.nom_prenom
+                        }));
+
+                        setAsVerified();
+                    } else {
+                        showError(data.message || "Aucune correspondance.");
+                    }
+                }, delay);
+            })
+            .catch(() => {
+                setTimeout(() => {
+                    btnLoader.classList.add('hidden');
+                    btnText.classList.remove('opacity-0');
+                    submitBtn.classList.remove('pointer-events-none');
+                    showError("Erreur de connexion.");
+                }, 1000);
+            });
+    });
+
+    function showError(msg) {
+        errorBox.classList.remove('hidden');
+        document.getElementById('error_msg').innerText = msg;
+        resetState();
+    }
+
+    function resetState() {
+        isVerified = false;
+        localStorage.removeItem('verified_employe'); // On efface si erreur
+        btnText.innerText = "Vérifier l'identité";
+        submitBtn.classList.replace('bg-emerald-600', 'bg-blue-600');
+        preview.classList.add('hidden');
+    }
+
+    // Reset si modif manuelle après vérification
+    [nifIn, cinIn].forEach(input => {
+        input.addEventListener('input', () => {
+            if (isVerified) resetState();
+        });
+    });
+});
+</script>
+{% endblock %}

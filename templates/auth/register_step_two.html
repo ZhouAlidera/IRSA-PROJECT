@@ -2,52 +2,117 @@
 {% block content %}
 {% include 'partials/header.html' %}
 
-<div class="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12">
-    <div class="w-full max-w-6xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex min-h-[750px] border border-slate-100">
+<div class="min-h-screen bg-[#F4F7F6] flex items-center justify-center px-4 py-12 font-sans">
+    <div class="w-full max-w-6xl bg-white rounded-[3rem] shadow-[0_40px_80px_-20px_rgba(45,139,139,0.1)] overflow-hidden flex min-h-[750px] border border-emerald-50 animate-fade-in-up">
         
-        <div class="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center">
-            <a href="{% url 'register_step_one' %}" class="flex items-center gap-2 text-slate-400 hover:text-indigo-600 font-bold text-xs uppercase mb-8 transition group">
-                <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                Retour Étape 1
+        <div class="w-full md:w-1/2 p-8 md:p-20 flex flex-col justify-center relative bg-white">
+            
+            <a href="{% url 'register_step_one' %}" class="flex items-center gap-2 text-slate-400 hover:text-[#2D8B8B] font-black text-[10px] uppercase tracking-[0.2em] mb-12 transition-all group stagger-item">
+                <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Étape précédente
             </a>
 
-            <div class="mb-10">
-                <h2 class="text-3xl font-black text-slate-900 tracking-tighter mb-2">Presque terminé.</h2>
-                <p class="text-slate-500 font-medium">Configurez vos accès personnels.</p>
+            <div class="mb-10 stagger-item">
+                <div class="flex items-center gap-6 mb-8">
+                    <div class="flex items-center gap-3 opacity-30">
+                        <span class="w-8 h-8 rounded-xl bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-black">1</span>
+                    </div>
+                    <div class="h-px w-8 bg-slate-100"></div>
+                    <div class="flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-2xl bg-[#2D8B8B] text-white flex items-center justify-center text-sm font-black shadow-lg shadow-emerald-100">2</span>
+                        <span class="text-[11px] font-black uppercase tracking-widest text-[#2D8B8B]">Accès Personnel</span>
+                    </div>
+                </div>
+                <h2 class="text-4xl font-black text-slate-800 tracking-tight mb-4">Presque terminé.</h2>
+                <p class="text-slate-400 font-medium text-lg">Créez vos identifiants de connexion.</p>
             </div>
 
-            <form method="post" id="regForm2" class="space-y-5">
+            <form method="post" id="regForm2" class="space-y-6 stagger-item">
                 {% csrf_token %}
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black uppercase text-slate-400 ml-4">Prénom</label>
-                        <input type="text" name="first_name" id="fname" required class="w-full px-6 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 focus:outline-none focus:ring-4 focus:ring-indigo-50 transition-all font-medium" />
+                
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="space-y-2 group">
+                        <label class="text-[10px] font-black uppercase tracking-[0.2em] text-[#2D8B8B] ml-2 group-focus-within:text-emerald-700 transition-colors">Prénom</label>
+                        <input type="text" name="first_name" id="fname" required placeholder="Ex: Jean"
+                               class="w-full px-6 py-4 rounded-2xl border-2 border-slate-50 bg-[#F9FAFB] focus:bg-white focus:outline-none focus:border-[#2D8B8B] transition-all font-bold text-slate-700 shadow-sm" />
                     </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black uppercase text-slate-400 ml-4">Nom</label>
-                        <input type="text" name="last_name" id="lname" required class="w-full px-6 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 focus:outline-none focus:ring-4 focus:ring-indigo-50 transition-all font-medium" />
+                    <div class="space-y-2 group">
+                        <label class="text-[10px] font-black uppercase tracking-[0.2em] text-[#2D8B8B] ml-2 group-focus-within:text-emerald-700 transition-colors">Nom</label>
+                        <input type="text" name="last_name" id="lname" required placeholder="Ex: Rakoto"
+                               class="w-full px-6 py-4 rounded-2xl border-2 border-slate-50 bg-[#F9FAFB] focus:bg-white focus:outline-none focus:border-[#2D8B8B] transition-all font-bold text-slate-700 shadow-sm" />
                     </div>
                 </div>
 
-                <div class="space-y-1">
-                    <label class="text-[10px] font-black uppercase text-slate-400 ml-4">Email</label>
-                    <input type="email" name="email" id="email" required class="w-full px-6 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 focus:outline-none focus:ring-4 focus:ring-indigo-50 transition-all font-medium" />
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <input type="password" name="password" required placeholder="Mot de passe" class="w-full px-6 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 focus:outline-none focus:ring-4 focus:ring-indigo-50 transition-all font-medium" />
-                    <input type="password" name="password_confirm" required placeholder="Confirmation" class="w-full px-6 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 focus:outline-none focus:ring-4 focus:ring-indigo-50 transition-all font-medium" />
+                <div class="space-y-2 group">
+                    <label class="text-[10px] font-black uppercase tracking-[0.2em] text-[#2D8B8B] ml-2 group-focus-within:text-emerald-700 transition-colors">Adresse Email Professionnelle</label>
+                    <div class="relative">
+                        <input type="email" name="email" id="email" required placeholder="jean@entreprise.mg"
+                               class="w-full px-6 py-5 rounded-2xl border-2 border-slate-50 bg-[#F9FAFB] focus:bg-white focus:outline-none focus:border-[#2D8B8B] transition-all font-bold text-slate-700 shadow-sm" />
+                        <div class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>
+                        </div>
+                    </div>
                 </div>
 
-                <button type="submit" id="final_submit" class="w-full py-4 bg-slate-900 text-white rounded-2xl shadow-xl hover:bg-indigo-600 hover:-translate-y-1 transition-all font-black uppercase text-xs flex items-center justify-center gap-3">
-                    Finaliser l'inscription
-                </button>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <input type="password" name="password" required placeholder="Mot de passe" 
+                               class="w-full px-6 py-5 rounded-2xl border-2 border-slate-50 bg-[#F9FAFB] focus:bg-white focus:outline-none focus:border-[#2D8B8B] transition-all font-bold text-slate-700 shadow-sm" />
+                    </div>
+                    <div class="space-y-2">
+                        <input type="password" name="password_confirm" required placeholder="Confirmation" 
+                               class="w-full px-6 py-5 rounded-2xl border-2 border-slate-50 bg-[#F9FAFB] focus:bg-white focus:outline-none focus:border-[#2D8B8B] transition-all font-bold text-slate-700 shadow-sm" />
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <button type="submit" id="final_submit" 
+                            class="w-full py-5 bg-[#2D8B8B] text-white rounded-[1.5rem] shadow-[0_20px_40px_-10px_rgba(45,139,139,0.4)] hover:bg-[#1E7F3C] hover:-translate-y-1 active:scale-95 transition-all duration-500 font-black uppercase text-xs tracking-[0.2em] flex items-center justify-center gap-4">
+                        Finaliser mon espace
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                    </button>
+                    <p class="text-center text-[10px] text-slate-400 mt-6 uppercase tracking-widest font-bold">En cliquant, vous acceptez les conditions d'utilisation</p>
+                </div>
             </form>
         </div>
 
-        <div class="hidden md:flex w-1/2 bg-slate-900 items-center justify-center relative p-12">
+        <div class="hidden md:flex w-1/2 bg-gradient-to-br from-[#1E7F3C] to-[#2D8B8B] relative items-center justify-center p-20 overflow-hidden">
+            <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-white opacity-5 rounded-full animate-pulse"></div>
+            <div class="absolute bottom-[-5%] right-[-5%] w-[300px] h-[300px] bg-emerald-900 opacity-20 rounded-full animate-bounce-slow"></div>
+            
+            <div class="relative z-10 w-full max-w-sm">
+                <div class="bg-white/10 backdrop-blur-3xl border border-white/20 p-10 rounded-[3.5rem] shadow-2xl text-white">
+                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-8">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    </div>
+                    <h3 class="text-2xl font-black mb-4">Sécurité maximale.</h3>
+                    <p class="text-emerald-50/80 leading-relaxed font-medium">Vos données sont protégées par les standards de sécurité de la Direction Générale des Impôts.</p>
+                    
+                    <div class="mt-10 pt-10 border-t border-white/10 flex items-center gap-4">
+                        <div class="flex -space-x-3">
+                            <div class="w-8 h-8 rounded-full border-2 border-emerald-700 bg-emerald-200"></div>
+                            <div class="w-8 h-8 rounded-full border-2 border-emerald-700 bg-emerald-400"></div>
+                            <div class="w-8 h-8 rounded-full border-2 border-emerald-700 bg-emerald-600"></div>
+                        </div>
+                        <span class="text-[10px] font-black uppercase tracking-widest">+ 5000 entreprises</span>
+                    </div>
+                </div>
             </div>
+        </div>
     </div>
 </div>
+
+<style>
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .stagger-item { opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .stagger-item:nth-child(1) { animation-delay: 0.1s; }
+    .stagger-item:nth-child(2) { animation-delay: 0.2s; }
+    .stagger-item:nth-child(3) { animation-delay: 0.3s; }
+    .animate-bounce-slow { animation: bounce 10s infinite ease-in-out; }
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -68,10 +133,9 @@ document.addEventListener('DOMContentLoaded', function() {
         fields[key].addEventListener('input', (e) => localStorage.setItem('reg_step2_' + key, e.target.value));
     });
 
-    // Nettoyer localStorage lors du succès final
+    // Nettoyage au submit
     document.getElementById('regForm2').addEventListener('submit', function() {
-        // Optionnel: localStorage.clear(); 
-        // Il vaut mieux attendre la réponse de Django avant de vider
+        // Optionnel : Effacer après succès backend
     });
 });
 </script>

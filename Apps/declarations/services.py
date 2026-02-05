@@ -495,3 +495,88 @@ def convertir_en_brouillon_SM(request):
         del request.session['temp_periode_fiscale']
     
     return redirect('detail_import_brouillon')
+
+from django.shortcuts import get_object_or_404
+from django.db.models import Sum
+from django.conf import settings
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML
+import tempfile
+
+from .models import (
+    DeclarationIRSA, LigneDeclarationIRSA, DetailRevenu, 
+    DetailDeduction, SituationFamiliale, RegimeSpecialIRSA
+)
+
+def export_declaration_pdf(request, declaration_id):
+    # 1. Récupération de la déclaration et de l'employeur
+    declaration = get_object_or_404(
+        DeclarationIRSA.objects.select_related('employeur', 'periode'), 
+        pk=declaration_id
+    )
+    
+    # 2. Agrégation des données pour les rubriques
+    lignes = declaration.lignes.all()
+    lignes_ids = lignes.values_list('id', flat=True)
+    employes_ids = lignes.values_list('employe_id', flat=True)
+
+    # Rubrique 2: Avantages en nature
+    r2_avantages = DetailRevenu.objects.filter(
+        ligne_id__in=lignes_ids, 
+        type_revenu__code='AVANT_NATURE'
+    ).aggregate(total=Sum('montant'))['total'] or 0
+
+    # Rubrique 5: CNaPS (Cotisation ouvrière)
+    r5_cnaps = DetailDeduction.objects.filter(
+        ligne_id__in=lignes_ids, 
+        type_deduction__code='COT_CNAPS'
+    ).aggregate(total=Sum('montant'))['total'] or 0
+
+    # Rubrique 6: RNI (Déjà stocké dans votre modèle)
+    r6_rni = declaration.total_salaire_imposable
+
+    # Rubrique 3: Rémunération Brute (RNI + Déductions)
+    # Note: On peut aussi sommer tous les DetailRevenu
+    r3_brut = DetailRevenu.objects.filter(
+        ligne_id__in=lignes_ids
+    ).aggregate(total=Sum('montant'))['total'] or 0
+
+    # Rubrique 22: Réduction pour charge de famille (2000 Ar / personne)
+    total_charges = SituationFamiliale.objects.filter(
+        employe_id__in=employes_ids,
+        date_debut__lte=declaration.periode.date_debut
+    ).aggregate(total=Sum('nombre_personnes_charge'))['total'] or 0
+    r22_reduction = total_charges * 2000
+
+    # Rubrique 24: Impôt net à payer
+    r24_net = max(0, declaration.total_irsa - r22_reduction)
+
+    # 3. Préparation du contexte pour le template
+    context = {
+        'dec': declaration,
+        'emp': declaration.employeur,
+        'r1': declaration.nombre_travailleurs_total,
+        'r2': r2_avantages,
+        'r3': r3_brut,
+        'r5': r5_cnaps,
+        'r6': r6_rni,
+        'r7': declaration.total_irsa,
+        'r20': declaration.total_irsa,
+        'r22': r22_reduction,
+        'r24': r24_net,
+        # On passe la date d'aujourd'hui pour le dépôt
+        'date_depot': declaration.date_declaration,
+    }
+
+    # 4. Génération du PDF avec WeasyPrint
+    html_string = render_to_string('components/formulaire_officiel.html', context)
+    html = HTML(string=html_string, base_url=request.build_absolute_uri())
+    
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="IRSA_{declaration.numero_document}.pdf"'
+    
+    # Création du PDF en mémoire
+    html.write_pdf(response)
+    
+    return response

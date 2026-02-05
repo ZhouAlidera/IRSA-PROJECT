@@ -24,6 +24,7 @@ urlpatterns = [
     path('',include('utilisateurs.urls')),
     path('',include('declarations.urls')),
     path('',include('NifAPI.urls')),
+     path('',include('Portail_employes.urls')),
     path("__reload__/", include("django_browser_reload.urls")),
 ]
 

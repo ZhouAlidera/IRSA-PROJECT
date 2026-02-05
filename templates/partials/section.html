@@ -1,0 +1,90 @@
+
+{% load static %}
+<div class="relative min-h-screen w-full flex items-center justify-center overflow-hidden font-sans">
+    
+    <div class="absolute inset-0 z-0">
+        <img src="{% static 'img/section.jpeg' %}" 
+             class="w-full h-full object-cover scale-105 animate-slow-zoom" 
+             alt="Antananarivo Panoramic View">
+        <div class="absolute inset-0 bg-gradient-to-b from-slate-900/40 via-slate-900/60 to-slate-900/80"></div>
+    </div>
+
+    <div class="relative z-10 max-w-5xl w-full px-6 py-12">
+        <div class="flex flex-col items-center text-center space-y-8">
+            
+            <div class="animate-fade-in-down">
+                <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white mb-4">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                    </span>
+                    <span class="text-[10px] font-black uppercase tracking-[0.3em]">Portail Officiel IRSA</span>
+                </div>
+            </div>
+
+            <div class="space-y-4 animate-fade-in">
+                <h1 class="text-5xl md:text-7xl font-black text-white tracking-tighter leading-none italic uppercase">
+                    Simplifiez votre <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-blue-300">Conformité Fiscale</span>
+                </h1>
+                <p class="max-w-2xl mx-auto text-slate-200 text-lg md:text-xl font-medium leading-relaxed">
+                    La plateforme intelligente de gestion et de déclaration de l'IRSA pour les employeurs à Madagascar. Rapide, sécurisé et certifié.
+                </p>
+            </div>
+
+            <div class="flex flex-col md:flex-row items-center gap-4 mt-4 animate-fade-in-up">
+                <a href="{% url 'login' %}" 
+                   class="group bg-indigo-600 hover:bg-indigo-500 text-white px-10 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-2xl shadow-indigo-500/40 flex items-center gap-3">
+                    Accéder à mon espace
+                    <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
+                <a href="#features" 
+                   class="px-10 py-5 rounded-2xl border border-white/30 text-white font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 backdrop-blur-sm transition-all">
+                    En savoir plus
+                </a>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12 border-t border-white/10 w-full animate-fade-in">
+                <div class="text-center">
+                    <p class="text-3xl font-black text-white italic">100%</p>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Digitalisé</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-3xl font-black text-white italic">Sec</p>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Cryptage SSL</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-3xl font-black text-white italic">24/7</p>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Disponibilité</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-3xl font-black text-white italic">DGI</p>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Conforme Madagascar</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes slow-zoom {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.1); }
+    }
+    .animate-slow-zoom {
+        animation: slow-zoom 20s infinite alternate ease-in-out;
+    }
+    .animate-fade-in { animation: fadeIn 1.5s ease-out forwards; }
+    .animate-fade-in-down { animation: fadeInDown 1s ease-out forwards; }
+    .animate-fade-in-up { animation: fadeInUp 1s ease-out forwards; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
