@@ -12,12 +12,14 @@ class RegisterStepOneForm(forms.Form):
         label="Numéro CIN",
         widget=forms.TextInput(attrs={'placeholder': 'Votre CIN', 'class': 'form-input'})
     )
+    nom_prenom = forms.CharField(required=False)
 
 class RegisterStepTwoForm(forms.Form):
     full_name = forms.CharField(
-        label="Nom et Prénoms",
-        widget=forms.TextInput(attrs={'readonly': 'readonly', 'class': 'bg-gray-100'})
-    )
+    label="Nom et Prénoms",
+    required=False,  # <-- C'EST CETTE LIGNE QUI RÈGLE TOUT
+    widget=forms.TextInput(attrs={'readonly': 'readonly', 'class': 'bg-gray-100'})
+)
     email = forms.EmailField(label="Email Personnel")
     password = forms.CharField(label="Mot de passe", widget=forms.PasswordInput)
     password_confirm = forms.CharField(label="Confirmer", widget=forms.PasswordInput)

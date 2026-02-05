@@ -99,15 +99,17 @@ def login_view(request):
             
             if hasattr(user, 'agentfiscale'):
                 # C'est un Agent de la DGI
-                return redirect("home") 
+                return redirect("dashboard_employeur") 
             
             elif hasattr(user, 'employeur'):
                 # C'est un Employeur/Entreprise
-                return redirect("home")
+                return redirect("dashboard_employeur")
+            elif hasattr(user, 'employe_profile'):
+                return redirect("dashboard_employe")
             
             else:
                 # Cas par défaut (ex: SuperAdmin ou compte sans profil encore créé)
-                return redirect("home")
+                return redirect("dashboard_employeur")
                 
         else:
             messages.error(request, "Email ou mot de passe incorrect.")

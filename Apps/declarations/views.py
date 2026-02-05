@@ -12,10 +12,11 @@ from utilisateurs.models import Employeur
 @login_required
 def declaration(request):
     return render(request,'declaration.html')
-
+# MISI ZVATRA TSY NORMALB-----------------------------
 @login_required
 def creer_periode_fiscale(request):
     if request.method == 'POST':
+        # employeur=request.user.employeur,
         form = PeriodeFiscaleForm(request.POST)
         if form.is_valid():
             # Au lieu de faire form.save(), on extrait les données propres

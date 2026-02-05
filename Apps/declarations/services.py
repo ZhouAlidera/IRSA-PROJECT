@@ -250,7 +250,7 @@ def dashboard_employeur(request):
     stats_queryset = (
         DeclarationIRSA.objects.filter(
             employeur=employeur, 
-            statut='confirme'
+            statut='valide'
         )
         .annotate(month=TruncMonth('periode__date_debut'))
         .values('month')
@@ -265,13 +265,13 @@ def dashboard_employeur(request):
     # Récupération de la toute dernière déclaration pour l'affichage de l'effectif
     derniere_decl = DeclarationIRSA.objects.filter(
         employeur=employeur,
-        statut='confirme'
+        statut='valide'
     ).order_by('-periode__date_debut').first()
 
     # Total IRSA cumulé sur l'année civile en cours
     total_annuel = DeclarationIRSA.objects.filter(
         employeur=employeur,
-        statut='confirme',
+        statut='valide',
         periode__annee=today.year
     ).aggregate(total=Sum('total_irsa'))['total'] or 0
 

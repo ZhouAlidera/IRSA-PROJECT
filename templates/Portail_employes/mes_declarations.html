@@ -1,0 +1,74 @@
+{% extends 'base_tailwind.html' %}
+{% block content %}
+{% include 'partials/messages.html' %}
+<div class="flex min-h-screen bg-slate-50">
+    <main class="flex-1 ml-0 md:ml-72 p-6 md:p-12">
+        <div class="mb-10 animate-fade-in">
+            <h1 class="text-4xl font-black text-slate-800 tracking-tight">Historique IRSA</h1>
+            <p class="text-slate-500 font-medium mt-2">Retrouvez le détail de vos revenus et impôts déclarés par vos employeurs.</p>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/60 border border-slate-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-900 text-white">
+                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em]">Période / Réf</th>
+                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em]">Employeur</th>
+                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em]">Salaire Imposable</th>
+                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em]">IRSA Retenu</th>
+                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em]">Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for ligne in lignes %}
+                        <tr class="hover:bg-slate-50/80 transition-all group">
+                            <td class="px-8 py-6">
+                                <div class="flex flex-col">
+                                    <span class="font-black text-slate-700 uppercase">{{ ligne.declaration.periode.periode_type }} {{ ligne.declaration.periode.annee }}</span>
+                                    <span class="text-[10px] text-slate-400 font-bold">{{ ligne.declaration.numero_document }}</span>
+                                </div>
+                            </td>
+                            <td class="px-8 py-6">
+                                <span class="text-sm font-bold text-slate-600 italic">{{ ligne.declaration.employeur.raison_sociale }}</span>
+                            </td>
+                            <td class="px-8 py-6">
+                                <span class="text-md font-black text-slate-800">{{ ligne.salaire_imposable }} Ar</span>
+                            </td>
+                            <td class="px-8 py-6">
+                                <span class="text-md font-black text-[#76aaaa] bg-[#76aaaa]/10 px-3 py-1 rounded-lg">
+                                    - {{ ligne.irsa_due }} Ar
+                                </span>
+                            </td>
+                            <td class="px-8 py-6">
+                                {% if ligne.declaration.statut == 'valide' %}
+                                    <span class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase rounded-full">
+                                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                                        Confirmé
+                                    </span>
+                                {% else %}
+                                    <span class="px-3 py-1 bg-amber-100 text-amber-700 text-[10px] font-black uppercase rounded-full">
+                                        En cours
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="px-8 py-32 text-center">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-20 h-20 bg-slate-100 rounded-[2rem] flex items-center justify-center text-slate-300 mb-4">
+                                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+                                    </div>
+                                    <p class="text-slate-400 font-black uppercase tracking-widest text-xs">Aucune donnée fiscale disponible pour le moment</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

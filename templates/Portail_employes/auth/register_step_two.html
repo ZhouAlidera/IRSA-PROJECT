@@ -1,6 +1,7 @@
 {% extends 'base_tailwind.html' %}
 {% block content %}
 {% include 'partials/header.html' %}
+{% include 'partials/messages.html' %}
 <div class="min-h-screen bg-[#F0F4F8] flex items-center justify-center px-4 py-12">
     <div class="w-full max-w-6xl bg-white rounded-[3rem] shadow-2xl overflow-hidden flex min-h-[700px] border border-slate-100 animate-fade-in-up">
         
@@ -53,6 +54,28 @@
                     </button>
                 </div>
             </form>
+            {% if form.errors %}
+<div class="mb-6 animate-shake">
+    <div class="p-4 bg-rose-50 border-l-4 border-rose-500 rounded-r-2xl shadow-sm">
+        <div class="flex items-center mb-2">
+            <svg class="w-4 h-4 text-rose-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="text-[10px] font-black uppercase text-rose-700 tracking-widest">Erreur de validation</span>
+        </div>
+        <ul class="space-y-1">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <li class="text-[11px] font-bold text-rose-600 uppercase italic">• {{ field|capfirst }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <li class="text-[11px] font-bold text-rose-600 uppercase italic">• {{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
         </div>
 
         <div class="hidden md:flex w-1/2 bg-slate-900 relative items-center justify-center p-20">
