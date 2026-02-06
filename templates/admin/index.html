@@ -1,0 +1,58 @@
+{% extends "admin/index.html" %}
+{% load i18n static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ dashboard_stats.total_employeurs|default:"0" }}</h3>
+                    <p>Employeurs Inscrits</p>
+                </div>
+                <div class="icon"><i class="fas fa-building"></i></div>
+                <a href="/admin/utilisateurs/employeur/" class="small-box-footer">Voir la liste <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ dashboard_stats.total_declarations|default:"0" }}</h3>
+                    <p>Déclarations ce mois</p>
+                </div>
+                <div class="icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                <a href="/admin/declarations/declarationirsas/" class="small-box-footer">Détails <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>{{ dashboard_stats.periodes_en_retard|default:"0" }}</h3>
+                    <p>Retards de paiement</p>
+                </div>
+                <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <a href="/admin/declarations/periodefiscale/" class="small-box-footer">Relancer <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ dashboard_stats.total_revenus|default:"0" }}</h3>
+                    <p>Revenus déclarés</p>
+                </div>
+                <div class="icon"><i class="fas fa-chart-line"></i></div>
+                <a href="#" class="small-box-footer">Rapport global <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    {% comment %} <div class="row">
+        <div class="col-md-12">
+            {{ block.super }}
+        </div>
+    </div> {% endcomment %}
+</div>
+{% endblock %}
