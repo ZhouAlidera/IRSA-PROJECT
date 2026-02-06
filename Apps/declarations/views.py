@@ -15,38 +15,40 @@ def declaration(request):
 # MISI ZVATRA TSY NORMALB-----------------------------
 @login_required
 def creer_periode_fiscale(request):
+    # On crée une clé unique par utilisateur
+    session_key = f'temp_periode_fiscale_{request.user.id}'
+    
     if request.method == 'POST':
-        # employeur=request.user.employeur,
         form = PeriodeFiscaleForm(request.POST)
         if form.is_valid():
-            # Au lieu de faire form.save(), on extrait les données propres
-            # On stocke tout dans un dictionnaire sérialisable pour la session
             data = form.cleaned_data
             
-            # Conversion des dates en chaînes (car les objets Date ne passent pas en JSON session)
-            request.session['temp_periode_fiscale'] = {
+            # Stockage spécifique à cet utilisateur
+            request.session[session_key] = {
                 'date_debut': data['date_debut'].isoformat(),
                 'date_fin': data['date_fin'].isoformat(),
                 'date_limite': data['date_limite'].isoformat() if data.get('date_limite') else None,
                 'annee': data.get('annee'),
                 'periode_type': data.get('periode_type', 'mensuel'),
             }
-            
-            # On redirige vers l'upload sans avoir rien créé en base
             return redirect('upload_annexe') 
     else:
-        # Si on revient sur la page, on peut pré-remplir avec la session existante
-        initial_data = request.session.get('temp_periode_fiscale', {})
-        form = PeriodeFiscaleForm(initial = initial_data)
+        # On ne pré-remplit QUE si c'est vraiment voulu (ex: bouton retour)
+        # Sinon, pour une nouvelle période, on laisse vide
+        initial_data = request.session.get(session_key, {})
+        form = PeriodeFiscaleForm(initial=initial_data)
     
-    return render(request, 'declaration/presentation.html', {'form': form})
+    # On ajoute des headers pour empêcher le cache du navigateur
+    response = render(request, 'declaration/presentation.html', {'form': form})
+    response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    return response
 
 import os
 from .models import PeriodeFiscale
 @login_required
 def upload_annexe(request):
     # 1. Récupération des données temporaires de la session (Step 1)
-    temp_periode = request.session.get('temp_periode_fiscale')
+    temp_periode = request.session.get(f'temp_periode_fiscale_{request.user.id}')
     
     # 2. Sécurité : Si aucune donnée temporaire n'existe, on redirige vers l'étape 1
     if not temp_periode:
@@ -66,8 +68,8 @@ def upload_annexe(request):
             # --- CRÉATION DE LA PÉRIODE EN BASE ---
             # C'est ici que l'on transforme le brouillon de session en objet réel
             try:
-                periode_obj = PeriodeFiscale.objects.create(
-                    # employeur=request.user.employeur,
+                periode_obj = PeriodeFiscale.objects.get_or_create(
+                    employeur=request.user.employeur,
                     date_debut=temp_periode['date_debut'],
                     date_fin=temp_periode['date_fin'],
                     date_limite=temp_periode.get('date_limite'),
@@ -78,7 +80,7 @@ def upload_annexe(request):
                 # Mise à jour de la session avec l'ID réel pour les étapes suivantes
                 request.session['current_periode_id'] = periode_obj.id
                 # On peut nettoyer la donnée temporaire
-                del request.session['temp_periode_fiscale']
+                del request.session[f'temp_periode_fiscale_{request.user.id}']
                 
             except Exception as e:
                 messages.error(request, f"Erreur lors de la création de la période : {e}")

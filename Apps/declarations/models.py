@@ -20,7 +20,7 @@ class PeriodeFiscale(models.Model):
         return str(self.annee)
     
     class Meta:
-        unique_together = ('annee', 'date_debut', 'date_fin')
+        unique_together = ('annee', 'date_debut', 'date_fin','employeur')
         app_label = 'declarations'
 
 

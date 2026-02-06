@@ -120,6 +120,8 @@ def valider_brouillon_vers_declaration(request, declaration_id):
             # Dans la vue finale après le save() réussi
             if 'temp_periode_fiscale' in request.session:
                del request.session['temp_periode_fiscale']
+            if 'current_periode_id' in request.session:
+               del request.session['current_periode_id']
 
             # Nettoyage définitif du brouillon
             lignes_brouillon.delete() 
@@ -587,11 +589,11 @@ def export_declaration_pdf(request, declaration_id):
 # view pour vider la session 
 # views.py
 def reset_session_debug(request):
-    keys_to_delete = ['temp_periode_fiscale', 'register_employe_data']
+    keys_to_delete = ['temp_periode_fiscale', 'register_employe_data','current_periode_id']
     for key in keys_to_delete:
         if key in request.session:
             del request.session[key]
-    return HttpResponse("Brouillons de session nettoyés ! <a href='/'>Retour</a>")
+    return HttpResponse("Brouillons de session nettoyés ! <a href='dashboard/'>Retour</a>")
 
 # urls.py
 

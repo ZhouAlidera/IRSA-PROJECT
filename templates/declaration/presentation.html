@@ -93,14 +93,19 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // On récupère l'ID de l'utilisateur pour isoler le stockage
+        const userId = "{{ user.id }}";
         const startInput = document.getElementById('id_date_debut');
         const endInput = document.getElementById('id_date_fin');
         const fields = ['id_date_debut', 'id_date_fin'];
         const submitBtn = document.querySelector('button[type="submit"]');
+
+        // Helper pour générer une clé unique par utilisateur
+        const getStoreKey = (id) => `user_${userId}_${id}`;
     
-        // 1. RESTAURATION : Au chargement
+        // 1. RESTAURATION : Au chargement, on ne récupère que les données de cet utilisateur
         fields.forEach(id => {
-            const savedValue = localStorage.getItem(id);
+            const savedValue = localStorage.getItem(getStoreKey(id));
             if (savedValue) {
                 document.getElementById(id).value = savedValue;
             }
@@ -110,43 +115,37 @@
             calculerPeriode();
         }
     
-        // --- LOGIQUE AMÉLIORÉE : AUTO-COMPLÉTION FIN DE MOIS ---
+        // --- LOGIQUE AUTO-COMPLÉTION FIN DE MOIS ---
         startInput.addEventListener('change', function() {
             if (this.value) {
                 const dateDebut = new Date(this.value);
-                
-                // Calcul du dernier jour du mois de la date de début
-                // (Mois + 1, Jour 0 = Dernier jour du mois précédent)
                 const dernierJour = new Date(dateDebut.getFullYear(), dateDebut.getMonth() + 1, 0);
                 
-                // Formatage YYYY-MM-DD pour l'input date
                 const year = dernierJour.getFullYear();
                 const month = String(dernierJour.getMonth() + 1).padStart(2, '0');
                 const day = String(dernierJour.getDate()).padStart(2, '0');
                 const dateFinAuto = `${year}-${month}-${day}`;
 
-                // On applique la date de fin automatiquement
                 endInput.value = dateFinAuto;
-                
-                // Contrainte : la fin ne peut pas être avant le début
                 endInput.setAttribute('min', this.value);
                 
-                // Sauvegarde et calcul
-                localStorage.setItem('id_date_debut', this.value);
-                localStorage.setItem('id_date_fin', dateFinAuto);
+                // Sauvegarde isolée par UserID
+                localStorage.setItem(getStoreKey('id_date_debut'), this.value);
+                localStorage.setItem(getStoreKey('id_date_fin'), dateFinAuto);
+                
                 calculerPeriode();
             }
         });
     
-        // 2. SAUVEGARDE & CALCUL (sur les autres changements manuels)
+        // 2. SAUVEGARDE & CALCUL (Changements manuels)
         endInput.addEventListener('change', function() {
-            localStorage.setItem('id_date_fin', this.value);
+            localStorage.setItem(getStoreKey('id_date_fin'), this.value);
             calculerPeriode();
         });
     
-        // 3. NETTOYAGE
+        // 3. NETTOYAGE : Supprime uniquement les clés de l'utilisateur actuel lors du submit
         document.querySelector('form').addEventListener('submit', function() {
-            fields.forEach(id => localStorage.removeItem(id));
+            fields.forEach(id => localStorage.removeItem(getStoreKey(id)));
         });
     
         function calculerPeriode() {
@@ -157,7 +156,6 @@
                 const d_debut = new Date(start);
                 const d_fin = new Date(end);
     
-                // Validation de cohérence
                 if (d_fin < d_debut) {
                     endInput.classList.add('border-rose-500', 'ring-rose-500/10');
                     submitBtn.disabled = true;
@@ -169,22 +167,17 @@
                     submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                 }
                 
-                // --- Calcul du type de période ---
-                // On ajoute 1 jour à la différence pour inclure les deux dates
                 const diffTime = Math.abs(d_fin - d_debut);
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
                 
                 const typeSelect = document.getElementById('id_periode_type');
                 
-                // Logique basée sur le nombre de jours approximatifs
                 if (diffDays <= 31) typeSelect.value = 'mensuel';
                 else if (diffDays <= 62) typeSelect.value = 'bimestriel';
                 else typeSelect.value = 'trimestriel';
                 
-                // Calcul date limite (15 du mois suivant la fin)
                 let dateLimite = new Date(d_fin.getFullYear(), d_fin.getMonth() + 1, 15);
                 
-                // Formatage de l'affichage
                 document.getElementById('id_date_limite').value = dateLimite.toISOString().split('T')[0];
                 document.getElementById('id_annee').value = d_fin.getFullYear();
             }
