@@ -22,8 +22,7 @@ import os
 # Application definition
 
 INSTALLED_APPS = [
-    # "unfold",
-    'jazzmin',
+    "unfold",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -64,103 +63,72 @@ MIDDLEWARE = [
     "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
-JAZZMIN_SETTINGS = {
-    # --- Titres et Branding ---
-    "site_title": "Portail Fiscal",
-    "site_header": "Direction des Impôts",
-    "site_brand": "Administration Fiscale",
-    "site_logo": None,  # Tu peux mettre le chemin vers ton logo : "img/logo.png"
-    "welcome_sign": "Bienvenue Agent Fiscal",
-    "copyright": "Gouvernement - Ministère des Finances",
-
-    # --- Recherche Globale ---
-    # Permet de chercher un employeur directement depuis la barre du haut
-    "search_model": ["utilisateurs.Employeur"], 
-
-    # --- Menu Utilisateur (Haut à droite) ---
-    "usermenu_links": [
-        {"name": "Support Technique", "url": "/support", "new_window": True},
-        {"model": "auth.user"}
-    ],
-
-    # --- Menu Latéral (Sidebar) ---
-    "show_sidebar": True,
-    "navigation_expanded": True,
-    "hide_apps": [],
-    "hide_models": [],
-
-    # Groupement des menus par métier pour l'agent
-    "side_menu_groups": [
-        {
-            "name": "Gestion des Contribuables",
-            "models": ["utilisateurs.Employeur", "auth.User"],
+UNFOLD = {
+    "SITE_TITLE": "DGI IRSA Admin",
+    "SITE_SYMBOL": "account_balance",
+    "COLORS": {
+        "primary": {
+            "50": "236 253 245",
+            "100": "209 250 229",
+            "200": "167 243 208",
+            "300": "110 231 183",
+            "400": "52 211 153",
+            "500": "16 185 129",  # Vert clair principal (Emerald 500)
+            "600": "5 150 105",
+            "700": "4 120 87",
+            "800": "6 95 70",
+            "900": "6 78 59",
+            "950": "2 44 34",
         },
-        {
-            "name": "Opérations Fiscales",
-            "models": [
-                "declarations.PeriodeFiscale", 
-                "declarations.Declaration", # Ajoute tes autres modèles ici
-            ],
-        },
-    ],
-
-    # --- Icônes (Font Awesome) ---
-    "icons": {
-        "auth": "fas fa-users-cog",
-        "auth.user": "fas fa-user-tie",
-        "utilisateurs.Employeur": "fas fa-building",
-        "declarations.PeriodeFiscale": "fas fa-calendar-check",
-        "declarations.Declaration": "fas fa-file-invoice-dollar",
     },
-    "default_icon_parents": "fas fa-chevron-circle-right",
-    "default_icon_children": "fas fa-circle",
-
-    # --- Liens Rapides (Top Menu) ---
-    "topmenu_links": [
-        {"name": "Accueil", "url": "admin:index"},
-        {"name": "Nouvelle Période", "model": "declarations.PeriodeFiscale"},
-    ],
-
-    # --- Personnalisation Visuelle ---
-    "show_ui_builder": False,  # Désactivé pour la production
-    
-    # IMPORTANT : Chemin vers ton CSS Tailwind compilé pour styliser ton futur Dashboard
-    # "custom_css": "css/output.css", 
-    "custom_js": None,
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": False,
+        "navigation": [
+            {
+                "title": "Tableau de Bord",
+                "items": [
+                    {
+                        "title": "Accueil Statistiques",
+                        "icon": "dashboard",
+                        "link": "/admin/",
+                    },
+                ],
+            },
+            {
+                "title": "Gestion Fiscale",
+                "items": [
+                    {
+                        "title": "Employeurs",
+                        "icon": "business",
+                        "link": "/admin/utilisateurs/employeur/",
+                    },
+                    {
+                        "title": "Déclarations IRSA",
+                        "icon": "description",
+                        "link": "/admin/declarations/declarationirsa/",
+                    },
+                    {
+                        "title": "Périodes Fiscales",
+                        "icon": "event",
+                        "link": "/admin/declarations/periodefiscale/",
+                    },
+                ],
+            },
+            {
+                "title": "Paramètres",
+                "items": [
+                    {
+                        "title": "Utilisateurs Admin",
+                        "icon": "group",
+                        "link": "/admin/auth/user/",
+                    },
+                ],
+            },
+        ],
+    },
 }
 
-# Configuration optionnelle pour un look plus "Institutionnel" (Bleu/Gris)
-JAZZMIN_UI_CUSTOMIZER = {
-    "navbar_small_text": False,
-    "footer_small_text": False,
-    "body_small_text": False,
-    "brand_small_text": False,
-    "brand_colour": "navbar-dark",
-    "accent": "accent-primary",
-    "navbar": "navbar-dark navbar-primary", # Bleu pro
-    "no_navbar_border": False,
-    "navbar_fixed": True,
-    "layout_boxed": False,
-    "footer_fixed": False,
-    "sidebar_fixed": True,
-    "sidebar": "sidebar-dark-primary",
-    "sidebar_nav_small_text": False,
-    "sidebar_disable_expand": False,
-    "sidebar_nav_child_indent": False,
-    "sidebar_nav_compact_style": False,
-    "sidebar_nav_legacy_style": False,
-    "sidebar_nav_flat_style": False,
-    "theme": "default",
-    "dark_mode_theme": None,
-    "button_classes": {
-        "primary": "btn-primary",
-        "secondary": "btn-secondary",
-        "info": "btn-info",
-        "warning": "btn-warning",
-        "danger": "btn-danger",
-        "success": "btn-success"
-    }
-}
 ROOT_URLCONF = 'IRSA.urls'
 
 CORS_ALLOW_ALL_ORIGINS = True

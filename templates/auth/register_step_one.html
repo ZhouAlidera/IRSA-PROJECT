@@ -2,157 +2,137 @@
 {% block content %}
 {% include 'partials/header.html' %}
 
-<div class="min-h-screen bg-[#F4F7F6] flex items-center justify-center px-4 py-12 font-sans">
-    <div class="w-full max-w-6xl bg-white rounded-[3rem] shadow-[0_40px_80px_-20px_rgba(45,139,139,0.1)] overflow-hidden flex min-h-[750px] border border-emerald-50 animate-fade-in-up">
+<div class="min-h-[90vh] bg-[#f8fafc] flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-5xl bg-white rounded-[2.5rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.05)] overflow-hidden flex min-h-[650px] border border-slate-100 animate-fade-in">
         
-        <div class="w-full md:w-1/2 p-8 md:p-20 flex flex-col justify-center relative bg-white">
+        <div class="w-full md:w-1/2 p-10 md:p-16 flex flex-col justify-center">
             
-            <div class="mb-12 stagger-item">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-12 h-12 bg-gradient-to-br from-[#2D8B8B] to-[#1E7F3C] rounded-2xl flex items-center justify-center shadow-xl shadow-emerald-100 rotate-3 hover:rotate-0 transition-transform duration-500">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                        </svg>
-                    </div>
-                    <span class="text-[11px] font-black uppercase tracking-[0.3em] text-[#2D8B8B]">Portail Employeur</span>
+            <div class="mb-10">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="w-6 h-1 bg-[#2D8B8B] rounded-full"></span>
+                    <span class="text-[10px] font-black uppercase tracking-[0.3em] text-[#2D8B8B]">Étape 01/02</span>
                 </div>
-                <h2 class="text-4xl font-black text-slate-800 tracking-tight mb-4">Identification.</h2>
-                <p class="text-slate-400 font-medium text-lg">Vérification de votre établissement via le NIF.</p>
+                <h2 class="text-3xl font-black text-slate-900 tracking-tighter uppercase italic">Identification <span class="text-[#2D8B8B]">DGI</span></h2>
+                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest mt-2">Relier votre établissement via le NIF</p>
             </div>
 
-            <div class="flex items-center gap-6 mb-12 stagger-item">
-                <div class="flex items-center gap-3">
-                    <span class="w-10 h-10 rounded-2xl bg-[#2D8B8B] text-white flex items-center justify-center text-sm font-black shadow-lg shadow-emerald-100">1</span>
-                    <span class="text-[11px] font-black uppercase tracking-widest text-[#2D8B8B]">Établissement</span>
-                </div>
-                <div class="h-1 w-12 bg-emerald-50 rounded-full"></div>
-                <div class="flex items-center gap-3 opacity-20">
-                    <span class="w-10 h-10 rounded-2xl bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-black">2</span>
-                    <span class="text-[11px] font-black uppercase tracking-widest text-slate-400">Accès</span>
-                </div>
-            </div>
-
-            <form method="post" id="regForm1" class="space-y-8 stagger-item">
+            <form method="post" id="regForm1" class="space-y-6">
                 {% csrf_token %}
                 
                 <div class="space-y-2 group">
-                    <label class="text-[10px] font-black uppercase tracking-[0.2em] text-[#2D8B8B] ml-2 group-focus-within:text-emerald-700 transition-colors">Numéro d'Identification Fiscale (NIF)</label>
+                    <label class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Numéro d'Identification Fiscale</label>
                     <div class="relative">
-                        <input type="text" name="nif" id="nif_input" required placeholder="Ex: 2001254..."
-                               class="w-full px-8 py-5 rounded-[1.5rem] border-2 border-slate-50 bg-[#F9FAFB] focus:bg-white focus:outline-none focus:ring-0 focus:border-[#2D8B8B] transition-all font-bold text-slate-700 uppercase tracking-widest shadow-sm" />
+                        <input type="text" name="nif" id="nif_input" required placeholder="0000000000"
+                               class="w-full px-6 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-[#2D8B8B] transition-all font-black text-slate-700 tracking-[0.2em] shadow-sm placeholder:text-slate-300" />
                         
-                        <div class="absolute right-5 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2">
                             <div id="nif_loader" class="hidden animate-spin h-5 w-5 border-2 border-[#2D8B8B] border-t-transparent rounded-full"></div>
-                            <div id="nif_success" class="hidden w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center animate-bounce-short">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            <div id="nif_success" class="hidden text-emerald-500">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
                             </div>
                         </div>
                     </div>
-                    <p id="nif_error" class="hidden text-[10px] font-bold text-rose-500 ml-4 animate-shake uppercase tracking-tighter">NIF introuvable dans la base DGI</p>
+                    <p id="nif_error" class="hidden text-[9px] font-bold text-rose-500 uppercase tracking-tighter italic">NIF invalide ou introuvable dans la base fiscale.</p>
                 </div>
 
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2">Raison Sociale (Auto)</label>
-                    <input type="text" name="raison_sociale" id="raison_input" required readonly
-                           class="w-full px-8 py-5 rounded-[1.5rem] border-2 border-transparent bg-slate-50 font-black text-slate-800 cursor-not-allowed transition-all opacity-60" />
-                </div>
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2">Adresse</label>
-                    <input type="text" name="adresse" id="adresse" required
-                           class="w-full px-8 py-5 rounded-[1.5rem] border-2 border-transparent bg-slate-50 font-black text-slate-800 transition-all opacity-60" />
+                <div class="space-y-2 opacity-50 transition-opacity duration-500" id="raison_container">
+                    <label class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Raison Sociale détectée</label>
+                    <input type="text" name="raison_sociale" id="raison_input" readonly
+                           class="w-full px-6 py-4 rounded-2xl bg-slate-100 border-none font-black text-slate-800 italic uppercase text-xs cursor-not-allowed" placeholder="---" />
                 </div>
 
-                <div class="flex items-center justify-between pt-6">
-                    <a href="{% url 'login' %}" class="group flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-[#2D8B8B] transition-all">
-                        <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                        Retour
-                    </a>
+                <div class="flex flex-col gap-4 pt-6">
                     <button type="submit" id="submit_btn" disabled 
-                            class="px-12 py-5 bg-slate-200 text-slate-400 rounded-2xl transition-all duration-500 font-black uppercase text-[11px] tracking-[0.2em] flex items-center gap-4 cursor-not-allowed shadow-inner">
-                        Suivant
+                            class="w-full py-4 bg-slate-200 text-slate-400 rounded-2xl transition-all duration-300 font-black uppercase text-[11px] tracking-[0.2em] flex items-center justify-center gap-3 cursor-not-allowed">
+                        Continuer l'inscription
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                     </button>
+                    
+                    <a href="{% url 'login' %}" class="text-center text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-[#2D8B8B] transition-colors">
+                        Déjà inscrit ? Se connecter
+                    </a>
                 </div>
             </form>
         </div>
 
-        <div class="hidden md:flex w-1/2 bg-gradient-to-br from-[#E6F4F1] to-[#D1E9E4] relative items-center justify-center p-20 overflow-hidden">
-            <div class="absolute top-[-5%] right-[-5%] w-[450px] h-[450px] bg-[#2D8B8B] rounded-full opacity-10 animate-pulse"></div>
-            <div class="absolute bottom-[-10%] left-[-10%] w-[350px] h-[350px] bg-[#1E7F3C] rounded-full opacity-5 animate-bounce-slow"></div>
+        <div class="hidden md:flex w-1/2 bg-[#2D8B8B] relative overflow-hidden items-center justify-center p-16">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-emerald-900/20 rounded-full -ml-32 -mb-32 blur-3xl"></div>
             
-            <div class="relative z-10 text-center space-y-8">
-                <div class="bg-white/30 backdrop-blur-2xl border border-white/50 p-12 rounded-[4rem] shadow-2xl transition-transform hover:scale-105 duration-700">
-                    <div class="inline-block p-5 bg-white text-[#2D8B8B] rounded-3xl mb-8 shadow-xl">
-                         <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                    </div>
-                    <h3 class="text-3xl font-black text-[#1E293B] italic leading-tight">Portail Sécurisé<br>Gestion IRSA</h3>
-                    <div class="h-1 w-12 bg-[#2D8B8B] mx-auto my-6 rounded-full"></div>
-                    <p class="text-[#2D8B8B] font-bold uppercase tracking-[0.3em] text-[10px]">République de Madagascar</p>
+            <div class="relative z-10 text-center">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 mb-8 shadow-2xl">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
                 </div>
+                <h3 class="text-2xl font-black text-white uppercase italic tracking-tighter leading-tight">Portail de Télédéclaration <br><span class="text-emerald-300">IRSA Madagascar</span></h3>
+                <div class="w-12 h-1 bg-white/20 mx-auto my-6 rounded-full"></div>
+                <p class="text-emerald-100/60 font-bold uppercase tracking-[0.2em] text-[9px] max-w-xs mx-auto leading-relaxed">
+                    Accès sécurisé réservé aux employeurs immatriculés auprès de la Direction Générale des Impôts.
+                </p>
+            </div>
+            
+            <div class="absolute bottom-8 flex items-center gap-3">
+                <div class="w-1 h-8 bg-white/20"></div>
+                <p class="text-[8px] font-black text-white/40 uppercase tracking-[0.4em] text-left">Ministère de l'Économie<br>et des Finances</p>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-    /* Les mêmes animations mais centrées sur les nouvelles couleurs */
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .stagger-item { opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .stagger-item:nth-child(1) { animation-delay: 0.1s; }
-    .stagger-item:nth-child(2) { animation-delay: 0.2s; }
-    .stagger-item:nth-child(3) { animation-delay: 0.3s; }
-
-    @keyframes bounce-short { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
-    .animate-bounce-short { animation: bounce-short 0.6s ease-in-out infinite; }
-    
-    .animate-bounce-slow { animation: bounce 8s infinite ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const fields = {
-        nif: document.getElementById('nif_input'),
-        raison: document.getElementById('raison_input')
-    };
+    const nifInput = document.getElementById('nif_input');
+    const raisonInput = document.getElementById('raison_input');
+    const raisonContainer = document.getElementById('raison_container');
     const submitBtn = document.getElementById('submit_btn');
     const nifLoader = document.getElementById('nif_loader');
     const nifSuccess = document.getElementById('nif_success');
     const nifError = document.getElementById('nif_error');
 
-    fields.nif.addEventListener('blur', function() { 
-        if(this.value.length >= 8) {
+    nifInput.addEventListener('input', function() {
+        if(this.value.length >= 10) { // Longueur standard NIF
             nifLoader.classList.remove('hidden');
-            nifSuccess.classList.add('hidden');
             nifError.classList.add('hidden');
+            nifSuccess.classList.add('hidden');
 
-            // Simulation API ou appel réel
-            fetch(`/api/nif-info/?nif=${encodeURIComponent(this.value)}`)
-                .then(res => res.json())
-                .then(data => {
-                    nifLoader.classList.add('hidden');
-                    if (data.exists) {
-                        fields.raison.value = data.data.raison_sociale;
-                        fields.raison.parentElement.classList.remove('opacity-60');
-                        nifSuccess.classList.remove('hidden');
-                        
-                        // Débloquer le bouton avec la couleur Émeraude
-                        submitBtn.disabled = false;
-                        submitBtn.className = "px-12 py-5 bg-[#2D8B8B] text-white rounded-2xl shadow-[0_15px_30px_-5px_rgba(45,139,139,0.3)] hover:bg-[#1E7F3C] hover:-translate-y-1 active:scale-95 transition-all duration-500 font-black uppercase text-[11px] tracking-[0.2em] flex items-center gap-4 cursor-pointer";
-                    } else {
-                        nifError.classList.remove('hidden');
-                        resetState();
-                    }
-                });
+            // Simulation d'appel API
+            setTimeout(() => {
+                nifLoader.classList.add('hidden');
+                // ICI: Remplacer par ton vrai fetch
+                const mockFound = true; 
+
+                if (mockFound) {
+                    raisonInput.value = "ENTREPRISE EXEMPLE SARL";
+                    raisonContainer.classList.remove('opacity-50');
+                    nifSuccess.classList.remove('hidden');
+                    
+                    // Activation du bouton
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+                    submitBtn.classList.add('bg-[#2D8B8B]', 'text-white', 'hover:bg-emerald-600', 'shadow-lg', 'shadow-emerald-900/20');
+                } else {
+                    nifError.classList.remove('hidden');
+                    resetState();
+                }
+            }, 800);
+        } else {
+            resetState();
         }
     });
 
     function resetState() {
         submitBtn.disabled = true;
-        submitBtn.className = "px-12 py-5 bg-slate-200 text-slate-400 rounded-2xl transition-all duration-500 font-black uppercase text-[11px] tracking-[0.2em] flex items-center gap-4 cursor-not-allowed shadow-inner";
+        submitBtn.classList.add('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+        submitBtn.classList.remove('bg-[#2D8B8B]', 'text-white', 'hover:bg-emerald-600', 'shadow-lg');
+        raisonInput.value = "---";
+        raisonContainer.classList.add('opacity-50');
         nifSuccess.classList.add('hidden');
-        fields.raison.value = "";
-        fields.raison.parentElement.classList.add('opacity-60');
     }
 });
 </script>

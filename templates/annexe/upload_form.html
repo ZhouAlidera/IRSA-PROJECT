@@ -1,28 +1,32 @@
 {% extends 'base_tailwind.html' %}
 {% block content %}
-{% include 'partials/header.html' %}
+
 {% include 'partials/stepper.html' with current_step=2 %}
 
-<div class="min-h-screen bg-white py-12 px-4">
+<div class="min-h-[calc(100vh-100px)] bg-[#F8FAFC] py-10 px-6 lg:px-10">
     <div class="max-w-6xl mx-auto">
         
-        <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-                <h1 class="text-3xl font-black text-slate-900 tracking-tight italic uppercase">
-                    Pièces <span class="text-[#2D8B8B]">Jointes</span>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3 italic uppercase">
+                    Pièces <span class="text-emerald-600">Jointes</span>
                 </h1>
-                <p class="text-slate-500 font-medium mt-1 uppercase text-[10px] tracking-[0.2em]">Étape 02 : Importation des données salariales</p>
+                <div class="flex items-center gap-2 mt-2">
+                    <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[9px] font-black uppercase tracking-wider">Étape 02</span>
+                    <p class="text-slate-400 font-bold uppercase text-[10px] tracking-[0.1em]">Importation des données salariales</p>
+                </div>
             </div>
             
-            <div class="flex items-center gap-3">
-                <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">Période :</span>
-                <span class="px-4 py-2 bg-slate-50 text-slate-700 rounded-xl text-[10px] font-black border border-slate-100 shadow-sm flex items-center gap-2">
-                    {% if periode_data %}
-                        <span class="text-[#2D8B8B] italic uppercase">{{ periode_data.periode_type }}</span> {{ periode_data.annee }}
-                    {% else %}
-                        <span class="text-rose-500 uppercase">Non définie</span>
-                    {% endif %}
-                </span>
+            <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
+                <div class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-[9px] font-black uppercase text-slate-400 tracking-tighter">Période Active</span>
+                    <span class="text-[11px] font-black text-slate-900 uppercase italic">
+                        {% if periode_data %}{{ periode_data.periode_type }} {{ periode_data.annee }}{% else %}Non définie{% endif %}
+                    </span>
+                </div>
             </div>
         </div>
 
@@ -30,111 +34,129 @@
             
             <div class="lg:col-span-8 space-y-6">
                 
-                <form method="POST" enctype="multipart/form-data" class="bg-white rounded-[2rem] border border-slate-100 shadow-[0_15px_40px_rgba(0,0,0,0.03)] overflow-hidden">
+                <form method="POST" enctype="multipart/form-data" class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden transition-all hover:shadow-md">
                     {% csrf_token %}
                     
-                    <div class="p-8 md:p-10">
+                    <div class="p-8 md:p-12">
                         <div class="relative group">
-                            <label id="dropzone" class="relative block border-2 border-dashed border-slate-200 rounded-[1.5rem] bg-slate-50/50 p-10 transition-all hover:border-[#2D8B8B] hover:bg-white flex flex-col items-center justify-center cursor-pointer">
-                                <div class="w-16 h-16 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500">
-                                    <svg class="w-8 h-8 text-[#2D8B8B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                                    </svg>
-                                </div>
-                                <div class="text-center">
-                                    <span class="text-sm font-black text-slate-900 block uppercase italic tracking-tight">Cliquer pour importer l'annexe</span>
-                                    <span class="text-[9px] text-slate-400 block font-bold uppercase tracking-[0.2em] mt-1 text-center">Formats acceptés : .XLSX, .XLS</span>
+                            <label id="dropzone" class="relative block border-2 border-dashed border-slate-200 rounded-[2rem] bg-slate-50/50 p-16 transition-all hover:border-emerald-500 hover:bg-white flex flex-col items-center justify-center cursor-pointer overflow-hidden">
+                                
+                                <div class="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/[0.02] transition-colors"></div>
+
+                                <div class="relative z-10 flex flex-col items-center">
+                                    <div class="w-20 h-20 bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                                        <svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="text-center">
+                                        <h3 class="text-lg font-black text-slate-900 uppercase italic tracking-tight">Déposer votre annexe ici</h3>
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-2">ou cliquez pour parcourir vos fichiers</p>
+                                    </div>
                                 </div>
                                 <input type="file" name="file" id="file_input" class="absolute inset-0 opacity-0 cursor-pointer" accept=".xlsx, .xls" required onchange="updateFileName(this)">
                             </label>
 
-                            <div id="file_name_display" class="hidden mt-4 flex items-center justify-between p-4 bg-slate-900 rounded-2xl text-white animate-in slide-in-from-top-2 duration-300">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 bg-[#2D8B8B] rounded-lg flex items-center justify-center">
-                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            <div id="file_name_display" class="hidden mt-6 flex items-center justify-between p-5 bg-slate-900 rounded-2xl text-white animate-in slide-in-from-top-4 duration-500">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                     </div>
-                                    <p id="file_name_text" class="text-[11px] font-bold truncate max-w-[200px] italic"></p>
+                                    <div>
+                                        <p id="file_name_text" class="text-xs font-black italic tracking-wide"></p>
+                                        <p class="text-[9px] text-emerald-400 font-bold uppercase">Fichier prêt pour analyse</p>
+                                    </div>
                                 </div>
-                                <button type="button" onclick="location.reload()" class="text-slate-400 hover:text-white transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                <button type="button" onclick="location.reload()" class="p-2 hover:bg-white/10 rounded-lg transition-colors text-slate-400 hover:text-white">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
-                        <a href="{% url 'presentation' %}" class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors italic">← Retour</a>
-                        <button type="submit" class="px-10 py-4 bg-[#2D8B8B] text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-[#1E7F3C] transition-all shadow-lg shadow-[#2D8B8B]/20 active:scale-95">
-                            Analyser les données
+                    <div class="px-8 py-8 bg-slate-50/80 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-6">
+                        <a href="{% url 'presentation' %}" class="group flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors italic">
+                            <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                            Retour
+                        </a>
+                        <button type="submit" class="w-full sm:w-auto px-12 py-5 bg-emerald-600 text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 hover:-translate-y-1 active:scale-95">
+                            Lancer l'analyse intelligente
                         </button>
                     </div>
                 </form>
 
-                <div class="bg-white rounded-[2rem] border border-slate-100 p-6 flex flex-col md:flex-row items-center justify-between gap-4 border-l-4 border-l-amber-400 shadow-sm">
-                    <div class="flex items-center gap-4 text-center md:text-left">
-                        <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center shrink-0">
-                            <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <div class="bg-white rounded-3xl border border-slate-100 p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm border-l-4 border-l-amber-400">
+                    <div class="flex items-center gap-5">
+                        <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center shrink-0 shadow-inner">
+                            <svg class="w-7 h-7 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                         </div>
                         <div>
-                            <h4 class="text-[11px] font-black text-slate-900 uppercase italic italic tracking-tight">Saisie Manuelle</h4>
-                            <p class="text-[10px] font-medium text-slate-500">Pour les petits effectifs ou corrections rapides.</p>
+                            <h4 class="text-xs font-black text-slate-900 uppercase italic tracking-tight">Pas de fichier Excel ?</h4>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mt-1">Utilisez la saisie manuelle pour les petits effectifs.</p>
                         </div>
                     </div>
-                    <a href="{% url 'valider_saisie_manuelle' %}" class="px-6 py-3 border-2 border-slate-100 text-slate-600 font-black rounded-xl hover:border-amber-400 hover:text-amber-600 transition-all uppercase text-[9px] tracking-widest">
-                        Commencer
+                    <a href="{% url 'valider_saisie_manuelle' %}" class="px-8 py-4 bg-white border-2 border-slate-100 text-slate-600 font-black rounded-xl hover:border-amber-400 hover:text-amber-600 transition-all uppercase text-[9px] tracking-widest shadow-sm">
+                        Saisie Manuelle
                     </a>
                 </div>
             </div>
 
             <div class="lg:col-span-4 space-y-6">
-                <div class="bg-slate-900 rounded-[2rem] p-8 text-white shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-[#2D8B8B]/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+                
+                <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl"></div>
                     
-                    <h4 class="text-[11px] font-black uppercase tracking-[0.2em] mb-8 text-[#2D8B8B] italic">Processus d'analyse</h4>
+                    <h4 class="text-[10px] font-black uppercase tracking-[0.25em] mb-10 text-emerald-400 flex items-center gap-2">
+                        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                        Pipeline d'analyse
+                    </h4>
                     
-                    <div class="space-y-8 relative">
-                        <div class="absolute left-[11px] top-2 bottom-2 w-[2px] bg-slate-800"></div>
+                    <div class="space-y-10 relative">
+                        <div class="absolute left-[11px] top-2 bottom-2 w-[1px] bg-slate-800"></div>
 
-                        <div class="relative flex gap-4">
-                            <div class="w-6 h-6 rounded-full bg-[#2D8B8B] flex items-center justify-center z-10 ring-4 ring-slate-900">
-                                <span class="text-[9px] font-black">1</span>
+                        <div class="relative flex gap-5">
+                            <div class="w-6 h-6 rounded-lg bg-emerald-500 flex items-center justify-center z-10 ring-4 ring-slate-900 shadow-lg shadow-emerald-500/40">
+                                <span class="text-[9px] font-black">01</span>
                             </div>
                             <div>
-                                <h5 class="text-[10px] font-black uppercase tracking-tight italic">Extraction</h5>
-                                <p class="text-slate-400 text-[10px] mt-1 leading-relaxed">Lecture intelligente de votre fichier Excel et identification des colonnes.</p>
+                                <h5 class="text-[10px] font-black uppercase tracking-tight italic">Extraction Data</h5>
+                                <p class="text-slate-500 text-[10px] mt-2 leading-relaxed font-medium">Lecture OCR et identification automatique des rubriques salariales.</p>
                             </div>
                         </div>
 
-                        <div class="relative flex gap-4">
-                            <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center z-10 ring-4 ring-slate-900">
-                                <span class="text-[9px] font-black">2</span>
+                        <div class="relative flex gap-5">
+                            <div class="w-6 h-6 rounded-lg bg-slate-800 flex items-center justify-center z-10 ring-4 ring-slate-900 border border-slate-700">
+                                <span class="text-[9px] font-black text-slate-400">02</span>
                             </div>
                             <div>
-                                <h5 class="text-[10px] font-black uppercase tracking-tight italic">Contrôle IRSA</h5>
-                                <p class="text-slate-400 text-[10px] mt-1 leading-relaxed">Vérification automatique de la conformité des calculs d'impôts.</p>
+                                <h5 class="text-[10px] font-black uppercase tracking-tight italic">Moteur Fiscal IRSA</h5>
+                                <p class="text-slate-500 text-[10px] mt-2 leading-relaxed font-medium">Vérification de la base taxable et recalcul des tranches d'impôt.</p>
                             </div>
                         </div>
 
-                        <div class="relative flex gap-4">
-                            <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center z-10 ring-4 ring-slate-900">
-                                <span class="text-[9px] font-black">3</span>
+                        <div class="relative flex gap-5">
+                            <div class="w-6 h-6 rounded-lg bg-slate-800 flex items-center justify-center z-10 ring-4 ring-slate-900 border border-slate-700">
+                                <span class="text-[9px] font-black text-slate-400">03</span>
                             </div>
                             <div>
-                                <h5 class="text-[10px] font-black uppercase tracking-tight italic">Rapport</h5>
-                                <p class="text-slate-400 text-[10px] mt-1 leading-relaxed">Génération d'un récapitulatif détaillé pour validation finale.</p>
+                                <h5 class="text-[10px] font-black uppercase tracking-tight italic">Rapport Flash</h5>
+                                <p class="text-slate-500 text-[10px] mt-2 leading-relaxed font-medium">Synthèse instantanée des anomalies et des montants totaux.</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-slate-50 rounded-[2rem] border border-slate-100 p-6 text-center group">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-4 italic italic">Besoin du format type ?</p>
-                    <a href="#" class="inline-flex items-center gap-3 text-[10px] font-black text-[#2D8B8B] hover:text-slate-900 transition-colors uppercase tracking-widest">
-                        <div class="p-2 bg-white rounded-lg shadow-sm group-hover:shadow-md transition-shadow">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div class="bg-emerald-50 rounded-[2rem] border border-emerald-100 p-8 group hover:bg-emerald-600 transition-all duration-500 cursor-help">
+                    <p class="text-[9px] font-black text-emerald-600 group-hover:text-emerald-200 uppercase tracking-widest mb-5 transition-colors">Format requis</p>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </div>
+                            <span class="text-xs font-black text-slate-900 group-hover:text-white transition-colors">Modèle Canevas .xlsx</span>
                         </div>
-                        Modèle Canevas .xlsx
-                    </a>
+                        <svg class="w-5 h-5 text-emerald-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </div>
                 </div>
             </div>
         </div>
@@ -150,9 +172,10 @@ function updateFileName(input) {
     if (input.files && input.files[0]) {
         text.innerText = input.files[0].name;
         display.classList.remove('hidden');
-        // On réduit la visibilité de la zone de drop pour focaliser sur le fichier prêt
-        dropzone.classList.add('opacity-40');
+        dropzone.classList.add('opacity-40', 'pointer-events-none', 'scale-[0.98]');
+        dropzone.querySelector('h3').innerText = "Fichier sélectionné";
     }
 }
 </script>
+
 {% endblock %}

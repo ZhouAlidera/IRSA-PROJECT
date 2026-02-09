@@ -4,92 +4,105 @@
 {% include 'partials/stepper.html' with current_step=1 %}
 {% include 'partials/messages.html' %}
 
-<div class="min-h-screen bg-white py-16 px-4">
-    <div class="max-w-4xl mx-auto">
+<div class="min-h-[calc(100vh-100px)] bg-[#F8FAFC] py-12 px-6 lg:px-10 font-sans">
+    <div class="max-w-5xl mx-auto">
         
-        <div class="mb-12">
-            <h1 class="text-4xl font-black text-slate-900 tracking-tight italic uppercase">
-                Configuration <span class="text-[#2D8B8B]">Période</span>
-            </h1>
-            <div class="h-1.5 w-24 bg-[#2D8B8B] mt-4 rounded-full"></div>
-            <p class="text-slate-500 text-sm mt-4 font-medium max-w-xl">
-                Définissez l'intervalle temporel de votre déclaration. Le système calculera automatiquement votre échéance légale.
-            </p>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+            <div>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                    <span class="p-3 bg-emerald-600 text-white rounded-2xl shadow-lg shadow-emerald-100">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </span>
+                    CONFIGURATION <span class="italic text-emerald-600 uppercase">PÉRIODE</span>
+                </h1>
+                <p class="text-slate-500 text-sm mt-3 font-medium">
+                    Définissez l'intervalle temporel. Le système calculera automatiquement votre <span class="text-slate-900 font-bold underline decoration-emerald-500/30">échéance fiscale</span>.
+                </p>
+            </div>
         </div>
 
         <form method="post" class="relative">
             {% csrf_token %}
             
-            <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.05)] overflow-hidden">
-                <div class="p-8 md:p-12">
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        
-                        <div class="space-y-4">
-                            <label for="id_date_debut" class="flex items-center gap-2 text-[12px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                                <svg class="w-4 h-4 text-[#2D8B8B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                Date de début
-                            </label>
-                            <input type="date" name="date_debut" id="id_date_debut" required
-                                class="w-full bg-slate-50 border-2 border-slate-100 text-slate-900 text-base font-bold rounded-2xl focus:ring-4 focus:ring-[#2D8B8B]/10 focus:border-[#2D8B8B] focus:bg-white block p-5 transition-all outline-none">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8 md:p-12 transition-all hover:shadow-md">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                            
+                            <div class="group">
+                                <label for="id_date_debut" class="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 group-focus-within:text-emerald-600 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    Date de début
+                                </label>
+                                <input type="date" name="date_debut" id="id_date_debut" required
+                                    class="w-full bg-slate-50 border-2 border-slate-100 text-slate-900 text-lg font-black rounded-2xl focus:ring-8 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white block p-5 transition-all outline-none">
+                            </div>
+
+                            <div class="group">
+                                <label for="id_date_fin" class="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 group-focus-within:text-emerald-600 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    Date de fin
+                                </label>
+                                <input type="date" name="date_fin" id="id_date_fin" required
+                                    class="w-full bg-slate-50 border-2 border-slate-100 text-slate-900 text-lg font-black rounded-2xl focus:ring-8 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white block p-5 transition-all outline-none">
+                            </div>
                         </div>
 
-                        <div class="space-y-4">
-                            <label for="id_date_fin" class="flex items-center gap-2 text-[12px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                                <svg class="w-4 h-4 text-[#2D8B8B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                Date de fin
-                            </label>
-                            <input type="date" name="date_fin" id="id_date_fin" required
-                                class="w-full bg-slate-50 border-2 border-slate-100 text-slate-900 text-base font-bold rounded-2xl focus:ring-4 focus:ring-[#2D8B8B]/10 focus:border-[#2D8B8B] focus:bg-white block p-5 transition-all outline-none">
-                        </div>
-                    </div>
-
-                    <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100/50">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Année Fiscale</span>
-                            <input type="number" name="annee" id="id_annee" readonly
-                                class="w-full bg-transparent border-none text-slate-900 text-xl font-black p-0 mt-1 cursor-default outline-none">
-                        </div>
-
-                        <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100/50">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Cycle</span>
-                            <select name="periode_type" id="id_periode_type" 
-                                class="w-full bg-transparent border-none text-[#2D8B8B] text-xl font-black p-0 mt-1 appearance-none pointer-events-none outline-none">
-                                <option value="mensuel">Mensuel</option>
-                                <option value="bimestriel">Bimestriel</option>
-                                <option value="trimestriel">Trimestriel</option>
-                            </select>
-                        </div>
-
-                        <div class="p-6 bg-[#2D8B8B]/5 rounded-3xl border border-[#2D8B8B]/10">
-                            <span class="text-[10px] font-black text-[#2D8B8B] uppercase tracking-tighter">Échéance Finale</span>
-                            <input type="date" name="date_limite" id="id_date_limite" readonly
-                                class="w-full bg-transparent border-none text-slate-900 text-xl font-black p-0 mt-1 outline-none">
+                        <div class="mt-10 p-5 bg-amber-50 rounded-2xl border border-amber-100 flex gap-4">
+                            <div class="text-amber-500 flex-shrink-0">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                            </div>
+                            <p class="text-amber-800 text-[11px] leading-relaxed font-medium">
+                                <span class="font-black uppercase tracking-widest block mb-1">Rappel Réglementaire</span>
+                                Le règlement est attendu au plus tard le <span class="font-black">15 du mois suivant</span> la fin de la période sélectionnée.
+                            </p>
                         </div>
                     </div>
                 </div>
 
-                <div class="px-8 py-10 bg-slate-50/50 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div class="flex items-center gap-5">
-                        <div class="w-12 h-12 bg-white shadow-sm border border-slate-100 rounded-2xl flex items-center justify-center text-amber-500">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                <div class="space-y-6">
+                    <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-xl relative overflow-hidden">
+                        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 mb-8">Calcul Automatique</h3>
+                        
+                        <div class="space-y-8 relative z-10">
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase">Exercice</span>
+                                <input type="number" name="annee" id="id_annee" readonly
+                                    class="w-full bg-transparent border-none text-2xl font-black p-0 mt-1 cursor-default outline-none text-white">
+                            </div>
+
+                            <div>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase">Cycle de Déclaration</span>
+                                <select name="periode_type" id="id_periode_type" 
+                                    class="w-full bg-transparent border-none text-emerald-400 text-xl font-black p-0 mt-1 appearance-none pointer-events-none outline-none">
+                                    <option value="mensuel">Mensuel</option>
+                                    <option value="bimestriel">Bimestriel</option>
+                                    <option value="trimestriel">Trimestriel</option>
+                                </select>
+                            </div>
+
+                            <div class="pt-6 border-t border-white/10">
+                                <span class="text-[9px] font-bold text-emerald-400 uppercase">Échéance de paiement</span>
+                                <input type="date" name="date_limite" id="id_date_limite" readonly
+                                    class="w-full bg-transparent border-none text-2xl font-black p-0 mt-1 outline-none text-white">
+                            </div>
                         </div>
-                        <div>
-                            <span class="text-slate-900 text-xs font-black uppercase italic">Note de conformité</span>
-                            <p class="text-slate-500 text-[11px] leading-relaxed">Délai rigoureux : Règlement attendu au plus tard le <span class="text-slate-900 font-bold">15 du mois suivant</span>.</p>
-                        </div>
+
+                        <div class="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
                     </div>
-                    
+
                     <button type="submit" 
-                        class="w-full md:w-auto px-12 py-5 bg-[#2D8B8B] hover:bg-[#1E7F3C] text-white text-[12px] font-black uppercase tracking-[0.25em] rounded-2xl transition-all shadow-[0_15px_30px_-5px_rgba(45,139,139,0.3)] hover:-translate-y-1 active:scale-95">
-                        Continuer l'analyse
+                        class="w-full group bg-emerald-600 hover:bg-emerald-700 text-white p-6 rounded-[2rem] transition-all shadow-xl shadow-emerald-100 flex flex-col items-center gap-2 active:scale-95">
+                        <span class="text-[12px] font-black uppercase tracking-[0.3em]">Continuer l'analyse</span>
+                        <svg class="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </button>
                 </div>
+
             </div>
         </form>
     </div>
 </div>
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

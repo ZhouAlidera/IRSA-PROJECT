@@ -2,101 +2,100 @@
 {% block content %}
 {% include 'partials/header.html' %}
 
-<div class="min-h-screen bg-[#F4F7F6] flex items-center justify-center px-4 py-12 font-sans">
-    <div class="w-full max-w-6xl bg-white rounded-[3rem] shadow-[0_40px_80px_-20px_rgba(45,139,139,0.1)] overflow-hidden flex min-h-[750px] border border-emerald-50 animate-fade-in-up">
+<div class="min-h-[90vh] bg-[#f8fafc] flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-5xl bg-white rounded-[2.5rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.05)] overflow-hidden flex min-h-[650px] border border-slate-100 animate-fade-in">
         
-        <div class="w-full md:w-1/2 p-8 md:p-20 flex flex-col justify-center relative bg-white">
+        <div class="w-full md:w-1/2 p-10 md:p-16 flex flex-col justify-center bg-white relative">
             
-            <a href="{% url 'register_step_one' %}" class="flex items-center gap-2 text-slate-400 hover:text-[#2D8B8B] font-black text-[10px] uppercase tracking-[0.2em] mb-12 transition-all group stagger-item">
-                <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
+            <a href="{% url 'register_step_one' %}" class="absolute top-8 left-10 flex items-center gap-2 text-slate-400 hover:text-[#2D8B8B] font-black text-[9px] uppercase tracking-[0.2em] transition-all group">
+                <svg class="w-3 h-3 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
                 Étape précédente
             </a>
 
-            <div class="mb-10 stagger-item">
-                <div class="flex items-center gap-6 mb-8">
-                    <div class="flex items-center gap-3 opacity-30">
-                        <span class="w-8 h-8 rounded-xl bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-black">1</span>
+            <div class="mb-10">
+                <div class="flex items-center gap-6 mb-6">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-1 bg-slate-200 rounded-full"></span>
+                        <span class="w-6 h-1 bg-[#2D8B8B] rounded-full"></span>
                     </div>
-                    <div class="h-px w-8 bg-slate-100"></div>
-                    <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-2xl bg-[#2D8B8B] text-white flex items-center justify-center text-sm font-black shadow-lg shadow-emerald-100">2</span>
-                        <span class="text-[11px] font-black uppercase tracking-widest text-[#2D8B8B]">Accès Personnel</span>
-                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-[0.3em] text-[#2D8B8B]">Étape 02/02</span>
                 </div>
-                <h2 class="text-4xl font-black text-slate-800 tracking-tight mb-4">Presque terminé.</h2>
-                <p class="text-slate-400 font-medium text-lg">Créez vos identifiants de connexion.</p>
+                <h2 class="text-3xl font-black text-slate-900 tracking-tighter uppercase italic">Accès <span class="text-[#2D8B8B]">Personnel</span></h2>
+                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest mt-2">Configurez vos identifiants de connexion</p>
             </div>
 
-            <form method="post" id="regForm2" class="space-y-6 stagger-item">
+            <form method="post" id="regForm2" class="space-y-5">
                 {% csrf_token %}
                 
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="space-y-2 group">
-                        <label class="text-[10px] font-black uppercase tracking-[0.2em] text-[#2D8B8B] ml-2 group-focus-within:text-emerald-700 transition-colors">Prénom</label>
-                        <input type="text" name="first_name" id="fname" required placeholder="Ex: Jean"
-                               class="w-full px-6 py-4 rounded-2xl border-2 border-slate-50 bg-[#F9FAFB] focus:bg-white focus:outline-none focus:border-[#2D8B8B] transition-all font-bold text-slate-700 shadow-sm" />
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1.5 group">
+                        <label class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1 group-focus-within:text-[#2D8B8B] transition-colors">Prénom</label>
+                        <input type="text" name="first_name" id="fname" required placeholder="Jean"
+                               class="w-full px-5 py-3.5 rounded-xl border-2 border-slate-50 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-[#2D8B8B] transition-all font-bold text-slate-700 text-sm shadow-sm" />
                     </div>
-                    <div class="space-y-2 group">
-                        <label class="text-[10px] font-black uppercase tracking-[0.2em] text-[#2D8B8B] ml-2 group-focus-within:text-emerald-700 transition-colors">Nom</label>
-                        <input type="text" name="last_name" id="lname" required placeholder="Ex: Rakoto"
-                               class="w-full px-6 py-4 rounded-2xl border-2 border-slate-50 bg-[#F9FAFB] focus:bg-white focus:outline-none focus:border-[#2D8B8B] transition-all font-bold text-slate-700 shadow-sm" />
+                    <div class="space-y-1.5 group">
+                        <label class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1 group-focus-within:text-[#2D8B8B] transition-colors">Nom</label>
+                        <input type="text" name="last_name" id="lname" required placeholder="Rakoto"
+                               class="w-full px-5 py-3.5 rounded-xl border-2 border-slate-50 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-[#2D8B8B] transition-all font-bold text-slate-700 text-sm shadow-sm" />
                     </div>
                 </div>
 
-                <div class="space-y-2 group">
-                    <label class="text-[10px] font-black uppercase tracking-[0.2em] text-[#2D8B8B] ml-2 group-focus-within:text-emerald-700 transition-colors">Adresse Email Professionnelle</label>
+                <div class="space-y-1.5 group">
+                    <label class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1 group-focus-within:text-[#2D8B8B] transition-colors">Email Professionnel</label>
                     <div class="relative">
-                        <input type="email" name="email" id="email" required placeholder="jean@entreprise.mg"
-                               class="w-full px-6 py-5 rounded-2xl border-2 border-slate-50 bg-[#F9FAFB] focus:bg-white focus:outline-none focus:border-[#2D8B8B] transition-all font-bold text-slate-700 shadow-sm" />
-                        <div class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>
-                        </div>
+                        <input type="email" name="email" id="email" required placeholder="nom@entreprise.mg"
+                               class="w-full px-5 py-4 rounded-xl border-2 border-slate-50 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-[#2D8B8B] transition-all font-bold text-slate-700 text-sm shadow-sm" />
+                        <svg class="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-width="2"/></svg>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <input type="password" name="password" required placeholder="Mot de passe" 
-                               class="w-full px-6 py-5 rounded-2xl border-2 border-slate-50 bg-[#F9FAFB] focus:bg-white focus:outline-none focus:border-[#2D8B8B] transition-all font-bold text-slate-700 shadow-sm" />
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Mot de passe</label>
+                        <input type="password" name="password" required placeholder="••••••••" 
+                               class="w-full px-5 py-4 rounded-xl border-2 border-slate-50 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-[#2D8B8B] transition-all font-bold text-slate-700 text-sm shadow-sm" />
                     </div>
-                    <div class="space-y-2">
-                        <input type="password" name="password_confirm" required placeholder="Confirmation" 
-                               class="w-full px-6 py-5 rounded-2xl border-2 border-slate-50 bg-[#F9FAFB] focus:bg-white focus:outline-none focus:border-[#2D8B8B] transition-all font-bold text-slate-700 shadow-sm" />
+                    <div class="space-y-1.5">
+                        <label class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Confirmation</label>
+                        <input type="password" name="password_confirm" required placeholder="••••••••" 
+                               class="w-full px-5 py-4 rounded-xl border-2 border-slate-50 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-[#2D8B8B] transition-all font-bold text-slate-700 text-sm shadow-sm" />
                     </div>
                 </div>
 
                 <div class="pt-6">
                     <button type="submit" id="final_submit" 
-                            class="w-full py-5 bg-[#2D8B8B] text-white rounded-[1.5rem] shadow-[0_20px_40px_-10px_rgba(45,139,139,0.4)] hover:bg-[#1E7F3C] hover:-translate-y-1 active:scale-95 transition-all duration-500 font-black uppercase text-xs tracking-[0.2em] flex items-center justify-center gap-4">
-                        Finaliser mon espace
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            class="w-full py-4 bg-[#2D8B8B] text-white rounded-2xl shadow-[0_20px_40px_-10px_rgba(45,139,139,0.3)] hover:bg-[#1E7F3C] hover:-translate-y-1 active:scale-[0.98] transition-all duration-500 font-black uppercase text-[11px] tracking-[0.2em] flex items-center justify-center gap-3">
+                        Créer mon espace
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                     </button>
-                    <p class="text-center text-[10px] text-slate-400 mt-6 uppercase tracking-widest font-bold">En cliquant, vous acceptez les conditions d'utilisation</p>
+                    <p class="text-center text-[8px] text-slate-400 mt-6 uppercase tracking-[0.2em] font-bold leading-relaxed">
+                        En finalisant, vous certifiez l'exactitude des informations<br>transmises à l'administration fiscale.
+                    </p>
                 </div>
             </form>
         </div>
 
-        <div class="hidden md:flex w-1/2 bg-gradient-to-br from-[#1E7F3C] to-[#2D8B8B] relative items-center justify-center p-20 overflow-hidden">
-            <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-white opacity-5 rounded-full animate-pulse"></div>
-            <div class="absolute bottom-[-5%] right-[-5%] w-[300px] h-[300px] bg-emerald-900 opacity-20 rounded-full animate-bounce-slow"></div>
+        <div class="hidden md:flex w-1/2 bg-gradient-to-br from-[#1E7F3C] to-[#2D8B8B] relative overflow-hidden items-center justify-center p-16">
+            <div class="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -mr-40 -mt-40 blur-3xl animate-pulse"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-black/10 rounded-full -ml-32 -mb-32 blur-2xl"></div>
             
             <div class="relative z-10 w-full max-w-sm">
-                <div class="bg-white/10 backdrop-blur-3xl border border-white/20 p-10 rounded-[3.5rem] shadow-2xl text-white">
-                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-8">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <div class="bg-white/10 backdrop-blur-2xl border border-white/20 p-10 rounded-[3rem] shadow-2xl">
+                    <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                     </div>
-                    <h3 class="text-2xl font-black mb-4">Sécurité maximale.</h3>
-                    <p class="text-emerald-50/80 leading-relaxed font-medium">Vos données sont protégées par les standards de sécurité de la Direction Générale des Impôts.</p>
+                    <h3 class="text-xl font-black text-white uppercase italic tracking-tighter mb-4">Protection Totale</h3>
+                    <p class="text-emerald-50/70 leading-relaxed font-bold text-xs uppercase tracking-wide mb-8">
+                        Votre compte sera lié au NIF de votre établissement. Seul l'administrateur pourra valider les flux financiers.
+                    </p>
                     
-                    <div class="mt-10 pt-10 border-t border-white/10 flex items-center gap-4">
-                        <div class="flex -space-x-3">
-                            <div class="w-8 h-8 rounded-full border-2 border-emerald-700 bg-emerald-200"></div>
-                            <div class="w-8 h-8 rounded-full border-2 border-emerald-700 bg-emerald-400"></div>
-                            <div class="w-8 h-8 rounded-full border-2 border-emerald-700 bg-emerald-600"></div>
+                    <div class="pt-8 border-t border-white/10 flex items-center gap-4">
+                        <div class="flex -space-x-2">
+                            <div class="w-7 h-7 rounded-full border-2 border-emerald-700 bg-emerald-200 shadow-sm"></div>
+                            <div class="w-7 h-7 rounded-full border-2 border-emerald-700 bg-emerald-400 shadow-sm"></div>
+                            <div class="w-7 h-7 rounded-full border-2 border-emerald-700 bg-emerald-600 shadow-sm"></div>
                         </div>
-                        <span class="text-[10px] font-black uppercase tracking-widest">+ 5000 entreprises</span>
+                        <span class="text-[9px] font-black text-white/60 uppercase tracking-widest leading-tight italic">Réseau Certifié<br>DGI Madagascar</span>
                     </div>
                 </div>
             </div>
@@ -105,13 +104,8 @@
 </div>
 
 <style>
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .stagger-item { opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .stagger-item:nth-child(1) { animation-delay: 0.1s; }
-    .stagger-item:nth-child(2) { animation-delay: 0.2s; }
-    .stagger-item:nth-child(3) { animation-delay: 0.3s; }
-    .animate-bounce-slow { animation: bounce 10s infinite ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+    .animate-fade-in { animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 </style>
 
 <script>
@@ -122,20 +116,22 @@ document.addEventListener('DOMContentLoaded', function() {
         email: document.getElementById('email')
     };
 
-    // Restaurer Step 2
+    // Restaurer les données stockées
     Object.keys(fields).forEach(key => {
         const val = localStorage.getItem('reg_step2_' + key);
         if (val) fields[key].value = val;
     });
 
-    // Sauvegarder Step 2
+    // Sauvegarder en temps réel
     Object.keys(fields).forEach(key => {
-        fields[key].addEventListener('input', (e) => localStorage.setItem('reg_step2_' + key, e.target.value));
+        fields[key].addEventListener('input', (e) => {
+            localStorage.setItem('reg_step2_' + key, e.target.value);
+        });
     });
 
-    // Nettoyage au submit
+    // Nettoyage au submit (optionnel selon ton flux Django)
     document.getElementById('regForm2').addEventListener('submit', function() {
-        // Optionnel : Effacer après succès backend
+        // localStorage.clear(); 
     });
 });
 </script>

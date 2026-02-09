@@ -5,116 +5,108 @@
 {% include 'partials/stepper.html' with current_step=5 %}
 {% include 'partials/messages.html' %}
 
-<div class="min-h-screen bg-[#f8fafc] py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-[98%] mx-auto">
+<div class="min-h-screen bg-[#f8fafc] py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[95%] mx-auto">
         
-        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-12 gap-8">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-8 gap-6">
             <div>
-                <span class="inline-block px-4 py-1.5 bg-emerald-50 text-[#2D8B8B] text-[10px] font-black uppercase rounded-lg mb-3 tracking-[0.2em] border border-emerald-100">Récapitulatif de calcul</span>
-                <h1 class="text-4xl font-black text-slate-900 italic uppercase tracking-tighter">Vérification <span class="text-[#2D8B8B]">Finale</span></h1>
-                <p class="text-slate-500 flex items-center gap-2 mt-2 font-bold text-xs uppercase tracking-widest">
-                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    Document : <span class="text-slate-900 underline decoration-[#2D8B8B] decoration-2 underline-offset-4">{{ declaration.numero_document }}</span>
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="w-8 h-[2px] bg-[#2D8B8B]"></span>
+                    <span class="text-[10px] font-black text-[#2D8B8B] uppercase tracking-[0.3em]">Étape Finale</span>
+                </div>
+                <h1 class="text-3xl font-black text-slate-900 italic uppercase tracking-tighter">Vérification <span class="text-[#2D8B8B]">Fiscale</span></h1>
+                <p class="text-slate-400 flex items-center gap-2 mt-1 font-bold text-[10px] uppercase tracking-widest">
+                    Doc : <span class="text-slate-900 underline decoration-[#2D8B8B] decoration-2 underline-offset-4">{{ declaration.numero_document }}</span>
                 </p>
             </div>
             
             <button type="button" onclick="toggleModal('modal-confirm')" 
-                class="group bg-[#2D8B8B] hover:bg-emerald-600 text-white px-12 py-5 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-emerald-900/30 transition-all transform hover:-translate-y-1 active:scale-95 flex items-center">
-                <svg class="w-5 h-5 mr-4 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                class="group bg-[#2D8B8B] hover:bg-emerald-600 text-white px-8 py-4 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-xl shadow-emerald-900/20 transition-all transform hover:-translate-y-1 active:scale-95 flex items-center">
+                <svg class="w-4 h-4 mr-3 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                 Confirmer la déclaration
             </button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-12">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-5 mb-10">
             
-            <div class="md:col-span-5 lg:col-span-4 bg-slate-900 rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden flex flex-col justify-between min-h-[280px] group">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-[#2D8B8B]/20 rounded-full -mr-32 -mt-32 blur-3xl group-hover:bg-[#2D8B8B]/30 transition-colors"></div>
+            <div class="md:col-span-4 bg-slate-900 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden flex flex-col justify-between min-h-[200px] group border border-white/5">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-[#2D8B8B]/20 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-[#2D8B8B]/30 transition-colors"></div>
                 
                 <div class="relative z-10">
-                    <div class="h-12 w-12 bg-[#2D8B8B] rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-emerald-900/50">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-                    </div>
-                    <p class="text-[10px] font-black text-emerald-400/60 uppercase tracking-[0.3em] mb-2">Net à verser à l'administration</p>
-                    <p class="text-5xl font-black text-white italic tracking-tighter">
-                        {{ stats.total_irsa|default:0|floatformat:0 }} <span class="text-lg font-bold text-emerald-500 ml-1 uppercase">Ar</span>
+                    <p class="text-[9px] font-black text-emerald-400/70 uppercase tracking-[0.2em] mb-1">Total IRSA à verser</p>
+                    <p class="text-4xl font-black text-white italic tracking-tighter">
+                        {{ stats.total_irsa|default:0|floatformat:0 }} <span class="text-sm font-bold text-emerald-500 ml-1 uppercase">Ar</span>
                     </p>
                 </div>
                 
-                <div class="relative z-10 mt-6 pt-6 border-t border-white/10">
-                    <p class="text-[9px] text-white/40 font-bold uppercase tracking-widest italic">Paiement sécurisé via portail fiscal</p>
+                <div class="relative z-10 pt-4 border-t border-white/10">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                        <p class="text-[8px] text-white/40 font-bold uppercase tracking-widest italic">Prêt pour transmission DGI</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="md:col-span-7 lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm flex flex-col justify-center">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-blue-500"></span> Masse Brute Totale
+            <div class="md:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm flex flex-col justify-center">
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Masse Brute
                     </p>
-                    <p class="text-3xl font-black text-slate-900 italic tracking-tighter">
-                        {{ stats.total_brut|default:0|floatformat:0 }} <span class="text-sm font-bold text-slate-300 ml-1">AR</span>
-                    </p>
-                </div>
-
-                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm flex flex-col justify-center">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-indigo-500"></span> Base Imposable (RNI)
-                    </p>
-                    <p class="text-3xl font-black text-slate-900 italic tracking-tighter">
-                        {{ stats.total_rni|default:0|floatformat:0 }} <span class="text-sm font-bold text-slate-300 ml-1">AR</span>
+                    <p class="text-2xl font-black text-slate-900 italic tracking-tighter">
+                        {{ stats.total_brut|default:0|floatformat:0 }} <span class="text-[10px] text-slate-300 ml-1 uppercase">Ar</span>
                     </p>
                 </div>
 
-                <div class="sm:col-span-2 bg-emerald-50/50 p-6 rounded-3xl border border-emerald-100 flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <div class="h-12 w-12 bg-white rounded-2xl flex items-center justify-center text-[#2D8B8B] shadow-sm border border-emerald-100">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        </div>
-                        <div>
-                            <p class="text-xl font-black text-[#2D8B8B] italic leading-tight">{{ rows|length }} Salariés</p>
-                            <p class="text-[10px] font-bold text-emerald-600/60 uppercase tracking-widest">Inscrits dans cette période</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-[10px] font-black text-emerald-700/40 uppercase tracking-tighter">Conformité 100%</span>
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm flex flex-col justify-center">
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-blue-500"></span> Base RNI
+                    </p>
+                    <p class="text-2xl font-black text-slate-900 italic tracking-tighter">
+                        {{ stats.total_rni|default:0|floatformat:0 }} <span class="text-[10px] text-slate-300 ml-1 uppercase">Ar</span>
+                    </p>
+                </div>
+
+                <div class="bg-emerald-50/40 p-6 rounded-[2rem] border border-emerald-100 flex flex-col justify-center">
+                    <p class="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-2">Effectif total</p>
+                    <div class="flex items-baseline gap-2">
+                        <p class="text-2xl font-black text-[#2D8B8B] italic tracking-tighter">{{ rows|length }}</p>
+                        <p class="text-[10px] font-black text-[#2D8B8B]/60 uppercase italic">Salariés</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] overflow-hidden border border-slate-100">
-            <div class="px-10 py-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
-                <h3 class="font-black text-slate-900 uppercase text-xs tracking-[0.2em] italic">Détail Nominatif des cotisations</h3>
-                <div class="flex items-center gap-2">
-                    <span class="h-2 w-2 rounded-full bg-[#2D8B8B] animate-pulse"></span>
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Barème IRSA 2024</span>
-                </div>
+        <div class="bg-white rounded-[2rem] shadow-sm overflow-hidden border border-slate-100">
+            <div class="px-8 py-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+                <h3 class="font-black text-slate-900 uppercase text-[10px] tracking-[0.2em] italic">Détail Nominatif des cotisations</h3>
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Barème IRSA 2024</span>
             </div>
             
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
                     <thead>
                         <tr class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] bg-white">
-                            <th class="px-10 py-6">Collaborateur</th>
-                            <th class="px-10 py-6 text-right">Brut</th>
-                            <th class="px-10 py-6 text-right text-rose-400">Retenues</th>
-                            <th class="px-10 py-6 text-right">Base RNI</th>
-                            <th class="px-10 py-6 text-right text-[#2D8B8B]">IRSA Net</th>
+                            <th class="px-8 py-4">Collaborateur</th>
+                            <th class="px-8 py-4 text-right">Brut</th>
+                            <th class="px-8 py-4 text-right text-rose-400">Retraite</th>
+                            <th class="px-8 py-4 text-right">Base RNI</th>
+                            <th class="px-8 py-4 text-right text-[#2D8B8B]">IRSA Net</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-50">
                         {% for row in rows %}
-                        <tr class="group hover:bg-slate-50 transition-all">
-                            <td class="px-10 py-6">
+                        <tr class="group hover:bg-slate-50/80 transition-all">
+                            <td class="px-8 py-4">
                                 <div class="flex flex-col">
-                                    <span class="italic font-black text-slate-900 uppercase text-sm tracking-tight group-hover:text-[#2D8B8B] transition-colors">{{ row.nom_prenom }}</span>
-                                    <span class="text-[10px] text-slate-400 font-bold font-mono tracking-tighter mt-0.5">{{ row.num_cnaps }}</span>
+                                    <span class="italic font-black text-slate-800 uppercase text-xs tracking-tight group-hover:text-[#2D8B8B] transition-colors">{{ row.nom_prenom }}</span>
+                                    <span class="text-[9px] text-slate-400 font-bold font-mono">{{ row.num_cnaps }}</span>
                                 </div>
                             </td>
-                            <td class="px-10 py-6 text-right text-sm font-bold text-slate-600">{{ row.remuneration_brute|floatformat:0 }}</td>
-                            <td class="px-10 py-6 text-right text-sm text-rose-500 font-bold">- {{ row.pension|floatformat:0 }}</td>
-                            <td class="px-10 py-6 text-right text-sm font-black text-slate-900">{{ row.revenu_net_theo|floatformat:0 }}</td>
-                            <td class="px-10 py-6 text-right">
-                                <span class="inline-block px-5 py-2.5 bg-emerald-50 text-[#2D8B8B] rounded-xl text-sm font-black border border-emerald-100 group-hover:bg-[#2D8B8B] group-hover:text-white transition-all shadow-sm">
+                            <td class="px-8 py-4 text-right text-xs font-bold text-slate-600">{{ row.remuneration_brute|floatformat:0 }}</td>
+                            <td class="px-8 py-4 text-right text-xs text-rose-500 font-bold italic">- {{ row.pension|floatformat:0 }}</td>
+                            <td class="px-8 py-4 text-right text-xs font-black text-slate-900">{{ row.revenu_net_theo|floatformat:0 }}</td>
+                            <td class="px-8 py-4 text-right">
+                                <span class="inline-block px-4 py-1.5 bg-emerald-50 text-[#2D8B8B] rounded-lg text-xs font-black border border-emerald-100 group-hover:bg-[#2D8B8B] group-hover:text-white transition-all">
                                     {{ row.impot_net_theo|floatformat:0 }} Ar
                                 </span>
                             </td>
@@ -128,31 +120,31 @@
 </div>
 
 <div id="modal-confirm" class="fixed inset-0 z-[100] hidden">
-    <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-md transition-opacity"></div>
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div id="modal-content" class="relative bg-white rounded-[3rem] shadow-2xl max-w-md w-full p-10 transform transition-all scale-95 opacity-0 duration-300 border border-slate-100">
+        <div id="modal-content" class="relative bg-white rounded-[2rem] shadow-2xl max-w-sm w-full p-8 transform transition-all scale-95 opacity-0 duration-300">
             <div class="text-center">
-                <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-[2rem] bg-emerald-50 mb-8 text-[#2D8B8B] shadow-inner">
-                    <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-2xl bg-emerald-50 mb-6 text-[#2D8B8B]">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                 </div>
-                <h3 class="text-2xl font-black text-slate-900 uppercase italic tracking-tighter">Action Définitive</h3>
-                <p class="text-[11px] text-slate-500 font-bold mt-4 leading-relaxed uppercase tracking-widest">
-                    En confirmant, vous validez le versement de <span class="text-[#2D8B8B] font-black underline">{{ stats.total_irsa|floatformat:0 }} AR</span>. Cette donnée sera transmise à la DGI.
+                <h3 class="text-xl font-black text-slate-900 uppercase italic tracking-tighter">Transmission DGI</h3>
+                <p class="text-[10px] text-slate-500 font-bold mt-4 leading-relaxed uppercase tracking-[0.15em]">
+                    Vous allez valider un montant total de <span class="text-[#2D8B8B] font-black underline">{{ stats.total_irsa|floatformat:0 }} AR</span>. 
                 </p>
             </div>
 
-            <div class="mt-10 flex flex-col gap-4">
+            <div class="mt-8 flex flex-col gap-3">
                 <form action="{% url 'finaliser_declaration' declaration.id %}" method="post" id="form-final">
                     {% csrf_token %}
                     <button type="submit" id="btn-submit" onclick="showLoader()"
-                        class="w-full px-8 py-5 bg-[#2D8B8B] text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-2xl hover:bg-emerald-600 transition-all flex items-center justify-center gap-3 shadow-xl shadow-emerald-900/20">
-                        <span id="btn-text">Confirmer l'envoi final</span>
-                        <div id="btn-loader" class="hidden animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                        class="w-full px-6 py-4 bg-[#2D8B8B] text-white font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-emerald-600 transition-all flex items-center justify-center gap-3">
+                        <span id="btn-text">Confirmer l'envoi</span>
+                        <div id="btn-loader" class="hidden animate-spin h-3 w-3 border-2 border-white border-t-transparent rounded-full"></div>
                     </button>
                 </form>
                 <button type="button" onclick="toggleModal('modal-confirm')" 
-                    class="w-full px-8 py-4 text-slate-400 font-black text-[10px] uppercase tracking-widest hover:text-slate-600 transition-colors">
-                    Revenir en arrière
+                    class="w-full py-2 text-slate-400 font-black text-[9px] uppercase tracking-widest hover:text-slate-600 transition-colors">
+                    Annuler
                 </button>
             </div>
         </div>

@@ -1,174 +1,141 @@
 {% extends 'base_tailwind.html' %}
 {% load static %}
-{% block content %}
-{% include 'partials/header.html' %}
-{% include 'partials/messages.html' %}
 
-<div class="min-h-screen bg-[#F4F7F6] p-4 lg:p-10 font-sans">
-    <div class="max-w-7xl mx-auto space-y-10">
+{% block content %}
+<div class="min-h-screen bg-[#F8FAFC] p-6 lg:p-10 font-sans">
+    <div class="max-w-[1600px] mx-auto space-y-8">
         
-        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 animate-fade-in">
-            <div class="flex items-center gap-6">
-                <div class="h-24 w-24 bg-gradient-to-br from-[#2D8B8B] to-[#1E7F3C] rounded-[2.5rem] flex items-center justify-center text-white shadow-[0_20px_40px_-10px_rgba(45,139,139,0.3)] transform -rotate-3 hover:rotate-0 transition-all duration-500">
-                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="text-4xl font-black text-slate-800 tracking-tighter uppercase italic leading-none">
-                        {{ request.user.employeur.raison_sociale|default:"Mon Entreprise" }}
-                    </h1>
-                    <div class="flex items-center gap-4 mt-3">
-                        <span class="px-4 py-1.5 bg-white border border-slate-200 rounded-xl text-[10px] font-black text-slate-500 uppercase tracking-widest shadow-sm">NIF {{ request.user.employeur.nif }}</span>
-                        <div class="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-xl">
-                            <span class="h-2 w-2 bg-[#2D8B8B] rounded-full animate-pulse"></span>
-                            <span class="text-[10px] font-black text-[#2D8B8B] uppercase tracking-wider">Portail Sécurisé</span>
-                        </div>
-                    </div>
-                </div>
+        <div class="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-slate-200 pb-8">
+            <div>
+                <p class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em] mb-2">Espace Employeur Certifié</p>
+                <h1 class="text-4xl font-black text-slate-900 tracking-tighter flex items-center gap-4">
+                    {{ request.user.employeur.raison_sociale|default:"Tableau de Bord" }}
+                    <span class="px-3 py-1 bg-white border border-slate-200 rounded-full text-[9px] font-bold text-slate-400 uppercase tracking-widest shadow-sm italic">NIF {{ request.user.employeur.nif }}</span>
+                </h1>
             </div>
             
-            <div class="flex flex-wrap items-center gap-4">
+            <div class="flex items-center gap-3">
                 {% if brouillon_en_cours > 0 %}
-                <a href="{% url 'detail_import_brouillon' %}" class="bg-white border-2 border-slate-200 text-slate-700 px-6 py-4 rounded-2xl font-black text-xs transition-all hover:border-[#2D8B8B] hover:text-[#2D8B8B] flex items-center gap-3 shadow-sm">
-                    BROUILLON EN COURS ({{ brouillon_en_cours }})
+                <a href="{% url 'detail_import_brouillon' %}" class="bg-amber-50 text-amber-700 px-5 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-amber-100 transition-all flex items-center gap-2">
+                    <span class="h-2 w-2 bg-amber-500 rounded-full animate-pulse"></span>
+                    Brouillon ({{ brouillon_en_cours }})
                 </a>
                 {% endif %}
-                <a href="{% url 'presentation' %}" class="group bg-[#2D8B8B] text-white px-8 py-5 rounded-2xl font-black text-xs transition-all hover:bg-[#1E7F3C] hover:scale-105 shadow-[0_15px_30px_-5px_rgba(45,139,139,0.4)] flex items-center gap-3 uppercase tracking-[0.15em]">
-                    <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+                <a href="{% url 'presentation' %}" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all hover:bg-emerald-700 hover:shadow-xl hover:shadow-emerald-100 flex items-center gap-3 active:scale-95">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
                     Nouvelle Déclaration
                 </a>
             </div>
         </div>
 
         {% if deadline_info.jours <= 15 %}
-        <div class="relative overflow-hidden bg-slate-900 rounded-[3rem] p-8 text-white shadow-2xl animate-fade-in-up">
-            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                <div class="flex items-center gap-8">
-                    <div class="h-20 w-20 bg-white/10 backdrop-blur-xl rounded-[2rem] flex items-center justify-center border border-white/10">
-                        <span class="text-3xl font-black {% if deadline_info.jours <= 5 %}text-red-400{% else %}text-[#2D8B8B]{% endif %}">J-{{ deadline_info.jours }}</span>
+        <div class="group relative overflow-hidden bg-white border border-rose-100 rounded-[2.5rem] p-6 shadow-sm hover:shadow-md transition-all">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+                <div class="flex items-center gap-6">
+                    <div class="h-16 w-16 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-600">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
                     <div>
-                        <h4 class="text-xl font-black uppercase italic tracking-tight">Échéance Fiscale</h4>
-                        <p class="text-slate-400 text-sm mt-1">Date limite de soumission : <span class="text-white font-bold">{{ deadline_info.date|date:"d F Y" }}</span></p>
+                        <h4 class="text-sm font-black uppercase text-slate-800 tracking-widest">Échéance Proche</h4>
+                        <p class="text-slate-500 text-xs mt-1 italic font-medium">Il vous reste <span class="text-rose-600 font-black">{{ deadline_info.jours }} jours</span> avant la date limite du {{ deadline_info.date|date:"d F Y" }}</p>
                     </div>
                 </div>
-                <button class="w-full md:w-auto px-12 py-5 bg-white text-slate-900 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-50 transition-all active:scale-95">Régulariser maintenant</button>
+                <button class="px-6 py-3 bg-rose-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-700 transition-colors">Régulariser</button>
             </div>
-            <div class="absolute top-0 right-0 w-80 h-80 bg-[#2D8B8B]/20 rounded-full blur-[100px] -mr-40 -mt-40"></div>
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-rose-50 rounded-full blur-3xl opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
         </div>
         {% endif %}
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-white p-10 rounded-[3rem] border border-emerald-50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
-                <div class="flex justify-between items-start mb-6">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Cumul Annuel IRSA</p>
-                    <div class="p-2 bg-emerald-50 rounded-lg text-[#2D8B8B]">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    </div>
-                </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Cumul Annuel IRSA</p>
                 <div class="flex items-baseline gap-2">
-                    <span class="text-5xl font-black text-slate-900 tracking-tighter">{{ total_irsa_annuel|floatformat:0 }}</span>
-                    <span class="text-slate-300 font-black text-lg italic uppercase">Ar</span>
+                    <span class="text-4xl font-black text-slate-900 tracking-tighter">{{ total_irsa_annuel|floatformat:0 }}</span>
+                    <span class="text-slate-300 font-bold text-sm uppercase italic">Ar</span>
                 </div>
-                <div class="mt-8 flex items-center gap-2">
-                    <span class="flex h-2 w-2 rounded-full bg-[#2D8B8B]"></span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Exercice {{ today.year }}</span>
+                <div class="mt-6 flex items-center gap-2">
+                    <div class="flex -space-x-2">
+                        <div class="h-6 w-6 rounded-full bg-emerald-500 border-2 border-white"></div>
+                        <div class="h-6 w-6 rounded-full bg-emerald-300 border-2 border-white"></div>
+                    </div>
+                    <span class="text-[9px] font-bold text-emerald-600 uppercase">Exercice {{ today.year }}</span>
                 </div>
             </div>
 
-            <div class="bg-white p-10 rounded-[3rem] border border-emerald-50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
-                <div class="flex justify-between items-start mb-6">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Effectif Salarié</p>
-                    <div class="p-2 bg-slate-50 rounded-lg text-slate-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                    </div>
-                </div>
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm group">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Effectif Salarié</p>
                 <div class="flex items-center gap-4">
-                    <span class="text-5xl font-black text-slate-900 tracking-tighter">{{ nb_employes_actuel }}</span>
-                    <span class="px-3 py-1 bg-emerald-50 text-[#2D8B8B] rounded-lg text-[9px] font-black uppercase italic">Actifs</span>
+                    <span class="text-4xl font-black text-slate-900 tracking-tighter">{{ nb_employes_actuel }}</span>
+                    <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[9px] font-black uppercase italic">Salariés Actifs</span>
                 </div>
-                <div class="mt-8 h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-[#2D8B8B] to-[#1E7F3C] rounded-full" style="width: 85%"></div>
+                <div class="mt-6 flex items-center gap-4">
+                    <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-slate-900 rounded-full" style="width: 70%"></div>
+                    </div>
+                    <span class="text-[9px] font-bold text-slate-400">Capacité 70%</span>
                 </div>
             </div>
 
-            <div class="bg-gradient-to-br from-[#2D8B8B] to-[#1E7F3C] p-10 rounded-[3rem] shadow-[0_20px_50px_-10px_rgba(45,139,139,0.4)] text-white relative overflow-hidden group">
-                <div class="relative z-10">
-                    <p class="text-[10px] font-black text-emerald-100/60 uppercase tracking-[0.2em] mb-6">Indice de Conformité</p>
-                    <div class="flex items-center gap-8">
-                        <div class="relative h-24 w-24 flex items-center justify-center">
-                            <svg class="absolute inset-0 h-full w-full rotate-[-90deg]" viewBox="0 0 36 36">
-                                <circle cx="18" cy="18" r="16" fill="none" class="stroke-white/20" stroke-width="4"></circle>
-                                <circle cx="18" cy="18" r="16" fill="none" class="stroke-white" stroke-width="4" stroke-dasharray="95, 100" stroke-linecap="round"></circle>
-                            </svg>
-                            <span class="text-3xl font-black italic">95<span class="text-xs opacity-60">%</span></span>
-                        </div>
-                        <div>
-                            <p class="text-xl font-black italic uppercase leading-none">Excellent</p>
-                            <p class="text-[10px] text-emerald-100 font-bold uppercase tracking-widest mt-2 border-t border-white/20 pt-2">Données certifiées</p>
-                        </div>
+            <div class="bg-emerald-600 p-8 rounded-[2.5rem] text-white shadow-xl shadow-emerald-100 relative overflow-hidden">
+                <p class="text-[10px] font-black text-emerald-100/60 uppercase tracking-[0.2em] mb-4">Statut de Conformité</p>
+                <div class="flex items-center gap-6 relative z-10">
+                    <div class="h-14 w-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-black italic uppercase leading-none tracking-tight">À Jour</p>
+                        <p class="text-[9px] text-emerald-100 font-bold uppercase tracking-widest mt-1">Dossier certifié DGI</p>
                     </div>
                 </div>
+                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white opacity-10 rounded-full"></div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
-            <div class="lg:col-span-2 bg-white p-10 rounded-[3.5rem] border border-emerald-50 shadow-sm">
-                <div class="flex justify-between items-center mb-10">
-                    <div>
-                        <h3 class="text-2xl font-black text-slate-800 uppercase italic tracking-tight">Tendance des Versements</h3>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Évolution sur les 6 derniers mois</p>
-                    </div>
-                    <div class="flex gap-3">
-                        <div class="flex items-center gap-2">
-                            <span class="h-3 w-3 bg-[#2D8B8B] rounded-full"></span>
-                            <span class="text-[9px] font-black uppercase text-slate-400">IRSA</span>
-                        </div>
-                    </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-lg font-black text-slate-800 uppercase italic tracking-tighter">Historique des versements</h3>
+                    <select class="bg-slate-50 border-none text-[10px] font-bold uppercase rounded-xl px-4 py-2 focus:ring-emerald-500">
+                        <option>6 Derniers Mois</option>
+                        <option>Année Complète</option>
+                    </select>
                 </div>
-                <div class="h-[350px] w-full bg-[#F9FAFB] rounded-[2.5rem] border-2 border-dashed border-slate-100 flex items-center justify-center">
-                    <div class="text-center">
-                        <svg class="w-12 h-12 text-slate-200 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
-                        <p class="text-slate-300 font-black text-[10px] uppercase tracking-[0.3em] italic">Visualisation Graphique</p>
+                <div class="h-[300px] flex items-end justify-between gap-2 px-4">
+                    {% for i in "123456" %}
+                    <div class="flex-1 flex flex-col items-center gap-3 group">
+                        <div class="w-full bg-slate-50 rounded-2xl relative flex items-end overflow-hidden h-48 transition-all group-hover:bg-slate-100">
+                            <div class="w-full bg-emerald-500/20 group-hover:bg-emerald-500 transition-all duration-500 rounded-t-xl" style="height: {% cycle '40%' '60%' '35%' '80%' '50%' '90%' %}"></div>
+                        </div>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase">M0{{ forloop.counter }}</span>
                     </div>
+                    {% endfor %}
                 </div>
             </div>
 
-            <div class="bg-white p-10 rounded-[3.5rem] border border-emerald-50 shadow-sm">
-                <div class="flex justify-between items-center mb-10">
-                    <h3 class="text-sm font-black text-slate-800 uppercase italic tracking-widest">Flux Récent</h3>
-                    <a href="{% url 'liste_declarations' %}" class="h-10 w-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 hover:text-[#2D8B8B] transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                    </a>
+            <div class="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm flex flex-col">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-xs font-black text-slate-800 uppercase tracking-widest">Flux Récent</h3>
+                    <a href="{% url 'liste_declarations' %}" class="text-[9px] font-black text-emerald-600 hover:underline tracking-widest uppercase">Voir tout</a>
                 </div>
-                <div class="space-y-8">
+                <div class="space-y-6 flex-1 overflow-y-auto max-h-[350px] pr-2">
                     {% for dec in recent_declarations %}
-                    <div class="flex items-center justify-between group cursor-pointer transition-all hover:translate-x-1">
-                        <div class="flex items-center gap-5">
-                            <div class="h-14 w-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-[#2D8B8B] transition-all duration-300">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-width="2" stroke-linecap="round"/></svg>
+                    <div class="flex items-center justify-between group cursor-pointer border-b border-slate-50 pb-4 last:border-0">
+                        <div class="flex items-center gap-4">
+                            <div class="h-12 w-12 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-width="2"/></svg>
                             </div>
                             <div>
-                                <p class="text-xs font-black text-slate-800 uppercase leading-none">{{ dec.periode|default:"Période Inconnue" }}</p>
-                                <p class="text-[9px] text-slate-400 font-bold mt-2 uppercase tracking-tighter">
-                                    {% if dec.statut == 'VALIDE' %}
-                                        <span class="text-emerald-500">Saisie Terminée</span>
-                                    {% else %}
-                                        {{ dec.statut }}
-                                    {% endif %}
-                                </p>
+                                <p class="text-[10px] font-black text-slate-800 uppercase">{{ dec.periode|default:"Période" }}</p>
+                                <p class="text-[8px] font-bold text-slate-400 mt-1 uppercase">ID: #{{ dec.id|slice:":8" }}</p>
                             </div>
                         </div>
                         <div class="text-right">
-                            <p class="text-sm font-black text-slate-900">{{ dec.total_irsa|floatformat:0 }}</p>
-                            <p class="text-[9px] text-slate-300 font-bold uppercase">Ar</p>
+                            <p class="text-[11px] font-black text-slate-900">{{ dec.total_irsa|floatformat:0 }} Ar</p>
+                            <span class="text-[7px] font-black px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded uppercase">Validé</span>
                         </div>
                     </div>
                     {% empty %}
-                    <div class="text-center py-10">
-                        <p class="text-slate-400 text-xs font-bold uppercase italic tracking-widest">Aucune activité</p>
-                    </div>
+                    <div class="text-center py-10 opacity-30 italic text-xs uppercase font-black">Aucune donnée</div>
                     {% endfor %}
                 </div>
             </div>
@@ -178,12 +145,10 @@
 </div>
 
 <style>
-    @keyframes fadeInUp { 
-        from { opacity: 0; transform: translateY(30px); } 
-        to { opacity: 1; transform: translateY(0); } 
-    }
-    .animate-fade-in { animation: fadeInUp 0.6s ease-out forwards; }
-    .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    /* Scrollbar personnalisée pour le flux récent */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #CBD5E1; }
 </style>
-
 {% endblock %}

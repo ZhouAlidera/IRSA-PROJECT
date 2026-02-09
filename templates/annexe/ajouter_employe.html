@@ -1,151 +1,140 @@
 {% extends 'base_tailwind.html' %}
 
 {% block content %}
-{% include 'partials/header.html' %}
-{% include 'partials/messages.html' %}
+{# {% include 'partials/header.html' %} #}
 
-<div class="max-w-7xl mx-auto px-4 mt-4">
-    {% if messages %}
-        {% for message in messages %}
-            <div class="flex items-center p-4 mb-4 rounded-2xl shadow-sm border 
-                {% if message.tags == 'error' %}
-                    bg-red-50 border-red-200 text-red-800
-                {% elif message.tags == 'success' %}
-                    bg-green-50 border-green-200 text-green-800
-                {% else %}
-                    bg-blue-50 border-blue-200 text-blue-800
-                {% endif %}">
-                
-                {% if message.tags == 'error' %}
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
-                {% else %}
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                {% endif %}
-                
-                <span class="font-bold text-sm">{{ message }}</span>
-            </div>
-        {% endfor %}
-    {% endif %}
-</div>
+<div class="min-h-screen bg-[#F8FAFC] pb-20">
+    <div class="max-w-7xl mx-auto px-4 pt-6">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="flex items-center p-4 mb-6 rounded-2xl shadow-sm border animate-fade-in
+                    {% if message.tags == 'error' %} bg-rose-50 border-rose-100 text-rose-800
+                    {% elif message.tags == 'success' %} bg-emerald-50 border-emerald-100 text-emerald-800
+                    {% else %} bg-blue-50 border-blue-100 text-blue-800 {% endif %}">
+                    <span class="font-black text-[10px] uppercase tracking-widest italic">{{ message }}</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
 
-<div class="min-h-screen bg-gray-50 py-12 px-4">
-    <div class="max-w-7xl mx-auto">
-        
-        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
             <div>
-                <h1 class="text-3xl font-black text-gray-900 tracking-tight italic uppercase">
-                    {% if is_edit %}Modifier l'employé{% else %}Ajouter un employé{% endif %}
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="w-8 h-[2px] bg-emerald-500"></span>
+                    <span class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em]">Saisie Individuelle</span>
+                </div>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tighter italic uppercase">
+                    {% if is_edit %}Modifier <span class="text-emerald-600">Salarié</span>{% else %}Nouveau <span class="text-emerald-600">Salarié</span>{% endif %}
                 </h1>
-                <p class="text-gray-500 font-medium italic">Période : <span class="text-indigo-600">{{ annexe.periode_label }} {{ annexe.annee }}</span></p>
             </div>
-            <a href="{% url 'detail_import_brouillon' %}" class="group flex items-center text-sm font-bold text-gray-400 hover:text-red-500 transition-colors uppercase tracking-widest">
-                <span class="mr-2 px-2 py-1 bg-gray-200 rounded-lg group-hover:bg-red-100 italic transition-colors">✕</span> Annuler
+            <a href="{% url 'detail_import_brouillon' %}" class="group flex items-center px-5 py-2.5 bg-white border border-slate-200 rounded-xl text-[9px] font-black text-slate-400 hover:text-rose-500 transition-all uppercase tracking-widest">
+                <span class="mr-2">✕</span> Annuler
             </a>
         </div>
 
-        <form method="post" class="space-y-6">
+        <form method="post" class="space-y-8">
             {% csrf_token %}
 
-            <div class="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden">
+            <div class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/60 border border-slate-100 overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50/80">
+                    <table class="min-w-full">
+                        <thead class="bg-slate-50/50 border-b border-slate-100">
                             <tr>
-                                <th class="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Informations Salarié</th>
-                                <th class="px-4 py-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Revenus</th>
-                                <th class="px-4 py-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Déductions Sociales</th>
-                                <th class="px-4 py-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Situation Familiale</th>
+                                <th class="px-8 py-5 text-left text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">01. Identité</th>
+                                <th class="px-6 py-5 text-center text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">02. Revenus</th>
+                                <th class="px-6 py-5 text-center text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">03. Social</th>
+                                <th class="px-8 py-5 text-center text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">04. Famille</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="divide-x divide-slate-50">
                             <tr class="align-top">
-                                <td class="px-6 py-6 space-y-3 w-1/3 border-r border-gray-50">
+                                <td class="px-8 py-8 space-y-4 w-1/3">
                                     <div>
-                                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Nom Complet</label>
-                                        <input type="text" name="nom_prenom" required value="{{ item.nom_prenom|default:'' }}" placeholder="Ex: RAKOTO Jean"
-                                               class="w-full bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-500 font-bold text-gray-900">
+                                        <label class="block text-[9px] font-black text-emerald-600 uppercase mb-1.5 tracking-widest italic">Nom & Prénoms</label>
+                                        <input type="text" name="nom_prenom" required value="{{ item.nom_prenom|default:'' }}" 
+                                               class="w-full bg-slate-50 border-transparent rounded-lg focus:ring-4 focus:ring-emerald-500/10 focus:bg-white focus:border-emerald-500 font-bold text-slate-900 py-2.5 text-sm transition-all">
                                     </div>
-                                    <div class="grid grid-cols-2 gap-2">
-                                        <div class="col-span-2">
-                                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 italic">N° CIN (Obligatoire)</label>
-                                            <input type="text" name="cin" required value="{{ item.cin|default:'' }}" placeholder="000 000 000 000"
-                                                   class="w-full bg-indigo-50/50 border-none rounded-xl focus:ring-2 focus:ring-indigo-500 font-black tracking-widest text-indigo-900">
+                                    <div>
+                                        <label class="block text-[9px] font-black text-emerald-600 uppercase mb-1.5 tracking-widest italic">N° CIN / Passeport</label>
+                                        <input type="text" name="cin" id="cin-input" required value="{{ item.cin|default:'' }}"
+                                               class="w-full bg-emerald-50/30 border-emerald-100/50 rounded-lg focus:ring-4 focus:ring-emerald-500/10 font-black tracking-widest text-emerald-700 py-2.5 text-sm">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="block text-[9px] font-black text-emerald-600/50 uppercase mb-1.5">CNaPS</label>
+                                            <input type="text" name="num_cnaps" value="{{ item.num_cnaps|default:'' }}"
+                                                   class="w-full bg-slate-50 border-transparent rounded-lg text-xs py-2">
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">CNaPS</label>
-                                            <input type="text" name="num_cnaps" value="{{ item.num_cnaps|default:'' }}" placeholder="Matricule"
-                                                   class="w-full bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-500 font-bold text-sm">
-                                        </div>
-                                        <div>
-                                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Fonction</label>
-                                            <input type="text" name="fonction" value="{{ item.fonction|default:'' }}" placeholder="Poste"
-                                                   class="w-full bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-500 font-bold text-sm">
+                                            <label class="block text-[9px] font-black text-emerald-600/50 uppercase mb-1.5">Fonction</label>
+                                            <input type="text" name="fonction" value="{{ item.fonction|default:'' }}"
+                                                   class="w-full bg-slate-50 border-transparent rounded-lg text-xs py-2">
                                         </div>
                                     </div>
                                 </td>
 
-                                <td class="px-4 py-6 bg-indigo-50/10 space-y-3 border-r border-gray-50">
+                                <td class="px-6 py-8 bg-slate-50/30 space-y-5">
                                     <div>
-                                        <label class="block text-[10px] font-bold text-indigo-400 uppercase mb-1 text-center italic">Salaire Brut (Ar)</label>
+                                        <label class="block text-[9px] font-black text-emerald-600 uppercase mb-1.5 text-center tracking-widest italic">Salaire Brut (Ar)</label>
                                         <input type="number" step="0.01" name="brut" required value="{{ item.remuneration_brute|stringformat:'.2f'|default:'0' }}"
-                                               class="w-full bg-white border-2 border-indigo-100 rounded-xl focus:ring-2 focus:ring-indigo-500 font-black text-indigo-700 text-xl text-center">
+                                               class="w-full bg-white border border-emerald-200 rounded-xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 font-black text-emerald-600 text-lg text-center py-3">
                                     </div>
                                     <div>
-                                        <label class="block text-[10px] font-bold text-amber-500 uppercase mb-1 text-center">Avantages en nature</label>
+                                        <label class="block text-[9px] font-black text-amber-500 uppercase mb-1.5 text-center tracking-widest italic">Avantages Nature</label>
                                         <input type="number" step="0.01" name="avantage" value="{{ item.avantages_nature|stringformat:'.2f'|default:'0' }}"
-                                               class="w-full bg-white border-none rounded-xl focus:ring-2 focus:ring-amber-500 font-bold text-center text-amber-600">
+                                               class="w-full bg-white border border-amber-100 rounded-lg focus:ring-4 focus:ring-amber-500/10 font-bold text-center text-amber-600 py-2 text-sm">
                                     </div>
                                 </td>
 
-                                <td class="px-4 py-6 space-y-3 border-r border-gray-50">
+                                <td class="px-6 py-8 space-y-5">
                                     <div>
-                                        <label class="block text-[10px] font-bold text-red-400 uppercase mb-1 text-center italic">Retraite (Auto 1%)</label>
+                                        <label class="block text-[9px] font-black text-rose-500 uppercase mb-1.5 text-center tracking-widest italic">Retraite (1%)</label>
                                         <input type="number" step="0.01" name="pension" value="{{ item.pension|stringformat:'.2f'|default:'0' }}" readonly
-                                               class="w-full bg-gray-100 border-none rounded-xl font-black text-center text-red-500 cursor-not-allowed">
+                                               class="w-full bg-slate-100 border-none rounded-lg font-black text-center text-rose-500 py-2.5 text-sm cursor-not-allowed">
                                     </div>
                                     <div>
-                                        <label class="block text-[10px] font-bold text-blue-400 uppercase mb-1 text-center italic">Cotisation Santé</label>
+                                        <label class="block text-[9px] font-black text-blue-500 uppercase mb-1.5 text-center tracking-widest italic">Santé / OSTIE</label>
                                         <input type="number" step="0.01" name="sante" value="{{ item.cotisation_sante|stringformat:'.2f'|default:'0' }}"
-                                               class="w-full bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-400 font-bold text-center text-blue-500">
+                                               class="w-full bg-slate-50 border-transparent rounded-lg focus:ring-4 focus:ring-blue-500/10 font-bold text-center text-blue-600 py-2.5 text-sm">
                                     </div>
                                 </td>
 
-                                <td class="px-6 py-6 bg-gray-50/30">
-                                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 text-center">Enfants à charge</label>
-                                    <div class="flex items-center justify-center bg-white border border-gray-100 rounded-2xl p-1 mt-4 shadow-sm">
+                                <td class="px-8 py-8 bg-slate-50/30 flex flex-col items-center">
+                                    <label class="block text-[9px] font-black text-slate-400 uppercase mb-4 text-center tracking-widest italic">Enfants à charge</label>
+                                    <div class="flex items-center justify-center bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
                                         <button type="button" onclick="const i=this.nextElementSibling; i.value=Math.max(0,parseInt(i.value)-1); i.dispatchEvent(new Event('change'))" 
-                                                 class="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-xl font-black text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors">-</button>
+                                                 class="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-lg font-black text-slate-400 hover:text-rose-500 transition-all active:scale-90">−</button>
                                         <input type="number" name="charges" value="{{ item.personnes_charge|default:'0' }}" readonly 
-                                               class="w-14 border-none bg-transparent text-center font-black text-indigo-600 text-2xl">
+                                               class="w-12 border-none bg-transparent text-center font-black text-emerald-600 text-xl focus:ring-0">
                                         <button type="button" onclick="const i=this.previousElementSibling; i.value=parseInt(i.value)+1; i.dispatchEvent(new Event('change'))" 
-                                                 class="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-xl font-black text-gray-400 hover:bg-green-50 hover:text-green-500 transition-colors">+</button>
+                                                 class="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-lg font-black text-slate-400 hover:text-emerald-500 transition-all active:scale-90">+</button>
                                     </div>
-                                    <p class="text-[9px] text-gray-400 text-center mt-3 uppercase font-bold tracking-tighter italic">(-2.000 Ar / enfant)</p>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <div class="bg-gray-900 px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div class="flex flex-wrap gap-8 justify-center md:justify-start">
-                        <div class="text-center md:text-left border-r border-gray-700 pr-8">
-                            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Base Imposable (RNI)</p>
-                            <p id="display-rni" class="text-2xl font-black text-white">0 Ar</p>
+                <div class="bg-slate-900 px-10 py-8 flex flex-col lg:flex-row items-center justify-between gap-8">
+                    <div class="flex flex-wrap gap-10 justify-center lg:justify-start">
+                        <div>
+                            <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Base Imposable</p>
+                            <p id="display-rni" class="text-2xl font-black text-white italic">0 <span class="text-[10px]">AR</span></p>
                         </div>
-                        <div class="text-center md:text-left border-r border-gray-700 pr-8">
-                            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Réduction Famille</p>
-                            <p id="display-reduction" class="text-2xl font-black text-amber-500">0 Ar</p>
+                        <div class="text-center lg:text-left">
+                            <p class="text-[8px] font-black text-amber-500 uppercase tracking-widest mb-1">Réduction Famille</p>
+                            <p id="display-reduction" class="text-2xl font-black text-amber-500 italic">0 <span class="text-[10px]">AR</span></p>
                         </div>
-                        <div class="text-center md:text-left">
-                            <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1 italic">Impôt IRSA Net</p>
-                            <p id="display-impot" class="text-3xl font-black text-green-400">0 Ar</p>
+                        <div class="text-center lg:text-left">
+                            <p class="text-[8px] font-black text-emerald-400 uppercase tracking-widest mb-1 italic">Net IRSA</p>
+                            <p id="display-impot" class="text-3xl font-black text-emerald-400 italic">0 <span class="text-[10px]">AR</span></p>
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full md:w-auto px-12 py-5 bg-green-500 hover:bg-green-400 text-gray-900 font-black rounded-2xl shadow-2xl shadow-green-500/20 transition-all transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest text-sm flex items-center justify-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                        {% if is_edit %}Mettre à jour{% else %}Enregistrer l'employé{% endif %}
+                    <button type="submit" class="w-full lg:w-auto px-10 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-lg transition-all transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest text-[11px] flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        {% if is_edit %}Mettre à jour{% else %}Enregistrer{% endif %}
                     </button>
                 </div>
             </div>
@@ -160,7 +149,7 @@
         const inputSante = document.querySelector('input[name="sante"]');
         const inputPension = document.querySelector('input[name="pension"]');
         const inputCharges = document.querySelector('input[name="charges"]');
-        const cinInput = document.querySelector('input[name="cin"]');
+        const cinInput = document.getElementById('cin-input');
         
         function updateCalculations() {
             const brut = parseFloat(inputBrut.value) || 0;
@@ -184,15 +173,17 @@
     
             const reduction = nbEnfants * 2000;
             let irsaNet = Math.max(irsaBrut - reduction, 0);
+            
+            // Minimum de perception si imposable
             if (rni > 350000 && irsaNet < 3000) irsaNet = 3000;
     
             const formatter = new Intl.NumberFormat('fr-FR');
-            document.getElementById('display-rni').innerText = formatter.format(Math.round(rni)) + " Ar";
-            document.getElementById('display-reduction').innerText = "-" + formatter.format(reduction) + " Ar";
-            document.getElementById('display-impot').innerText = formatter.format(Math.round(irsaNet)) + " Ar";
+            document.getElementById('display-rni').innerHTML = `${formatter.format(Math.round(rni))} <span class="text-xs text-slate-500 uppercase">Ar</span>`;
+            document.getElementById('display-reduction').innerHTML = `-${formatter.format(reduction)} <span class="text-xs text-amber-900/50 uppercase">Ar</span>`;
+            document.getElementById('display-impot').innerHTML = `${formatter.format(Math.round(irsaNet))} <span class="text-xs text-emerald-900 uppercase">Ar</span>`;
         }
     
-        // Formatage CIN auto
+        // Formatage CIN auto (Espace tous les 3 chiffres)
         cinInput.addEventListener('input', function(e) {
             let val = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
             let formatted = val.match(/.{1,3}/g)?.join(' ') || val;
@@ -205,7 +196,7 @@
         
         inputCharges.addEventListener('change', updateCalculations);
 
-        // LANCEMENT INITIAL : Très important pour la modification
+        // Initialisation
         updateCalculations();
     });
 </script>

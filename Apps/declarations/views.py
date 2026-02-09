@@ -68,7 +68,7 @@ def upload_annexe(request):
             # --- CRÉATION DE LA PÉRIODE EN BASE ---
             # C'est ici que l'on transforme le brouillon de session en objet réel
             try:
-                periode_obj = PeriodeFiscale.objects.get_or_create(
+                periode_obj,created = PeriodeFiscale.objects.get_or_create(
                     employeur=request.user.employeur,
                     date_debut=temp_periode['date_debut'],
                     date_fin=temp_periode['date_fin'],
