@@ -29,6 +29,7 @@ class DeclarationIRSA(models.Model):
         BROUILLON = 'brouillon', 'Brouillon'
         CONFIRME = 'confirme', 'Confirmé'
         VALIDE = 'valide', 'Validé'
+        ARCHIVE = 'archive', 'archivé'
 
     # ... autres champs ...
 

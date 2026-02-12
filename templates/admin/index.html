@@ -1,4 +1,5 @@
-{% extends "admin/index.html" %} {% load i18n static %} 
+{% extends "admin/index.html" %} 
+{% load i18n static %} 
 
 {% block content %}
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -22,40 +23,40 @@
         </div>
     </div>
 
-    <div class="flex flex-col justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+    <div class="flex flex-col justify-between rounded-xl border border-amber-200 bg-amber-50/30 p-5 shadow-sm dark:border-amber-900/50 dark:bg-amber-900/10">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Déclarations / Mois</p>
-                <h3 class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
-                    {{ dashboard_stats.total_declarations|default:"0" }}
+                <p class="text-sm font-medium text-amber-600 dark:text-amber-400">Dossiers à Valider</p>
+                <h3 class="mt-1 text-2xl font-bold text-amber-700 dark:text-amber-300">
+                    {{ dashboard_stats.urgent_a_valider|default:"0" }}
                 </h3>
             </div>
-            <div class="rounded-lg bg-green-50 p-3 text-green-600 dark:bg-green-900/20 dark:text-green-400">
-                <i class="fas fa-file-invoice-dollar text-xl"></i>
+            <div class="rounded-lg bg-amber-100 p-3 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400">
+                <i class="fas fa-check-double text-xl"></i>
             </div>
         </div>
-        <div class="mt-4 border-t border-gray-100 pt-4 dark:border-gray-800">
-            <a href="/admin/declarations/declarationirsas/" class="group flex items-center text-sm font-semibold text-green-600 hover:text-green-700 dark:text-green-400">
-                Détails <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+        <div class="mt-4 border-t border-amber-100 pt-4 dark:border-amber-800/50">
+            <a href="/admin/declarations/declarationirsa/?statut__exact=confirme" class="group flex items-center text-sm font-semibold text-amber-700 hover:text-amber-800 dark:text-amber-400">
+                Traiter les dossiers <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
             </a>
         </div>
     </div>
 
-    <div class="flex flex-col justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+    <div class="flex flex-col justify-between rounded-xl border border-red-200 bg-red-50/30 p-5 shadow-sm dark:border-red-800 dark:bg-red-900/10">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-red-500 dark:text-red-400">Retards de paiement</p>
+                <p class="text-sm font-medium text-red-500 dark:text-red-400">Périodes en Retard</p>
                 <h3 class="mt-1 text-2xl font-bold text-red-600 dark:text-red-400">
                     {{ dashboard_stats.periodes_en_retard|default:"0" }}
                 </h3>
             </div>
-            <div class="rounded-lg bg-red-50 p-3 text-red-600 dark:bg-red-900/20 dark:text-red-400">
+            <div class="rounded-lg bg-red-100 p-3 text-red-600 dark:bg-red-900/40 dark:text-red-400">
                 <i class="fas fa-exclamation-triangle text-xl"></i>
             </div>
         </div>
-        <div class="mt-4 border-t border-gray-100 pt-4 dark:border-gray-800">
-            <a href="/admin/declarations/periodefiscale/" class="group flex items-center text-sm font-semibold text-red-600 hover:text-red-700 dark:text-red-400">
-                Relancer <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+        <div class="mt-4 border-t border-red-100 pt-4 dark:border-red-800/50">
+            <a href="/admin/declarations/periodefiscale/?retard=oui" class="group flex items-center text-sm font-semibold text-red-600 hover:text-red-700 dark:text-red-400">
+                Lister les retardataires <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
             </a>
         </div>
     </div>
@@ -63,24 +64,26 @@
     <div class="flex flex-col justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Revenus déclarés</p>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Brouillons Actifs</p>
                 <h3 class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
-                    {{ dashboard_stats.total_revenus|default:"0" }}
+                    {{ dashboard_stats.brouillons_en_cours|default:"0" }}
                 </h3>
             </div>
-            <div class="rounded-lg bg-amber-50 p-3 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400">
-                <i class="fas fa-chart-line text-xl"></i>
+            <div class="rounded-lg bg-gray-50 p-3 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                <i class="fas fa-edit text-xl"></i>
             </div>
         </div>
         <div class="mt-4 border-t border-gray-100 pt-4 dark:border-gray-800">
-            <a href="#" class="group flex items-center text-sm font-semibold text-amber-600 hover:text-amber-700 dark:text-amber-400">
-                Rapport <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+            <a href="/admin/declarations/declarationirsa/?statut__exact=brouillon" class="group flex items-center text-sm font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400">
+                Suivi <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
             </a>
         </div>
     </div>
+
 </div>
 
-{% comment %} <div class="mt-8">
+<div class="mt-8">
+    <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Navigation Administrative</h2>
     {{ block.super }}
-</div> {% endcomment %}
-</div> {% endblock %}
+</div>
+{% endblock %}

@@ -1,105 +1,140 @@
 {% extends 'base_tailwind.html' %}
 {% block content %}
-{% include 'Portail_employes/partials/header.html' %}
-{% include 'partials/messages.html' %}
 
-<div class="flex min-h-screen bg-slate-50">
-    <main class="flex-1 ml-0 md:ml-72 p-6 md:p-12">
-        <div class="mb-10 animate-fade-in">
-            <h1 class="text-4xl font-black text-slate-800 tracking-tight">Historique IRSA</h1>
+<div class="animate-fade-in space-y-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl md:text-4xl font-black text-slate-800 tracking-tight">Historique IRSA</h1>
             <p class="text-slate-500 font-medium mt-2">Retrouvez le détail de vos revenus et impôts déclarés par vos employeurs.</p>
         </div>
+    </div>
 
-        <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/60 border border-slate-100 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-900 text-white">
-                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em]">Période / Réf</th>
-                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em]">Employeur</th>
-                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em]">Salaire Imposable</th>
-                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em]">IRSA Retenu</th>
-                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em]">Statut</th>
-                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        {% for ligne in lignes %}
-                        <tr class="hover:bg-slate-50/80 transition-all group">
-                            <td class="px-8 py-6">
-                                <div class="flex items-center gap-4">
-                                    {% if not ligne.est_lu %}
-                                    <span class="relative flex h-2 w-2">
-                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#91c4c6] opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-[#91c4c6]"></span>
-                                    </span>
-                                    {% endif %}
-                                    
-                                    <div class="flex flex-col">
-                                        <span class="font-black {% if not ligne.est_lu %}text-slate-900{% else %}text-slate-500{% endif %} uppercase transition-colors">
-                                            {{ ligne.declaration.periode.periode_type }} {{ ligne.declaration.periode.annee }}
-                                        </span>
-                                        <span class="text-[10px] text-slate-400 font-bold">{{ ligne.declaration.numero_document }}</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-8 py-6">
-                                <span class="text-sm font-bold text-slate-600 italic">{{ ligne.declaration.employeur.raison_sociale }}</span>
-                            </td>
-                            <td class="px-8 py-6">
-                                <span class="text-md font-black text-slate-800">{{ ligne.salaire_imposable }} Ar</span>
-                            </td>
-                            <td class="px-8 py-6">
-                                <span class="text-md font-black text-[#76aaaa] bg-[#76aaaa]/10 px-3 py-1 rounded-lg">
-                                    - {{ ligne.irsa_due }} Ar
-                                </span>
-                            </td>
-                            <td class="px-8 py-6">
-                                {% if ligne.declaration.statut == 'valide' or ligne.declaration.statut == 'confirme' %}
-                                    <span class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase rounded-full">
-                                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full {% if not ligne.est_lu %}animate-pulse{% endif %}"></span>
-                                        Confirmé
-                                    </span>
-                                {% else %}
-                                    <span class="px-3 py-1 bg-amber-100 text-amber-700 text-[10px] font-black uppercase rounded-full">
-                                        En cours
-                                    </span>
-                                {% endif %}
-                            </td>
-                            <td class="px-8 py-6 text-center">
-                                <div class="flex items-center justify-center gap-3">
-                                    {% if ligne.est_lu %}
-                                        <svg title="Déjà consulté" class="w-4 h-4 text-[#91c4c6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                        </svg>
-                                    {% endif %}
-
-                                    <a href="{% url 'detail_declaration_irsa' ligne.id %}" 
-                                       class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300 shadow-sm">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" class="px-8 py-32 text-center">
-                                <div class="flex flex-col items-center">
-                                    <div class="w-20 h-20 bg-slate-100 rounded-[2rem] flex items-center justify-center text-slate-300 mb-4">
-                                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
-                                    </div>
-                                    <p class="text-slate-400 font-black uppercase tracking-widest text-xs">Aucune donnée fiscale disponible pour le moment</p>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    <div class="bg-white p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-slate-100 shadow-sm">
+        <form method="GET" class="flex flex-col lg:flex-row gap-4">
+            <div class="flex-1 relative">
+                <span class="absolute inset-y-0 left-4 flex items-center text-slate-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </span>
+                <input type="text" name="q" value="{{ search_query }}" 
+                       placeholder="Rechercher un employeur ou un document..." 
+                       class="w-full pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold text-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-[#91c4c6] transition-all">
             </div>
+
+            <div class="w-full lg:w-64">
+                <select name="year" onchange="this.form.submit()" 
+                        class="w-full py-3 bg-slate-50 border-none rounded-xl text-sm font-black text-slate-600 focus:ring-2 focus:ring-[#91c4c6] cursor-pointer appearance-none">
+                    <option value="">Toutes les années</option>
+                    {% for annee in annees %}
+                        <option value="{{ annee }}" {% if selected_year == annee|stringformat:"i" %}selected{% endif %}>
+                            Année {{ annee }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {% if search_query or selected_year %}
+            <a href="{% url 'mes_declarations_irsa' %}" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-500 text-xs font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center">
+                Réinitialiser
+            </a>
+            {% endif %}
+        </form>
+    </div>
+
+    <div class="bg-white rounded-[1.5rem] md:rounded-[2.5rem] shadow-2xl shadow-slate-200/60 border border-slate-100 overflow-hidden">
+        <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left border-collapse min-w-[850px]">
+                <thead>
+                    <tr class="bg-slate-900 text-white">
+                        <th class="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em]">Période / Réf</th>
+                        <th class="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em]">Employeur</th>
+                        <th class="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em]">Salaire Imposable</th>
+                        <th class="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em]">IRSA Retenu</th>
+                        <th class="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em]">Statut</th>
+                        <th class="px-6 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for ligne in lignes %}
+                    <tr class="hover:bg-slate-50/80 transition-all group">
+                        <td class="px-6 py-6">
+                            <div class="flex items-center gap-3">
+                                {% if not ligne.est_lu %}
+                                <span class="relative flex h-2 w-2 shrink-0">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#91c4c6] opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-[#91c4c6]"></span>
+                                </span>
+                                {% endif %}
+                                <div class="flex flex-col">
+                                    <span class="font-black text-sm {% if not ligne.est_lu %}text-slate-900{% else %}text-slate-500{% endif %} uppercase">
+                                        {{ ligne.declaration.periode.periode_type }} {{ ligne.declaration.periode.annee }}
+                                    </span>
+                                    <span class="text-[10px] text-slate-400 font-bold">{{ ligne.declaration.numero_document }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-6">
+                            <span class="text-sm font-bold text-slate-600 italic block truncate max-w-[200px]" title="{{ ligne.declaration.employeur.raison_sociale }}">
+                                {{ ligne.declaration.employeur.raison_sociale }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-6">
+                            <span class="text-sm font-black text-slate-800 whitespace-nowrap">{{ ligne.salaire_imposable }} Ar</span>
+                        </td>
+                        <td class="px-6 py-6">
+                            <span class="text-sm font-black text-[#76aaaa] bg-[#76aaaa]/10 px-3 py-1 rounded-lg whitespace-nowrap">
+                                - {{ ligne.irsa_due }} Ar
+                            </span>
+                        </td>
+                        <td class="px-6 py-6">
+                            {% if ligne.declaration.statut == 'valide' or ligne.declaration.statut == 'confirme' %}
+                                <span class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase rounded-full">
+                                    <span class="w-1 h-1 bg-emerald-500 rounded-full"></span>
+                                    Confirmé
+                                </span>
+                            {% else %}
+                                <span class="px-3 py-1 bg-amber-100 text-amber-700 text-[9px] font-black uppercase rounded-full">
+                                    En cours
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-6 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <a href="{% url 'detail_declaration_irsa' ligne.id %}" 
+                                   class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all shadow-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-8 py-24 text-center">
+                            <div class="flex flex-col items-center">
+                                <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-200 mb-4">
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                                    </svg>
+                                </div>
+                                <p class="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Aucun résultat trouvé pour votre recherche</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-    </main>
+    </div>
 </div>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar { height: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+</style>
+
 {% endblock %}

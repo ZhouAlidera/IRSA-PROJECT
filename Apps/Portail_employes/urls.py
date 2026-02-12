@@ -7,10 +7,11 @@ urlpatterns = [
     # --- Inscription Employeur (existant) ---
     path('register/employeur/step-1/', views.register_employe_step_one, name='register_employe_step_one'),
     path('register/employeur/step-2/', views.register_employe_step_two, name='register_employe_step_two'),
-    path('dashbord/employe/', views.dashborad_employe, name='dashboard_employe'),
+    path('dashbord/employe/', views.dashboard_employe, name='dashboard_employe'),
     path('mes-declarations/', views.mes_declarations_irsa, name='mes_declarations_irsa'),
     path('mon-profil/', views.profil_employe_view, name='profil_employe'),
     path('mes-declarations/<int:pk>/', views.detail_declaration_irsa, name='detail_declaration_irsa'),
+    path('mon-espace/fiche/pdf/<int:fiche_id>/', views.generer_pdf_fiche, name='generer_pdf_fiche'),
 
     # # --- Portail Employé ---
     # path('mon-espace/', views.portail_employe_view, name='portail_employe'),

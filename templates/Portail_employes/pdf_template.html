@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page { size: A4; margin: 1.5cm; }
+        body { font-family: 'Helvetica', sans-serif; font-size: 10px; color: #1f2937; }
+        .border-main { border: 1px solid #000; padding: 0; }
+        .header { border-bottom: 1px solid #000; padding: 10px; }
+        .table-data { width: 100%; border-collapse: collapse; }
+        .table-data th { border-bottom: 1px solid #000; border-right: 1px solid #000; padding: 8px; background: #f3f4f6; text-align: left; }
+        .table-data td { border-right: 1px solid #000; padding: 5px 10px; vertical-align: top; }
+        .text-right { text-align: right; }
+        .footer-total { border-top: 1px solid #000; padding: 15px; background: #f9fafb; }
+        .label { font-weight: bold; font-size: 9px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+<div class="border-main">
+    <div class="header">
+        <table width="100%">
+            <tr>
+                <td width="50%">
+                    <div class="label">Employeur</div>
+                    <div style="font-size: 14px; font-weight: 900;">{{ employeur.raison_sociale }}</div>
+                    <div>NIF : {{ employeur.nif }}</div>
+                    <div>STAT : {{ employeur.adresse }}</div>
+                </td>
+                <td width="50%" class="text-right">
+                    <div style="font-size: 16px; font-weight: 900; margin-bottom: 5px;">BULLETIN DE PAIE</div>
+                    <div class="label">Période : {{ fiche.declaration.periode }}</div>
+                    <div>Document : {{ fiche.declaration.numero_document }}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="padding: 10px; border-bottom: 1px solid #000; background: #fafafa;">
+        <table width="100%">
+            <tr>
+                <td><span class="label">Salarié :</span> {{ fiche.employe.nom_prenom }}</td>
+                <td class="text-right"><span class="label">NIF :</span> {{ fiche.employe.nif_individuel }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <table class="table-data">
+        <thead>
+            <tr>
+                <th width="50%">Désignation</th>
+                <th width="25%" class="text-right">Gains (Ar)</th>
+                <th width="25%" class="text-right" style="border-right: none;">Retenues (Ar)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rev in details_revenus %}
+            <tr>
+                <td>{{ rev.type_revenu.libelle }}</td>
+                <td class="text-right">{{ rev.montant|floatformat:2 }}</td>
+                <td class="text-right" style="border-right: none;">-</td>
+            </tr>
+            {% endfor %}
+
+            {% for ded in details_deductions %}
+            <tr>
+                <td>{{ ded.type_deduction.libelle }}</td>
+                <td class="text-right">-</td>
+                <td class="text-right" style="border-right: none;">{{ ded.montant|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+
+            <tr>
+                <td style="font-weight: bold;">IRSA (Impôt sur les Revenus)</td>
+                <td class="text-right">-</td>
+                <td class="text-right" style="border-right: none; font-weight: bold; color: #dc2626;">{{ fiche.irsa_due|floatformat:2 }}</td>
+            </tr>
+
+            {% for i in "12345678" %}
+            <tr><td style="height: 15px;">&nbsp;</td><td></td><td style="border-right: none;"></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer-total">
+        <table width="100%">
+            <tr>
+                <td width="70%" class="text-right label">Total Brut :</td>
+                <td width="30%" class="text-right font-bold">{{ salaire_brut|floatformat:2 }} Ar</td>
+            </tr>
+            <tr>
+                <td class="text-right label">Total Retenues :</td>
+                <td class="text-right font-bold">{{ total_retenues|floatformat:2 }} Ar</td>
+            </tr>
+            <tr style="font-size: 14px;">
+                <td class="text-right" style="padding-top: 10px; font-weight: 900;">NET À PAYER :</td>
+                <td class="text-right" style="padding-top: 10px; font-weight: 900; border-top: 2px solid #000;">
+                    {{ salaire_net|floatformat:2 }} Ar
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div style="margin-top: 20px; font-size: 8px; text-align: center; color: #9ca3af;">
+    Ceci est un document officiel généré par FiscLink le {{ date_edition|date:"d/m/Y à H:i" }}.
+</div>
+
+</body>
+</html>

@@ -221,95 +221,86 @@ def get_deadline_info():
 
 import json
 from datetime import date
+from dateutil.relativedelta import relativedelta
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum, Count, Q
+from django.db.models import Sum
 from django.db.models.functions import TruncMonth
-from .models import DeclarationIRSA, ImportIRSATemporaire
+# Assure-toi d'importer tes modèles (ex: from .models import DeclarationIRSA)
 
 @login_required
 def dashboard_employeur(request):
     employeur = request.user.employeur
     today = date.today()
 
-    # --- 1. GESTION DYNAMIQUE DE LA DEADLINE (Le 15 du mois) ---
-    deadline = date(today.year, today.month, 15)
-    if today > deadline:
-        # Si on a dépassé le 15, on calcule la deadline du mois prochain
-        next_month = today.month % 12 + 1
-        year = today.year + (1 if today.month == 12 else 0)
-        deadline = date(year, next_month, 15)
-            
-    jours_restants = (deadline - today).days
-    
-    # Niveaux d'alerte UI
-    if jours_restants <= 3:
-        deadline_status = "danger"
-    elif jours_restants <= 7:
-        deadline_status = "warning"
-    else:
-        deadline_status = "info"
-
-    # --- 2. STATISTIQUES POUR LE GRAPHIQUE (Évolution IRSA) ---
-    # On récupère les 6 derniers mois confirmés
-    stats_queryset = (
-        DeclarationIRSA.objects.filter(
-            employeur=employeur, 
-            statut='valide'
-        )
-        .annotate(month=TruncMonth('periode__date_debut'))
-        .values('month')
-        .annotate(total=Sum('total_irsa'))
-        .order_by('month')[:6]
-    )
-
-    labels = [s['month'].strftime("%b") for s in stats_queryset]
-    data_values = [float(s['total']) for s in stats_queryset]
-
-    # --- 3. KPIs (Indicateurs Clés) ---
-    # Récupération de la toute dernière déclaration pour l'affichage de l'effectif
+    # --- 1. LOGIQUE DE DEADLINE ---
     derniere_decl = DeclarationIRSA.objects.filter(
         employeur=employeur,
         statut='valide'
     ).order_by('-periode__date_debut').first()
 
-    # Total IRSA cumulé sur l'année civile en cours
-    total_annuel = DeclarationIRSA.objects.filter(
-        employeur=employeur,
-        statut='valide',
-        periode__annee=today.year
-    ).aggregate(total=Sum('total_irsa'))['total'] or 0
+    mois_dernier = (today - relativedelta(months=1)).replace(day=1)
+    is_a_jour = False
+    
+    if derniere_decl:
+        if derniere_decl.periode.date_debut >= mois_dernier:
+            is_a_jour = True
+            prochain_mois_a_declarer = today
+        else:
+            prochain_mois_a_declarer = derniere_decl.periode.date_debut + relativedelta(months=1)
+    else:
+        prochain_mois_a_declarer = mois_dernier
 
-    # Vérification si un brouillon est actuellement en cours (Saisie ou Excel)
-    brouillon_count = ImportIRSATemporaire.objects.filter(
-        employeur=employeur,
-        statut='BROUILLON'
-    ).count()
+    deadline = (prochain_mois_a_declarer + relativedelta(months=1)).replace(day=15)
+    jours_restants = (deadline - today).days
 
-    # Liste des 5 dernières activités
-    recent_declarations = DeclarationIRSA.objects.filter(
-        employeur=employeur
-    ).select_related('periode').order_by('-id')[:5]
+    # --- 2. LOGIQUE DU GRAPHIQUE (12 MOIS DE L'ANNÉE EN COURS) ---
+    stats_queryset = (
+        DeclarationIRSA.objects.filter(
+            employeur=employeur, 
+            statut='valide',
+            periode__date_debut__year=today.year # Uniquement l'année en cours
+        )
+        .annotate(month=TruncMonth('periode__date_debut'))
+        .values('month')
+        .annotate(total=Sum('total_irsa'))
+        .order_by('month')
+    )
+    
+    # Création du dictionnaire de correspondance { "Janvier": 150000, ... }
+    # Note: On utilise l'index du mois pour éviter les problèmes de langue
+    data_map = {s['month'].month: s['total'] for s in stats_queryset}
+    
+    noms_mois = [
+        "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", 
+        "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
+    ]
+    
+    chart_data_list = []
+    for i, mois in enumerate(noms_mois, 1):
+        chart_data_list.append({
+            'label': mois,
+            'value': float(data_map.get(i, 0)), # 0 si aucune déclaration pour ce mois
+        })
 
-    # --- 4. CONSTRUCTION DU CONTEXTE ---
+    # --- 3. CONTEXTE COMPLET ---
     context = {
-        # Graphique
-        'chart_labels': json.dumps(labels),
-        'chart_data': json.dumps(data_values),
-        
-        # Deadline
+        'today': today,
         'deadline_info': {
             'date': deadline,
             'jours': jours_restants,
-            'status': deadline_status
+            'is_a_jour': is_a_jour,
+            'status': 'success' if is_a_jour else ('danger' if jours_restants <= 3 else 'info'),
+            'mois_concerne': prochain_mois_a_declarer.strftime("%B %Y")
         },
-        
-        # Chiffres clés
-        'total_irsa_annuel': total_annuel,
+        'chart_data_list': chart_data_list,
+        'total_irsa_annuel': DeclarationIRSA.objects.filter(
+            employeur=employeur, 
+            statut='valide', 
+            periode__date_debut__year=today.year
+        ).aggregate(total=Sum('total_irsa'))['total'] or 0,
         'nb_employes_actuel': derniere_decl.nombre_travailleurs_total if derniere_decl else 0,
-        'brouillon_en_cours': brouillon_count,
-        'recent_declarations': recent_declarations,
-        'today': today,
+        'recent_declarations': DeclarationIRSA.objects.filter(employeur=employeur).order_by('-id')[:5],
     }
 
     return render(request, 'dashboard/employeur.html', context)
@@ -362,7 +353,7 @@ from .models import ImportIRSATemporaire
 
 # 1. La vue qui affiche la page
 def valider_saisie_manuelle(request):
-    temp_periode = request.session.get('temp_periode_fiscale')
+    temp_periode = request.session.get(f'temp_periode_fiscale_{request.user.id}')
     
     # On récupère les employés déjà saisis pour ne pas les perdre au rafraîchissement
     employes_existants = ImportIRSATemporaire.objects.filter(
@@ -443,7 +434,7 @@ from django.db import transaction
 @transaction.atomic
 def convertir_en_brouillon_SM(request):
     employeur = request.user.employeur
-    temp_periode = request.session.get('temp_periode_fiscale')
+    temp_periode = request.session.get(f'temp_periode_fiscale_{request.user.id}')
 
     if not temp_periode:
         messages.error(request, "Session expirée. Veuillez recommencer.")
@@ -497,8 +488,8 @@ def convertir_en_brouillon_SM(request):
     # 6. Nettoyage et session
     request.session['current_periode_id'] = periode_obj.id
     request.session['current_declaration_id'] = declaration.id
-    if 'temp_periode_fiscale' in request.session:
-        del request.session['temp_periode_fiscale']
+    if f'temp_periode_fiscale_{request.user.id}' in request.session:
+        del request.session[f'temp_periode_fiscale_{request.user.id}']
     
     return redirect('detail_import_brouillon')
 
@@ -559,8 +550,10 @@ def export_declaration_pdf(request, declaration_id):
     r24_net = max(0, declaration.total_irsa - r22_reduction)
 
     # 3. Préparation du contexte pour le template
+    # 3. Préparation du contexte pour le template
     context = {
-        'dec': declaration,
+        'declaration': declaration, # Ajoutez cette ligne ou remplacez 'dec'
+        'dec': declaration,         # On garde 'dec' au cas où vous l'utilisez ailleurs
         'emp': declaration.employeur,
         'r1': declaration.nombre_travailleurs_total,
         'r2': r2_avantages,
@@ -571,7 +564,6 @@ def export_declaration_pdf(request, declaration_id):
         'r20': declaration.total_irsa,
         'r22': r22_reduction,
         'r24': r24_net,
-        # On passe la date d'aujourd'hui pour le dépôt
         'date_depot': declaration.date_declaration,
     }
 
@@ -589,7 +581,7 @@ def export_declaration_pdf(request, declaration_id):
 # view pour vider la session 
 # views.py
 def reset_session_debug(request):
-    keys_to_delete = ['temp_periode_fiscale', 'register_employe_data','current_periode_id']
+    keys_to_delete = [f'temp_periode_fiscale_{request.user.id}', 'register_employe_data','current_periode_id']
     for key in keys_to_delete:
         if key in request.session:
             del request.session[key]
@@ -598,3 +590,4 @@ def reset_session_debug(request):
 # urls.py
 
 #----------------------------------------------
+# Disposition coté Django-admin

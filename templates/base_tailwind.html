@@ -2,35 +2,122 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <title>IRSA DIRECT</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="{% static 'js/htmx.min.js' %}" defer></script>
+    <title>IRSA DIRECT</title>
     {% tailwind_css %}
     <style>
-      * {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      }
+        body { overflow-x: hidden; }
+        
+        /* Correction : On utilise des IDs cohérents avec le script de la sidebar */
+        #sidebar { 
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease-in-out; 
+            width: 288px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 50;
+        }
+
+        #mainContent { 
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+        }
+
+        .sidebar-text {
+            transition: opacity 0.2s ease, visibility 0.2s;
+            white-space: nowrap;
+        }
+
+        /* Mobile : On cache la sidebar par défaut */
+        @media (max-width: 1023px) {
+            #sidebar { 
+                transform: translateX(-100%); 
+                width: 288px !important; 
+            }
+            #sidebar.active-mobile { 
+                transform: translateX(0); 
+            }
+            #mainContent { 
+                margin-left: 0 !important; 
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-black leading-normal tracking-normal">
+<body class="bg-[#F8FAFC] text-slate-900 font-sans">
 
-    {% include 'partials/header.html' %}
-
-    <main class="ml-72 min-h-screen">
+    {% if user.is_authenticated %}
+        {% if user.employeur %} 
+            {% include 'partials/header.html' %}
+        {% else %}
+            {# Vérifiez que ce fichier existe et contient bien l'élément <aside id="sidebar"> #}
+            {% include 'Portail_employes/partials/header.html' %}
+        {% endif %}
         
-        <div class="p-6 lg:p-10">
-            
+        <main id="mainContent" class="md:ml-72">
+    {% else %}
+        {% include 'partials/header_public.html' %}
+        <main id="mainContent">
+    {% endif %}
+
+        <div class="p-4 lg:p-10 max-w-[1600px] mx-auto">
             {% include 'partials/messages.html' %}
-
             <div id="main-content">
-                {% block content %}
-                    {% include 'partials/section.html' %}
-                {% endblock %}
+                {% block content %}{% endblock %}
             </div>
-
         </div>
     </main>
 
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // On s'assure de cibler les IDs présents dans votre partial header
+        const toggleBtn = document.getElementById('desktopToggle') || document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const overlay = document.getElementById('sidebarOverlay');
+        const sidebarTexts = document.querySelectorAll('.sidebar-text');
+
+        let isCollapsed = false;
+
+        function updateLayout() {
+            if (window.innerWidth >= 1024) {
+                if (isCollapsed) {
+                    sidebar.style.width = "96px"; // w-24
+                    mainContent.style.marginLeft = "96px";
+                    if(toggleIcon) toggleIcon.classList.add('rotate-180');
+                    sidebarTexts.forEach(t => { t.classList.add('hidden', 'opacity-0'); });
+                } else {
+                    sidebar.style.width = "288px"; // w-72
+                    mainContent.style.marginLeft = "288px";
+                    if(toggleIcon) toggleIcon.classList.remove('rotate-180');
+                    sidebarTexts.forEach(t => { t.classList.remove('hidden', 'opacity-0'); });
+                }
+            }
+        }
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    isCollapsed = !isCollapsed;
+                    updateLayout();
+                } else {
+                    sidebar.classList.toggle('active-mobile');
+                    sidebar.classList.toggle('-translate-x-full'); // Pour contrer le translate par défaut
+                    if(overlay) overlay.classList.toggle('hidden');
+                }
+            });
+        }
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth < 1024) {
+                mainContent.style.marginLeft = "0";
+            } else {
+                updateLayout();
+            }
+        });
+    });
+    </script>
 </body>
 </html>

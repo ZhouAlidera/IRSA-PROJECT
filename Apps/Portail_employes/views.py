@@ -143,40 +143,54 @@ def dashborad_employe(request):
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from declarations.models import LigneDeclarationIRSA
 
 @login_required
 def mes_declarations_irsa(request):
-    # 1. Récupération sécurisée du profil
     profil = getattr(request.user, 'employe_profile', None)
     
     if not profil:
         messages.error(request, "Aucun profil employé trouvé pour ce compte.")
         return redirect('home')
 
-    # 2. On récupère ses identifiants
-    nif = profil.nif_individuel
-    cin = profil.cin
+    # 1. Capture des filtres depuis l'URL
+    query = request.GET.get('q', '')
+    year_filter = request.GET.get('year', '')
+
+    # 2. Base de la requête (Filtrage par identité)
+    filters = Q(employe__nif_individuel=profil.nif_individuel) | Q(employe__cin=profil.cin)
     
-    # 3. Requête flexible : On cherche par NIF OU par CIN
-    # Cela permet de trouver les lignes même si l'employeur n'a saisi que le CIN
-    from django.db.models import Q
-    
-    mes_lignes = LigneDeclarationIRSA.objects.filter(
-        Q(employe__nif_individuel=nif) | Q(employe__cin=cin)
-    ).select_related(
+    mes_lignes = LigneDeclarationIRSA.objects.filter(filters).select_related(
         'declaration__periode', 
         'declaration__employeur'
-    ).distinct().order_by('-declaration__periode__date_debut')
+    ).distinct()
 
-    # --- DEBUG : À supprimer après test ---
-    if not mes_lignes.exists():
-        print(f"DEBUG: Aucun match trouvé pour NIF: {nif} ou CIN: {cin}")
-    # ---------------------------------------
+    # 3. Application de la recherche dynamique (Employeur ou N° Document)
+    if query:
+        mes_lignes = mes_lignes.filter(
+            Q(declaration__employeur__raison_sociale__icontains=query) |
+            Q(declaration__numero_document__icontains=query)
+        )
+
+    # 4. Application du triage par année
+    if year_filter and year_filter.isdigit():
+        mes_lignes = mes_lignes.filter(declaration__periode__annee=year_filter)
+
+    # 5. Tri final et récupération des années disponibles pour le dropdown
+    mes_lignes = mes_lignes.order_by('-declaration__periode__date_debut')
+    
+    # Liste des années uniques pour le filtre (pour le menu déroulant)
+    annees_disponibles = LigneDeclarationIRSA.objects.filter(filters).values_list(
+        'declaration__periode__annee', flat=True
+    ).distinct().order_by('-declaration__periode__annee')
 
     return render(request, "Portail_employes/mes_declarations.html", {
         'lignes': mes_lignes,
-        'nom_valide': profil.nom_prenom
+        'nom_valide': profil.nom_prenom,
+        'annees': annees_disponibles,
+        'selected_year': year_filter,
+        'search_query': query,
     })
 
 from django.shortcuts import render
@@ -233,3 +247,107 @@ def detail_declaration_irsa(request, pk):
     }
     
     return render(request, "Portail_employes/detail_declaration.html", context)
+
+from django.db.models import Sum
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from declarations.models import LigneDeclarationIRSA
+
+from django.db.models import Sum
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from declarations.models import LigneDeclarationIRSA, DeclarationIRSA # Importez DeclarationIRSA
+
+@login_required
+def dashboard_employe(request):
+    aujourdhui = timezone.now()
+    annee_actuelle = aujourdhui.year
+    employe = request.user.employe_profile 
+    
+    # Utilisation des TextChoices pour éviter les erreurs de frappe
+    status = DeclarationIRSA.StatusChoices
+
+    # 1. Alerte : Déclaration CONFIRMÉE (pas encore validée)
+    alerte_attente = LigneDeclarationIRSA.objects.filter(
+        employe=employe,
+        declaration__statut=status.CONFIRME # Utilise 'confirme'
+    ).select_related('declaration').order_by('-declaration__date_declaration').first()
+
+    # 2. Statistiques (uniquement sur ce qui est VALIDÉ)
+    total_irsa_annee = LigneDeclarationIRSA.objects.filter(
+        employe=employe, 
+        declaration__date_declaration__year=annee_actuelle,
+        declaration__statut=status.VALIDE # Utilise 'valide'
+    ).aggregate(total=Sum('irsa_due'))['total'] or 0
+
+    # 3. Données graphique (6 derniers mois validés)
+    recent_stats = LigneDeclarationIRSA.objects.filter(
+        employe=employe,
+        declaration__statut=status.VALIDE
+    ).select_related('declaration').order_by('-declaration__periode')[:6]
+    
+    # 4. Historique (Validé + Confirmé pour que l'employé voie ce qui arrive)
+    # On exclut le brouillon pour l'employé
+    dernieres_fiches = LigneDeclarationIRSA.objects.filter(
+        employe=employe
+    ).exclude(
+        declaration__statut=status.BROUILLON
+    ).select_related('declaration').order_by('-id')[:5]
+
+    context = {
+        'total_irsa': total_irsa_annee,
+        'annee_actuelle': annee_actuelle,
+        'dernieres_fiches': dernieres_fiches,
+        'recent_stats': recent_stats,
+        'alerte_attente': alerte_attente,
+        'status': status, # On passe les choix au template pour les tests
+    }
+    return render(request, 'Portail_employes/dashboard.html', context)
+
+from django.conf import settings
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from weasyprint import HTML
+from declarations.models import LigneDeclarationIRSA, DetailRevenu, DetailDeduction
+
+def generer_pdf_fiche(request, fiche_id):
+    # 1. Récupérer la ligne (sécurité : liée au profil de l'employé connecté)
+    fiche = get_object_or_404(LigneDeclarationIRSA, id=fiche_id, employe=request.user.employe_profile)
+    
+    # 2. Récupérer les détails stockés dans les tables liées
+    # On utilise select_related pour éviter les requêtes SQL répétitives dans le template
+    details_revenus = DetailRevenu.objects.filter(ligne=fiche).select_related('type_revenu')
+    details_deductions = DetailDeduction.objects.filter(ligne=fiche).select_related('type_deduction')
+
+    # 3. Calculs financiers pour le bulletin
+    salaire_brut = sum(item.montant for item in details_revenus)
+    total_retenues_sociales = sum(item.montant for item in details_deductions)
+    
+    # Le Net à payer = Brut - Retenues (CNaPS/Santé) - IRSA
+    salaire_net = salaire_brut - total_retenues_sociales - fiche.irsa_due
+
+    # 4. Préparer le contexte
+    context = {
+        'fiche': fiche,
+        'details_revenus': details_revenus,
+        'details_deductions': details_deductions,
+        'salaire_brut': salaire_brut,
+        'total_retenues': total_retenues_sociales + fiche.irsa_due,
+        'salaire_net': salaire_net,
+        'entreprise': fiche.declaration.employeur,
+        'date_edition': timezone.now(),
+    }
+    
+    # 5. Rendre le HTML et générer le PDF
+    html_string = render_to_string('Portail_employes/pdf_template.html', context)
+    html = HTML(string=html_string, base_url=request.build_absolute_uri())
+    pdf = html.write_pdf()
+    
+    # 6. Envoyer la réponse
+    response = HttpResponse(pdf, content_type='application/pdf')
+    filename = f"Bulletin_{fiche.employe.nif_individuel}_{fiche.declaration.periode}.pdf"
+    response['Content-Disposition'] = f'inline; filename="{filename}"'
+    
+    return response

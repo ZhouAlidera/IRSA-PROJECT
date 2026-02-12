@@ -7,7 +7,10 @@
                 {% with step_int=step_num|add:"0" %}
                 
                 <div class="flex items-center {% if not forloop.last %}flex-1{% endif %}">
-                    <div class="flex items-center gap-4 group min-w-max">
+                    
+                    <a href="{% if step_int == 1 %}{% url 'presentation' %}{% elif step_int == 2 %}{% url 'upload_annexe' %}{% elif step_int == 3 %}{% url 'preview_annexe' %}{% elif step_int == 4 %}{% url 'detail_import_brouillon' %}{% elif step_int == 5 %}{% else %}#{% endif %}" 
+                       class="flex items-center gap-4 group min-w-max transition-all {% if current_step >= step_int %}cursor-pointer hover:opacity-80{% else %}cursor-not-allowed opacity-60{% endif %}">
+                        
                         <div class="relative">
                             {% if current_step == step_int %}
                                 <div class="absolute inset-0 rounded-2xl bg-emerald-500 animate-ping opacity-20"></div>
@@ -17,7 +20,7 @@
                                 {% if current_step == step_int %} 
                                     bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-200 scale-110 z-10
                                 {% elif current_step > step_int %} 
-                                    bg-emerald-50 text-emerald-600 border-emerald-100
+                                    bg-emerald-50 text-emerald-600 border-emerald-100 group-hover:bg-emerald-600 group-hover:text-white
                                 {% else %} 
                                     bg-white text-slate-300 border-slate-100
                                 {% endif %}">
@@ -32,17 +35,15 @@
 
                         <div class="flex flex-col">
                             <span class="text-[8px] font-black uppercase tracking-[0.2em] transition-colors
-                                {% if current_step == step_int %} text-emerald-600 {% else %} text-slate-400 {% endif %}">
+                                {% if current_step == step_int %} text-emerald-600 {% else %} text-slate-400 {% endif %} group-hover:text-emerald-500">
                                 {% if step_int == 1 %}Initial{% elif step_int == 2 %}Fichiers{% elif step_int == 3 %}Analyse{% elif step_int == 4 %}Calculs{% elif step_int == 5 %}Fiscalité{% else %}Succès{% endif %}
                             </span>
                             <span class="text-[10px] font-bold uppercase tracking-tight transition-colors
-                                {% if current_step == step_int %} text-slate-900 {% else %} text-slate-400 {% endif %}">
+                                {% if current_step == step_int %} text-slate-900 {% else %} text-slate-400 {% endif %} group-hover:text-slate-700">
                                 {% if step_int == 1 %}Présentation{% elif step_int == 2 %}Pièces Jointes{% elif step_int == 3 %}Synthèse{% elif step_int == 4 %}Détails{% elif step_int == 5 %}Déclaration{% else %}Confirmation{% endif %}
                             </span>
                         </div>
-                    </div>
-
-                    {% if not forloop.last %}
+                    </a> {% if not forloop.last %}
                     <div class="h-[2px] flex-1 mx-6 rounded-full bg-slate-50 overflow-hidden hidden xl:block relative">
                         {% if current_step > step_int %}
                             <div class="absolute inset-0 bg-emerald-500 transition-all duration-1000">
